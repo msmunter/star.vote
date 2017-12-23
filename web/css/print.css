@@ -1,0 +1,263 @@
+body {
+	background-color: white;
+	color: black;
+	width: 7.5in;
+	font-size: 11pt;
+}
+
+img.qrcodeImage {
+	width: 70px;
+}
+
+img.barcodeImage {
+	width: 200px;
+}
+
+#printResultsContainer {
+	float: left;
+	width: 100%;
+}
+
+#topRow {
+	float: left;
+	width: 100%;
+	text-align: center;
+}
+
+#headerRow {
+	width: 100%;
+	font-weight: bold;
+	margin-bottom: 20px;
+	font-size: 13pt;
+	text-align: center;
+}
+
+#tripleRow {
+	float: left;
+	width: 100%;
+}
+
+#logoCell {
+	float: left;
+	width: 33%;
+	text-align: center;
+}
+
+#logoCellHeader {
+	float: left;
+	font-weight: bold;
+	width: 100%;
+}
+
+#logoCellLabName {
+	font-weight: bold;
+	font-size: 16pt;
+	margin: 0px auto;
+	margin-top: 40px;
+}
+
+#logoCellText {
+	float: left;
+	clear: left;
+	width: 100%;
+	font-size: 12pt;
+}
+
+#printLogo {
+	float: left;
+	width: 100px;
+	margin-top: 5px;
+	margin-left: 10px;
+}
+
+#batchInfoCell {
+	float: left;
+	text-align: center;
+	font-weight: bold;
+	margin-right: 0px;
+	width: 33%;
+}
+
+#samplePhoto {
+	width: 100%;
+	float: none;
+	border-radius: 3px;
+}
+
+#clientInfoCell {
+	float: left;
+	width: 33%;
+	text-align: center;
+}
+
+.clientLogoMedium {
+	max-width: 150px;
+	max-height: 170px;
+}
+
+.pesticideTotal {
+	border-top: solid 1px #777777;
+}
+
+#bottomRow {
+	width: 100%;
+	float: left;
+	clear: left;
+	margin-top: 30px;
+}
+
+#signatureCell {
+	float: left;
+	width: 49.5%;
+}
+
+#qrcodeCell {
+	float: left;
+	width: 49.5%;
+}
+
+#qrcodeContainer {
+	text-align: center;
+}
+
+#qrcode {
+	clear: left;
+	margin: 0px auto;
+}
+
+#qrcodeText {
+	margin-left: 5px;
+}
+
+#signature {
+	font-size: 10pt;
+	font-weight: bold;
+	margin-top: 3px;
+}
+
+#signatureLabel, #dateLabel {
+	float: left;
+	font-size: 7pt;
+	border-top: solid 1px black;
+	margin-top: 30px;
+}
+
+#signatureLabel.nospace, #dateLabel.nospace {
+	margin-top: 2px;
+}
+
+#signatureLabel {
+	width: 250px;
+}
+
+#dateLabel {
+	width: 100px;
+}
+
+#microPestRow, #potencyAttributesRow, #terpenesRow, #labFooter {
+	float: left;
+	clear: left;
+	width: 100%;
+}
+
+#pesticideCell, #microbialCell {
+	float: left;
+	width: 49.5%;
+	border: none;
+	padding: 0px;
+	border-radius: 0px;
+}
+
+#batchAttributesCell {
+	float: left;
+	clear: right;
+	width: 49.5%;
+	border: none;
+	padding: 0px;
+	border-radius: 0px;
+}
+
+#potencyCell {
+	float: left;
+	width: 49.5%;
+	border: none;
+}
+
+#percent_cbd, #percent_cbc, #percent_d8thc, #percent_thc, #percent_cbg, #percent_cbn, #total_thc, #percent_total, #percent_other {
+	font-weight: bold;
+	font-size: 14px;
+}
+
+#potencyAmounts {
+	float: left;
+	width: auto;
+}
+
+#potency_piechart {
+	width: 220px;
+	height: 180px;
+	float: left;
+}
+
+.testMethod {
+	font-size: 7pt;
+	color: #777777;
+	margin-top: 0px;
+}
+
+#tagHeader {
+	font-weight: bold;
+}
+
+.tagRow {
+	padding-bottom: 5px;
+	border-bottom: dashed 1px #777777;
+}
+
+.tagRowCell {
+	float: left;
+	width: 3.15in;
+	border: none;
+	padding: 0px;
+	border-radius: 0px;
+}
+
+.tagRow {
+	float: left;
+	clear: left;
+	width: 100%;
+}
+
+.labFooter img.logo {
+	width: 20px;
+}
+
+.labFooter {
+	font-size: 11px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+div.orderLine {
+	border-bottom: dotted 1px #cccccc;
+}
+
+/*************/
+/* Timeclock */
+/*************/
+
+div#tcPrintTitle {
+	font-size: 12pt;
+	color: darkgreen;
+	font-weight: bold;
+}
+
+table.printPayPeriod {
+	float: left;
+	margin-right: 10px;
+}
+
+.pageBreak {
+	display: block !important;
+	page-break-after: always !important;
+}

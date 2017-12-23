@@ -1,0 +1,5 @@
+User-agent: *
+Disallow /adminpanel/
+Disallow /batches/
+Disallow /clients/
+Disallow /today/

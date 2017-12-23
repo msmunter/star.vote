@@ -1,0 +1,134 @@
+.ui-page {
+	font-family: verdana, tahoma, helvetica, sans-serif;
+	background-color: #664400;
+	/*background-image: url("../images/wood_texture.jpg");*/
+	/*color: white;*/
+}
+
+/* Page Header */
+
+#pageHeader {
+	float: left;
+}
+
+#headerLogo {
+	float: left;
+	height: 16px;
+	margin: none;
+	margin-right: 5px;
+	padding: 2px;
+	/*background-color: white;
+	border-radius: 10px;*/
+}
+
+#pageHeader a {
+	/*color: white;*/
+	text-decoration: none;
+	cursor: pointer;
+}
+
+#breadCrumbs {
+	float: right;
+	font-size: 14px;
+}
+
+#breadCrumbs a {
+	/*color: #ffffff;*/
+}
+
+/* Index */
+
+/* Polls */
+#statusMsg {
+	border-radius: 7px;
+	padding: 0px 5px 0px 5px;
+	float: left;
+	border: solid 2px #cccccc;
+}
+
+a.pollLink:link, a.pollLink:hover, a.pollLink:visited {
+	display: block;
+	float: left;
+	height: 50px;
+	width: 300px;
+	border: solid 1px #cccccc;
+	border-radius: 7px;
+	text-decoration: none;
+	padding: 5px;
+	margin: 5px 5px 5px 0px;
+	color: #38c;
+	font-weight: bold;
+}
+
+div.pollInfo, div.pollQuestion {
+	display: block;
+	font-weight: normal;
+	color: black;
+	size: 12px;
+}
+
+/* Global */
+.ui-link {
+	/*color: #c9e3b5 !important;*/
+}
+
+/* Generic Classes */
+.firstRow {
+	background-color: #dfdfdf;
+}
+
+.secondRow {
+	background-color: #ffffff;
+}
+
+.numberCell {
+	text-align: right;
+}
+
+.alignLeft {
+	text-align: left !important;
+}
+
+.alignRight {
+	text-align: right !important;
+}
+
+.hidden {
+	display: none;
+}
+
+.center {
+	text-align: center;
+}
+
+.clear {
+	clear: both;
+}
+
+.italic {
+	font-style: italic;
+}
+
+.bold {
+	font-weight: bold;
+}
+
+.floatleft {
+	float: left;
+}
+
+.floatright {
+	float: right;
+}
+
+.alignright {
+	text-align: right;
+}
+
+.monospace {
+	font-family: monospace;
+}
+
+.pageBreak	{
+	display: none;
+}
