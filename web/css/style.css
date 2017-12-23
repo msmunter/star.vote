@@ -1,6 +1,6 @@
 .ui-page {
 	font-family: verdana, tahoma, helvetica, sans-serif;
-	background-color: #664400;
+	/*background-color: #664400;*/
 	/*background-image: url("../images/wood_texture.jpg");*/
 	/*color: white;*/
 }
@@ -50,7 +50,7 @@ a.pollLink:link, a.pollLink:hover, a.pollLink:visited {
 	display: block;
 	float: left;
 	height: 50px;
-	width: 300px;
+	width: 400px;
 	border: solid 1px #cccccc;
 	border-radius: 7px;
 	text-decoration: none;
@@ -63,8 +63,27 @@ a.pollLink:link, a.pollLink:hover, a.pollLink:visited {
 div.pollInfo, div.pollQuestion {
 	display: block;
 	font-weight: normal;
+	font-size: 12px;
 	color: black;
 	size: 12px;
+}
+
+div#pollResults {
+	border-top: dashed 2px #cccccc;
+}
+
+div#pollResultsTitle, div#voteTitle {
+	font-size: 18px;
+	font-weight: bold;
+}
+
+form.answerForm {
+	float: left;
+	border-radius: 7px;
+	background-color: #eeeeee;
+	margin: 5px 5px 0px 0px;
+	box-shadow: 2px 2px 4px #cccccc;
+	padding-left: 10px;
 }
 
 /* Global */

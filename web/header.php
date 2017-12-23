@@ -17,30 +17,25 @@
 		<!-- Icon/Favicon -->
 		
 		<!-- jQuery CSS -->
-		<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		<!--<link rel="stylesheet" href="/web/css/starvote.min.css" />-->
+		<!-- jQuery Mobile CSS -->
+		<!--<link rel="stylesheet" href="/web/css/jquery.mobile.icons.min.css" />-->
+		<link rel="stylesheet" href="/web/css/jquery.mobile-1.4.5.min.css" />
 		<!-- jQuery UI CSS -->
-		<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/ui-lightness/jquery-ui.css" />
+		<!--<link rel="stylesheet" href="/web/css/jquery-ui-1.12.1.css" />-->
 		<!-- Local CSS -->
 		<link rel="stylesheet" href="/web/css/style.css" />
 		<!-- jQuery -->
-		<script
-			src="https://code.jquery.com/jquery-3.2.1.min.js"
-			integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-			crossorigin="anonymous">
-		</script>
+		<script src="/web/js/jquery-2.1.4.min.js"></script>
 		<script type="text/javascript">
 			$(document).on("mobileinit", function(){
 				$.mobile.ajaxEnabled = false;
 			});
 		</script>
 		<!-- jQuery Mobile -->
-		<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+		<script src="/web/js/jquery.mobile-1.4.5.min.js"></script>
 		<!-- jQuery UI -->
-		<script
-			src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-			integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-			crossorigin="anonymous">
-		</script>
+		<!--<script src="/web/js/jquery.ui-1.12.1.min.js"></script>-->
 	</head>
 	<body>
 		<div data-role="page">

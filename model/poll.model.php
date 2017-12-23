@@ -64,8 +64,7 @@ class PollModel extends Model
 	{
 		$this->query = "SELECT COUNT(DISTINCT(`votes`.`voterID`)) as `ct`
 						FROM `votes`
-						WHERE `votes`.`pollID` LIKE '$pollID'
-						LIMIT 0,1;";
+						WHERE `votes`.`pollID` LIKE '$pollID';";
 		$this->doSelectQuery();
 		return $this->results[0]->ct;
 	}
@@ -85,6 +84,31 @@ class PollModel extends Model
 		$this->query = "SELECT `polls`.`pollID`
 						FROM `polls`
 						WHERE `pollID` LIKE '".$pollID."'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (!empty($this->results)) {
+			return true;
+		} else return false;
+	}
+	
+	public function isGeneratedIDTaken($table, $column, $newID)
+	{
+		$this->query = "SELECT `$table`.`$column`
+						FROM `$table`
+						WHERE `$column` LIKE '".$newID."'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (!empty($this->results)) {
+			return true;
+		} else return false;
+	}
+	
+	public function userHasVoted($voterID, $pollID)
+	{
+		$this->query = "SELECT `votes`.`pollID`
+						FROM `votes`
+						WHERE `voterID` LIKE '".$voterID."'
+						AND `pollID` LIKE '".$pollID."'
 						LIMIT 0,1;";
 		$this->doSelectQuery();
 		if (!empty($this->results)) {

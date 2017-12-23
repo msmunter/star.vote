@@ -15,6 +15,7 @@ class PollController extends Controller
 	
 	public function index()
 	{
+		// Show poll history on this page
 		$this->history();
 	}
 	
@@ -107,11 +108,14 @@ class PollController extends Controller
 				$this->poll = $this->model->getPollByID($this->URLdata);
 				// Determine whether use has voted
 				if (!empty($_COOKIE['voterID'])) {
-					$this->voterID = $_COOKIE['voterID'];
-					if ($this->model->userHasVoted($this->voterID)) {
+					$this->setVoterID();
+					if ($this->model->userHasVoted($this->voterID, $this->URLdata)) {
 						$this->hasVoted = true;
 					} else $this->hasVoted = false;
-				} else $this->hasVoted = false;
+				} else {
+					$this->hasVoted = false;
+					$this->setVoterID();
+				}
 				// Load the answers
 				if (empty($this->poll)) {
 					$this->error = "ERROR: Poll not found";
@@ -119,7 +123,7 @@ class PollController extends Controller
 					$this->poll->answers = $this->model->getAnswersByPollID($this->URLdata);
 					if (count($this->poll->answers) > 0) {
 						foreach ($this->poll->answers as $index => $answer) {
-							$this->poll->answers[$index]->voterCount = $this->model->getAnswerVoterCount($answer->answerID);
+							//$this->poll->answers[$index]->voterCount = $this->model->getAnswerVoterCount($answer->answerID);
 						}
 					}
 					$this->poll->totalVoterCount = $this->model->getPollVoterCount($this->poll->pollID);
@@ -130,20 +134,34 @@ class PollController extends Controller
 		}
 	}
 	
-	public function vote()
+	private function setVoterID()
 	{
-		if (!empty($_COOKIE['voterID'])) {
+		// Check cookie for voter ID
+		if (strlen($_COOKIE['voterID']) > 0) {
 			$this->voterID = $_COOKIE['voterID'];
 		}
-		
-		// Be sure to save a cookie with this poll so they can't vote on it again immediately.
-		$cookieExpires = strtotime('now +10 years');
-		//setcookie("voterID", $voterID, $cookieExpires, "/");
+		// Generate voter ID if necessary
+		if (strlen($this->voterID) < 1) {
+			$this->voterID = $this->generateUniqueID(10, "voters", "voterID");
+			// Save a cookie with their voter ID
+			$cookieExpires = strtotime('+5 years');
+			setcookie("voterID", $this->voterID, $cookieExpires);
+		}
 	}
 	
-	private function generatePollID()
+	private function generateUniqueID($length, $table, $column)
 	{
-		
+		if ($length < 1) $length = 8;
+		if (strlen($table) > 0 && strlen($column) > 0) {
+			// Generate ID
+			$oUtility = new UtilityController();
+			$generatedIDIsTaken = true;
+			while ($generatedIDIsTaken) {
+				$newID = $oUtility->generateRandomString($type = 'distinctlower', $length);
+				$generatedIDIsTaken = $this->model->isGeneratedIDTaken($table, $column, $newID);
+			}
+			return $newID;
+		} else return false;
 	}
 }
 ?>
