@@ -111,6 +111,8 @@ class PollController extends Controller
 					$this->setVoterID();
 					if ($this->model->userHasVoted($this->voterID, $this->URLdata)) {
 						$this->hasVoted = true;
+						// Get their vote
+						$this->yourVote = $this->model->getYourVote($this->voterID, $this->poll->pollID);
 					} else $this->hasVoted = false;
 				} else {
 					$this->hasVoted = false;
@@ -132,6 +134,38 @@ class PollController extends Controller
 		} else {
 			$this->error = 'Must provide poll ID';
 		}
+	}
+	
+	public function ajaxvote()
+	{
+		$this->voterID = $_POST['voterID'];
+		$this->pollID = $_POST['pollID'];
+		//$return['html'] .= 'voterID: '.$this->voterID.'<br />'; // DEBUG ONLY!!!
+		parse_str($_POST['votes'], $voteArray);
+		if (!$this->model->voterExists($this->voterID)) {
+			$this->model->insertVoter($this->voterID, $_SERVER['REMOTE_ADDR']);
+		}
+		foreach ($voteArray as $index => $vote) {
+			$indexBoom = explode('|', $index);
+			$this->answerID = $indexBoom[1];
+			unset($indexBoom);
+			$this->votes[] = $vote;
+			//$return['html'] .= 'ID: '.$this->answerID.'; Vote: '.$vote.'<br />'; // DEBUG ONLY!!!
+			// Insert vote
+			$this->model->insertVote($this->pollID, $this->voterID, $this->answerID, $vote);
+			$return['html'] .= $this->model->query; // DEBUG ONLY!!!
+		}
+		$this->poll->answers = $voteArray;
+		$return['html'] .= $this->ajaxInclude('view/poll/yourvote.view.php');
+		echo json_encode($return);
+	}
+	
+	public function ajaxresults()
+	{
+		$this->URLdata = $_POST['pollID'];
+		$this->results();
+		$return['html'] = $this->ajaxInclude('view/poll/resultsactual.view.php');
+		echo json_encode($return);
 	}
 	
 	private function setVoterID()

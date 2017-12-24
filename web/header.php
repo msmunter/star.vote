@@ -8,7 +8,7 @@
 		<meta name="robots" content="follow, index" />
 		<title>
 		<?php if ($_SERVER['SERVER_NAME'] == 'starvote.msmunter.com') { ?>
-			Star.vote [Test Server]
+			Star.vote [Test]
 		<?php } else { ?>
 			Star.vote
 		<?php } ?>
@@ -46,7 +46,7 @@
 						<div id="headerTitle">
 							<!--<img id="headerLogo" src="web/images/starvote_logo.png" alt="Logo" />-->
 							<?php if ($_SERVER['SERVER_NAME'] == 'starvote.msmunter.com') { ?>
-								Star.vote [Test Server]
+								Star.vote [Test]
 							<?php } else { ?>
 								Star.vote
 							<?php } ?>

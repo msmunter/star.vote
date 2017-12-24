@@ -50,7 +50,7 @@ a.pollLink:link, a.pollLink:hover, a.pollLink:visited {
 	display: block;
 	float: left;
 	height: 50px;
-	width: 400px;
+	width: 100%;
 	border: solid 1px #cccccc;
 	border-radius: 7px;
 	text-decoration: none;

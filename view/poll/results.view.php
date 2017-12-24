@@ -8,21 +8,26 @@ if ($this->hasVoted) {
 //$this->debug($this->poll);
 /* END DEBUG */
 ?>
+<input type="hidden" id="pollID" value="<?php echo $this->poll->pollID; ?>" />
+<div id="statusMsg"></div>
+<div class="clear"></div>
 <p>
 	<?php
 	if ($this->poll) {
-		if (!$this->hasVoted) { ?>
-			<div id="voteInput">
-				<?php include_once('view/poll/voteinput.view.php'); ?>
-			</div>
-			<button id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
-		<?php } ?>
-		
-		<div id="pollResults">
-			<div id="pollResultsTitle">Results for "<?php echo $this->poll->question; ?>"</div>
-			<?php foreach ($this->poll->answers as $answer) { ?>
-				<div><?php echo $answer->text; ?>: <?php echo $answer->points; ?> points, <?php echo $answer->votes; ?> votes</div>
-			<?php } ?>
+		if ($this->hasVoted) {
+			// Have voted
+			echo '<div id="voteInput">';
+			include_once('view/poll/yourvote.view.php');
+			echo '</div>';
+		} else {
+			echo '<div id="voteInput">';
+			include_once('view/poll/voteinput.view.php');
+			echo '</div><button id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>';
+		}
+		?>
+		<button id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
+		<div id="pollResults" class="<?php if (!$this->hasVoted) echo ' hidden'; ?>">
+			<?php include('view/poll/resultsactual.view.php');?>
 		</div>
 		<?php
 	} else {

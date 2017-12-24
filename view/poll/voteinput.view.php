@@ -1,7 +1,6 @@
 <div id="voteTitle">
 	Vote on "<?php echo $this->poll->question; ?>"
 </div>
-
 <?php foreach ($this->poll->answers as $answer) { ?>
 	<form class="answerForm" id="voteForm|<?php echo $answer->answerID; ?>">
 		<fieldset data-role="controlgroup" data-type="horizontal">
