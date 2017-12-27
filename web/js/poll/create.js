@@ -45,7 +45,7 @@ function addAnswer()
 			updateStatus("ERROR: "+jData.error);
 		} else if (jData.nextAnswerID) {
 			// Success, add the line
-			$('#pollAnswers').append(jData.nextAnswer);
+			$('#pollAnswers').append(jData.nextAnswer).enhanceWithin();
 		} else {
 			alert('ERROR: failed to add answer');
 		}
