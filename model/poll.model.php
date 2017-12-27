@@ -21,13 +21,12 @@ class PollModel extends Model
 		return $this->results;
 	}
 	
-	public function getTopTwoAnswersByPollID($pollID)
+	public function getTopAnswersByPollID($pollID)
 	{
 		$this->query = "SELECT `answerID`, `text`, `votes`, `points`
 						FROM `answers`
 						WHERE `answers`.`pollID` LIKE '$pollID'
-						ORDER BY `points` DESC
-						LIMIT 0,2;";
+						ORDER BY `points` DESC;";
 		$this->doSelectQuery();
 		return $this->results;
 	}
@@ -49,7 +48,7 @@ class PollModel extends Model
 		$this->doSelectQuery();
 		$prefID2 = $this->results[0]->votes;
 		if ($prefID1 == $prefID2) {
-			$return['tie'] == true;
+			$return['tie'] = true;
 			$return['first']['answerID'] = $answerID1;
 			$return['first']['votes'] = $prefID1;
 			$return['second']['answerID'] = $answerID2;

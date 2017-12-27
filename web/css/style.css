@@ -86,6 +86,14 @@ form.answerForm {
 	padding-left: 10px;
 }
 
+div#runoffResults {
+	float: left;
+	border-radius: 7px;
+	padding: 5px;
+	background-color: #eeeeee;
+	box-shadow: 2px 2px 4px #cccccc;
+}
+
 /* Global */
 .ui-link {
 	/*color: #c9e3b5 !important;*/

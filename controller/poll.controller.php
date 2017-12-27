@@ -124,14 +124,26 @@ class PollController extends Controller
 					$this->error = "ERROR: Poll not found";
 				} else {
 					$this->poll->answers = $this->model->getAnswersByPollID($this->URLdata);
-					$this->poll->topTwo = $this->model->getTopTwoAnswersByPollID($this->URLdata);
-					$this->poll->runoffResults = $this->model->getRunoffResultsByAnswerID($this->URLdata, $this->poll->topTwo[0]->answerID, $this->poll->topTwo[1]->answerID);
-					if ($this->poll->runoffResults['first']['answerID'] == $this->poll->topTwo[0]->answerID) {
-						$this->poll->runoffResults['first']['question'] = $this->poll->topTwo[0]->text;
-						$this->poll->runoffResults['second']['question'] = $this->poll->topTwo[1]->text;
+					// HEY YOU! Figure out how to do a multi-way tie here, taps into resultsactual.view.php
+					$this->poll->topAnswers = $this->model->getTopAnswersByPollID($this->URLdata);
+					$this->poll->runoffResults = $this->model->getRunoffResultsByAnswerID($this->URLdata, $this->poll->topAnswers[0]->answerID, $this->poll->topAnswers[1]->answerID);
+					if ($this->poll->runoffResults['first']['answerID'] == $this->poll->topAnswers[0]->answerID) {
+						$this->poll->runoffResults['first']['question'] = $this->poll->topAnswers[0]->text;
+						$this->poll->runoffResults['second']['question'] = $this->poll->topAnswers[1]->text;
 					} else {
-						$this->poll->runoffResults['first']['question'] = $this->poll->topTwo[1]->text;
-						$this->poll->runoffResults['second']['question'] = $this->poll->topTwo[0]->text;
+						$this->poll->runoffResults['first']['question'] = $this->poll->topAnswers[1]->text;
+						$this->poll->runoffResults['second']['question'] = $this->poll->topAnswers[0]->text;
+					}
+					// Check for ties beyond this
+					if ($this->poll->runoffResults['tie']) {
+						$ignoreFirstTwo = 1;
+						$this->poll->runoffResults['tieEndsAt'] = 2;
+						foreach ($this->poll->topAnswers as $topAnswer) {
+							if ($ignoreFirstTwo > 2 && $this->poll->runoffResults['second']['votes'] == $topAnswer->votes) {
+								$this->poll->runoffResults['tieEndsAt']++;
+							}
+							$ignoreFirstTwo++;
+						}
 					}
 					
 					$this->poll->totalVoterCount = $this->model->getPollVoterCount($this->URLdata);
