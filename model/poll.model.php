@@ -48,7 +48,13 @@ class PollModel extends Model
 						LIMIT 0,1;";
 		$this->doSelectQuery();
 		$prefID2 = $this->results[0]->votes;
-		if ($prefID1 > $prefID2) {
+		if ($prefID1 == $prefID2) {
+			$return['tie'] == true;
+			$return['first']['answerID'] = $answerID1;
+			$return['first']['votes'] = $prefID1;
+			$return['second']['answerID'] = $answerID2;
+			$return['second']['votes'] = $prefID2;
+		} else if ($prefID1 > $prefID2) {
 			$return['first']['answerID'] = $answerID1;
 			$return['first']['votes'] = $prefID1;
 			$return['second']['answerID'] = $answerID2;

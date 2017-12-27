@@ -46,7 +46,7 @@ class PollController extends Controller
 			// Rearrange into a more useful array
 			foreach ($this->pollAnswerSet as $pollInputName => $pollAnswer) {
 				$inBoom = explode('answer', $pollInputName);
-				$this->pollAnswers[$inBoom[1]] = $pollAnswer;
+				if (trim($pollAnswer) != "") $this->pollAnswers[$inBoom[1]] = $pollAnswer;
 			}
 			unset($this->pollAnswerSet);
 			// See that we have some answers and they aren't blank
@@ -133,6 +133,7 @@ class PollController extends Controller
 						$this->poll->runoffResults['first']['question'] = $this->poll->topTwo[1]->text;
 						$this->poll->runoffResults['second']['question'] = $this->poll->topTwo[0]->text;
 					}
+					
 					$this->poll->totalVoterCount = $this->model->getPollVoterCount($this->URLdata);
 				}
 			}
@@ -168,9 +169,9 @@ class PollController extends Controller
 				if ($answerID != $answerID2) {
 					if ($vote > $vote2) {
 						$this->model->updateVoteMatrix($this->pollID, $answerID, $answerID2);
-					} else {
+					} else if ($vote < $vote2) {
 						$this->model->updateVoteMatrix($this->pollID, $answerID2, $answerID);
-					}
+					} // and do nothing if they're equal
 				}
 			}
 			unset($voteArrayToDestroy[$answerID]);
