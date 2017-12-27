@@ -5,7 +5,7 @@
 <div class="clear"></div>
 <div class="ui-field-contain">
 	<label for="pollQuestion">Question: </label>
-	<input type="text" id="pollQuestion" name="pollQuestion" ></input>
+	<input type="text" data-clear-btn="true" id="pollQuestion" name="pollQuestion" ></input>
 </div>
 <form id="pollAnswers">
 	<?php 
