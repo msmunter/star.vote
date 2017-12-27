@@ -2,6 +2,13 @@ $(document).ready(function() {
 	
 });
 
+function updateStatus(msg)
+{
+	$('#statusMsg').fadeOut(100, function() {
+		$('#statusMsg').html(msg).fadeIn(100);
+	});
+}
+
 function vote()
 {
 	$.post("/", { 
@@ -14,10 +21,14 @@ function vote()
 	}, function(data) {
 		var jData = JSON.parse(data);
 		if (jData.error) {
-			$('#statusMsg').html("ERROR: "+jData.error);
+			//$('#statusMsg').html("ERROR: "+jData.error);
+			updateStatus("ERROR: "+jData.error);
 		} else {
 			// Replace voting mechanism with personal results
 			$('#voteInput').html(jData.html);
+			// Hide vote button
+			$('#voteButton').hide();
+			$('#showResultsButton').html('Update Results');
 			// View results
 			$('#statusMsg').hide();
 			showResults();

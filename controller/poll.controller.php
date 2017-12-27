@@ -75,7 +75,8 @@ class PollController extends Controller
 				$return['pollID'] = $newPollID;
 				// Insert actual
 				$this->model->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, $_SERVER['REMOTE_ADDR']);
-				$return['html'] = 'Poll saved! Loading results...';
+				$return['html'] .= $this->model->debugHTML; // DEBUG ONLY!!!
+				$return['html'] .= 'Poll saved! Loading results...';
 			} else {
 				$return['error'] = 'Must provide at least two possible answers';
 			}
@@ -106,7 +107,7 @@ class PollController extends Controller
 				$this->error = 'Invalid poll ID (characters)';
 			} else {
 				$this->poll = $this->model->getPollByID($this->URLdata);
-				// Determine whether use has voted
+				// Determine whether user has voted
 				if (!empty($_COOKIE['voterID'])) {
 					$this->setVoterID();
 					if ($this->model->userHasVoted($this->voterID, $this->URLdata)) {
@@ -123,12 +124,16 @@ class PollController extends Controller
 					$this->error = "ERROR: Poll not found";
 				} else {
 					$this->poll->answers = $this->model->getAnswersByPollID($this->URLdata);
-					if (count($this->poll->answers) > 0) {
-						foreach ($this->poll->answers as $index => $answer) {
-							//$this->poll->answers[$index]->voterCount = $this->model->getAnswerVoterCount($answer->answerID);
-						}
+					$this->poll->topTwo = $this->model->getTopTwoAnswersByPollID($this->URLdata);
+					$this->poll->runoffResults = $this->model->getRunoffResultsByAnswerID($this->URLdata, $this->poll->topTwo[0]->answerID, $this->poll->topTwo[1]->answerID);
+					if ($this->poll->runoffResults['first']['answerID'] == $this->poll->topTwo[0]->answerID) {
+						$this->poll->runoffResults['first']['question'] = $this->poll->topTwo[0]->text;
+						$this->poll->runoffResults['second']['question'] = $this->poll->topTwo[1]->text;
+					} else {
+						$this->poll->runoffResults['first']['question'] = $this->poll->topTwo[1]->text;
+						$this->poll->runoffResults['second']['question'] = $this->poll->topTwo[0]->text;
 					}
-					$this->poll->totalVoterCount = $this->model->getPollVoterCount($this->poll->pollID);
+					$this->poll->totalVoterCount = $this->model->getPollVoterCount($this->URLdata);
 				}
 			}
 		} else {
@@ -141,21 +146,39 @@ class PollController extends Controller
 		$this->voterID = $_POST['voterID'];
 		$this->pollID = $_POST['pollID'];
 		//$return['html'] .= 'voterID: '.$this->voterID.'<br />'; // DEBUG ONLY!!!
-		parse_str($_POST['votes'], $voteArray);
+		parse_str($_POST['votes'], $dirtyVoteArray);
+		// Cleanup array
+		foreach ($dirtyVoteArray as $index => $vote) {
+			$indexBoom = explode('|', $index);
+			$answerID = $indexBoom[1];
+			unset($indexBoom);
+			$voteArray[$answerID] = $vote;
+		}
 		if (!$this->model->voterExists($this->voterID)) {
 			$this->model->insertVoter($this->voterID, $_SERVER['REMOTE_ADDR']);
 		}
-		foreach ($voteArray as $index => $vote) {
-			$indexBoom = explode('|', $index);
-			$this->answerID = $indexBoom[1];
-			unset($indexBoom);
+		$voteArrayToDestroy = $voteArray;
+		foreach ($voteArray as $answerID => $vote) {
 			$this->votes[] = $vote;
-			//$return['html'] .= 'ID: '.$this->answerID.'; Vote: '.$vote.'<br />'; // DEBUG ONLY!!!
+			//$return['html'] .= 'ID: '.$answerID.'; Vote: '.$vote.'<br />'; // DEBUG ONLY!!!
 			// Insert vote
-			$this->model->insertVote($this->pollID, $this->voterID, $this->answerID, $vote);
-			$return['html'] .= $this->model->query; // DEBUG ONLY!!!
+			$this->model->insertVote($this->pollID, $this->voterID, $answerID, $vote);
+			// Update matrix. Pooh, stop! That's not honey, that's recursion!
+			foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
+				if ($answerID != $answerID2) {
+					if ($vote > $vote2) {
+						$this->model->updateVoteMatrix($this->pollID, $answerID, $answerID2);
+					} else {
+						$this->model->updateVoteMatrix($this->pollID, $answerID2, $answerID);
+					}
+				}
+			}
+			unset($voteArrayToDestroy[$answerID]);
 		}
-		$this->poll->answers = $voteArray;
+		//$return['html'] .= $this->model->debugHTML; // DEBUG ONLY!!!
+		$this->poll = $this->model->getPollByID($this->pollID);
+		$this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
+		$this->yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
 		$return['html'] .= $this->ajaxInclude('view/poll/yourvote.view.php');
 		echo json_encode($return);
 	}

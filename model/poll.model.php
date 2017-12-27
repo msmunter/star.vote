@@ -15,13 +15,56 @@ class PollModel extends Model
 	{
 		$this->query = "SELECT `answerID`, `text`, `votes`, `points`
 						FROM `answers`
-						WHERE `answers`.`pollID` LIKE '$pollID';";
+						WHERE `answers`.`pollID` LIKE '$pollID'
+						ORDER BY `answerID` ASC;";
 		$this->doSelectQuery();
 		return $this->results;
 	}
 	
+	public function getTopTwoAnswersByPollID($pollID)
+	{
+		$this->query = "SELECT `answerID`, `text`, `votes`, `points`
+						FROM `answers`
+						WHERE `answers`.`pollID` LIKE '$pollID'
+						ORDER BY `points` DESC
+						LIMIT 0,2;";
+		$this->doSelectQuery();
+		return $this->results;
+	}
+	
+	public function getRunoffResultsByAnswerID($pollID, $answerID1, $answerID2)
+	{
+		$this->query = "SELECT `votes`
+						FROM `runoff`
+						WHERE `gtID` LIKE '$answerID1'
+						AND `ltID` LIKE '$answerID2'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		$prefID1 = $this->results[0]->votes;
+		$this->query = "SELECT `votes`
+						FROM `runoff`
+						WHERE `gtID` LIKE '$answerID2'
+						AND `ltID` LIKE '$answerID1'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		$prefID2 = $this->results[0]->votes;
+		if ($prefID1 > $prefID2) {
+			$return['first']['answerID'] = $answerID1;
+			$return['first']['votes'] = $prefID1;
+			$return['second']['answerID'] = $answerID2;
+			$return['second']['votes'] = $prefID2;
+		} else {
+			$return['first']['answerID'] = $answerID2;
+			$return['first']['votes'] = $prefID2;
+			$return['second']['answerID'] = $answerID1;
+			$return['second']['votes'] = $prefID1;
+		}
+		return $return;
+	}
+	
 	public function insertPoll($pollID, $question, $answers, $creatorIP)
 	{
+		global $return;
 		// Poll first
 		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `allowMultiVoting`, `allowComments`, `creatorIP`)
 						VALUES ('".$pollID."', '".$question."', '".date('Y-m-d h:i:s')."', 0, 0, 0, '".$creatorIP."')";
@@ -30,12 +73,35 @@ class PollModel extends Model
 		$this->doInsertQuery();
 		
 		// Now answers
+		$this->answerIDs = array();
 		foreach ($answers as $answer) {
 			$this->query = "INSERT INTO `answers` (`pollID`, `text`, `votes`, `points`)
 							VALUES ('".$pollID."', '".$answer."', 0, 0)";
 			// Insert
-			//echo '<pre>';print_r($this->query);echo '</pre>'; // DEBUG ONLY!!!
+			//$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
 			$this->doInsertQuery();
+			$this->answerIDs[] = $this->insertID;
+		}
+		
+		// Now the runoff matrix
+		$answerIDsToDestroy = $this->answerIDs;
+		foreach ($this->answerIDs as $a1Index => $a1) {
+			foreach ($answerIDsToDestroy as $a2Index => $a2) {
+				if ($a1 != $a2) {
+					$this->query = "INSERT INTO `runoff` (`pollID`, `gtID`, `ltID`, `votes`)
+							VALUES ('".$pollID."', '".$a1."', '".$a2."', 0)";
+					// Insert
+					//$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
+					$this->doInsertQuery();
+					// Now the reverse
+					$this->query = "INSERT INTO `runoff` (`pollID`, `gtID`, `ltID`, `votes`)
+							VALUES ('".$pollID."', '".$a2."', '".$a1."', 0)";
+					// Insert
+					//$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
+					$this->doInsertQuery();
+				}
+			}
+			array_shift($answerIDsToDestroy);
 		}
 	}
 	
@@ -82,15 +148,31 @@ class PollModel extends Model
 							VALUES ('".$voterID."', '".$pollID."', '".$answerID."', '".$vote."')";
 		// Insert
 		//echo '<pre>';print_r($this->query);echo '</pre>'; // DEBUG ONLY!!!
+		$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
 		$this->doInsertQuery();
 		
-		// Add votes to matrix
+		// Add to scores/votes
 		$this->query = "UPDATE `answers`
 						SET `points` = `points` + $vote,
 							`votes` = `votes` + 1
 						WHERE `answerID` = $answerID
 						LIMIT 1;";
 		// Insert
+		$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
+		$this->doUpdateQuery();
+	}
+	
+	public function updateVoteMatrix($pollID, $gtID, $ltID)
+	{
+		// Update
+		$this->query = "UPDATE `runoff`
+					SET `votes` = `votes` + 1
+					WHERE `pollID` LIKE '$pollID'
+					AND `gtID` = $gtID
+					AND `ltID` = $ltID
+					LIMIT 1;";
+		// Insert
+		$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
 		$this->doUpdateQuery();
 	}
 	
