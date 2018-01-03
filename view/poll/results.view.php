@@ -30,6 +30,10 @@
 		<div id="pollResults" class="<?php if (!$this->hasVoted) echo ' hidden'; ?>">
 			<?php include('view/poll/resultsactual.view.php');?>
 		</div>
+		<div class="ui-field-contain">
+			<label for="shareURLInput">Share: </label>
+			<input type="text" id="shareURLInput" name="shareURLInput" data-mini="true" value="https://<?php echo $_SERVER['SERVER_NAME']; ?>/poll/results/<?php echo $this->poll->pollID; ?>/" />
+		</div>
 		<?php
 	} else {
 		echo 'ERROR: '.$this->error;

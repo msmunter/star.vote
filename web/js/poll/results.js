@@ -1,5 +1,7 @@
 $(document).ready(function() {
-	
+	$('#shareURLInput').focus(function(){
+		$('#shareURLInput').select();
+	});
 });
 
 function updateStatus(msg)
@@ -69,4 +71,12 @@ function showResults() {
 			$('#pollResults').show();
 		}
 	});
+}
+
+function selectStar(id, vote) {
+	$('.radioLabel'+id).removeClass('starNumber');
+	for (i = 0; i <= vote; i++) { 
+		$("label[for='radioVote|"+id+"|"+i+"']").addClass('starNumber');
+	}
+	//$("label[for='radioVote|"+id+"|"+vote+"']").addClass('starNumber');
 }

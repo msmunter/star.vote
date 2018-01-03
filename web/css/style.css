@@ -94,6 +94,13 @@ div#runoffResults {
 	box-shadow: 2px 2px 4px #cccccc;
 }
 
+.starNumber {
+	background-image: url(https://starvote.msmunter.com/web/images/icons-png/star-black.png);
+	background-repeat: no-repeat;
+	background-position: center;
+    background-size: 60%;
+}
+
 /* Global */
 .ui-link {
 	/*color: #c9e3b5 !important;*/
