@@ -94,11 +94,20 @@ div#runoffResults {
 	box-shadow: 2px 2px 4px #cccccc;
 }
 
+.answerForm.ui-radio {
+	width: 42px;
+	height: 45px;
+}
+
 .starNumber {
-	background-image: url(https://starvote.msmunter.com/web/images/icons-png/star-black.png);
+	background-image: url(https://starvote.msmunter.com/web/images/icons-png/star-gold.png);
 	background-repeat: no-repeat;
 	background-position: center;
-    background-size: 60%;
+    /*background-size: 60%;*/
+}
+
+.starText {
+	color: #cccccc;
 }
 
 /* Global */

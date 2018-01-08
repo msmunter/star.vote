@@ -75,8 +75,17 @@ function showResults() {
 
 function selectStar(id, vote) {
 	$('.radioLabel'+id).removeClass('starNumber');
-	for (i = 0; i <= vote; i++) { 
-		$("label[for='radioVote|"+id+"|"+i+"']").addClass('starNumber');
+	$('.radioLabel'+id).removeClass('starText');
+	for (i = 0; i <= 6; i++) {
+		$("label[for='radioVote|"+id+"|"+i+"']").html(i);
 	}
-	//$("label[for='radioVote|"+id+"|"+vote+"']").addClass('starNumber');
+	for (i = 0; i <= vote; i++) { 
+		if (i != 0) $("label[for='radioVote|"+id+"|"+i+"']").addClass('starNumber');
+		if (i < vote) {
+			$("label[for='radioVote|"+id+"|"+i+"']").html('&nbsp;&nbsp;');
+			$("label[for='radioVote|"+id+"|"+i+"']").addClass('starText');
+		} else {
+			$("label[for='radioVote|"+id+"|"+i+"']").html(i);
+		}
+	}
 }
