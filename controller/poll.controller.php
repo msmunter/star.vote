@@ -74,7 +74,7 @@ class PollController extends Controller
 				}
 				$return['pollID'] = $newPollID;
 				// Insert actual
-				$this->model->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, $_SERVER['REMOTE_ADDR']);
+				$this->model->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR']);
 				$return['html'] .= $this->model->debugHTML; // DEBUG ONLY!!!
 				$return['html'] .= 'Poll saved! Loading results...';
 			} else {
@@ -124,6 +124,8 @@ class PollController extends Controller
 					$this->error = "ERROR: Poll not found";
 				} else {
 					$this->poll->answers = $this->model->getAnswersByPollID($this->URLdata);
+					// If we're supposed to randomize answers let's do that now
+					if ($this->poll->randomAnswerOrder) shuffle($this->poll->answers);
 					// HEY YOU! Figure out how to do a multi-way tie here, taps into resultsactual.view.php
 					$this->poll->topAnswers = $this->model->getTopAnswersByPollID($this->URLdata);
 					$this->poll->runoffResults = $this->model->getRunoffResultsByAnswerID($this->URLdata, $this->poll->topAnswers[0]->answerID, $this->poll->topAnswers[1]->answerID);
