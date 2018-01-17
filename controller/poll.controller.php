@@ -24,16 +24,25 @@ class PollController extends Controller
 		// Display of form for poll creation
 	}
 	
-	public function history()
+	public function processPollSet($pollSet)
 	{
-		// Poll history
-		$this->mostRecentPolls = $this->model->getMostRecentPolls(10);
-		if (count($this->mostRecentPolls) > 0) {
-			foreach ($this->mostRecentPolls as $index => $poll) {
-				$this->mostRecentPolls[$index]->totalVoterCount = $this->model->getPollVoterCount($poll->pollID);
+		if (empty($this->model)) $this->model = new PollModel();
+		if (empty($pollSet)) $this->model->getMostRecentPolls($count);
+		if (count($pollSet) > 0) {
+			foreach ($pollSet as $index => $poll) {
+				$this->pollSet[$index]->totalVoterCount = $this->model->getPollVoterCount($poll->pollID);
 			}
 			unset($poll);
 		}
+	}
+	
+	public function history()
+	{
+		// Poll history
+		$this->pollSet = $this->model->getMostRecentPolls(10);
+		$this->processPollSet($this->pollSet);
+		//$this->pollSet = $this->model->getMostRecentPolls(10);
+		//$this->processPollSet($this->pollSet);
 	}
 	
 	public function ajaxinsertpoll()

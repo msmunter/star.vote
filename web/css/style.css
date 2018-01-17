@@ -38,6 +38,11 @@
 
 /* Index */
 
+div.indexTitle {
+	font-size: 13pt;
+	font-weight: bold;
+}
+
 /* Polls */
 #statusMsg {
 	border-radius: 7px;

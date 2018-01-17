@@ -67,12 +67,12 @@ class PollModel extends Model
 		return $return;
 	}
 	
-	public function insertPoll($pollID, $question, $answers, $creatorIP)
+	public function insertPoll($pollID, $question, $answers, $randomOrder, $private, $creatorIP)
 	{
 		global $return;
 		// Poll first
-		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `allowMultiVoting`, `allowComments`, `creatorIP`)
-						VALUES ('".$pollID."', '".$question."', '".date('Y-m-d h:i:s')."', 0, 0, 0, '".$creatorIP."')";
+		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `allowMultiVoting`, `allowComments`, `randomAnswerOrder`, `creatorIP`)
+						VALUES ('".$pollID."', '".$question."', '".date('Y-m-d h:i:s')."', ".$private.", 0, 0, ".$randomOrder.", '".$creatorIP."')";
 		// Insert
 		//echo '<pre>';print_r($this->query);echo '</pre>'; // DEBUG ONLY!!!
 		$this->doInsertQuery();
@@ -187,7 +187,7 @@ class PollModel extends Model
 		$this->query = "SELECT *
 						FROM `polls`
 						WHERE true
-						ORDER BY `polls`.`created`
+						ORDER BY `polls`.`created` DESC
 						LIMIT 0,$limit;";
 		$this->doSelectQuery();
 		return $this->results;

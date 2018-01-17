@@ -37,10 +37,11 @@ class Controller
 		// Determine if AJAX output is requested
 		if ($_POST['ajax'] != '' || $_GET['ajax'] != '') $this->ajax = true;
 		
+		// Include basic model in case it gets used via code or by autoloader
+		include_once('model/model.php');
 		// Include the model if there is one
 		$modelFile = 'model/'.$this->name.'.model.php';
 		if (file_exists($modelFile)) {
-			include_once('model/model.php');
 			include_once($modelFile);
 			$modelName = ucfirst($this->name).'Model';
 			$this->model = new $modelName;

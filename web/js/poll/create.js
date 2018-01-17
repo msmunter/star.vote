@@ -62,7 +62,9 @@ function createPoll()
 		a: 'ajaxinsertpoll', 
 		ajax: '1',
 		pollQuestion: $('#pollQuestion').val(),
-		pollAnswers: $('#pollAnswers').serialize()
+		pollAnswers: $('#pollAnswers').serialize(),
+		fsPrivate: $('#fsPrivate').val(),
+		fsRandomOrder: $('#fsRandomOrder').val()
 	}, function(data) {
 		// Disable inputs
 		disableInputs();
