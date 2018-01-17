@@ -1,7 +1,7 @@
 <div class="indexHeader">Simple, fair voting using the STAR method.</div>
-<div class="indexTitle">Create Your Own</div>
+<div class="indexTitle">Create Your Own Poll</div>
 <div id="indexCreatePollContainer">
-	
+	<?php include('view/poll/pollinputform.view.php'); ?>
 </div>
 <div class="indexTitle">Recent Polls</div>
 <div id="recentPollContainer">
@@ -11,3 +11,4 @@
 	}
 	?>
 </div>
+<script><?php include('web/js/poll/create.js'); ?></script>

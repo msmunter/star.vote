@@ -43,6 +43,14 @@ div.indexTitle {
 	font-weight: bold;
 }
 
+div.indexHeader {
+	text-align: center;
+}
+
+div.indexTitle {
+	border-top: dotted 1px #cccccc;
+}
+
 /* Polls */
 #statusMsg {
 	border-radius: 7px;
