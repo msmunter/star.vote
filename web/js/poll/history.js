@@ -1,0 +1,3 @@
+function loadMoreRecentPolls() {
+	alert('soon!');
+}

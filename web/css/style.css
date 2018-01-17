@@ -45,10 +45,16 @@ div.indexTitle {
 
 div.indexHeader {
 	text-align: center;
+	font-size: 16pt;
 }
 
 div.indexTitle {
-	border-top: dotted 1px #cccccc;
+	border: none;
+	background-color: #e7e7e7;
+	border-radius: 5px;
+	padding: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 /* Polls */
