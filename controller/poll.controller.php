@@ -134,7 +134,7 @@ class PollController extends Controller
 				} else {
 					$this->poll->answers = $this->model->getAnswersByPollID($this->URLdata);
 					// If we're supposed to randomize answers let's do that now
-					if ($this->poll->randomAnswerOrder) shuffle($this->poll->answers);
+					if ($this->poll->randomAnswerOrder && $this->hasVoted == false) shuffle($this->poll->answers);
 					// HEY YOU! Figure out how to do a multi-way tie here, taps into resultsactual.view.php
 					$this->poll->topAnswers = $this->model->getTopAnswersByPollID($this->URLdata);
 					$this->poll->runoffResults = $this->model->getRunoffResultsByAnswerID($this->URLdata, $this->poll->topAnswers[0]->answerID, $this->poll->topAnswers[1]->answerID);
