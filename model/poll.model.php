@@ -183,10 +183,11 @@ class PollModel extends Model
 	
 	public function getMostRecentPolls($limit)
 	{
+		// Be sure you don't grab ones that are marked private
 		if (!$limit || $limit < 1) $limit = 10;
 		$this->query = "SELECT *
 						FROM `polls`
-						WHERE true
+						WHERE `private` = 0
 						ORDER BY `polls`.`created` DESC
 						LIMIT 0,$limit;";
 		$this->doSelectQuery();
