@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	
+	$('#pollQuestion').focus();
 });
 
 function updateStatus(msg)
