@@ -48,13 +48,28 @@ div.indexHeader {
 	font-size: 16pt;
 }
 
+div.bigContainer {
+	box-shadow: 4px 4px 4px #cccccc;
+	border-radius: 10px;
+	margin-top: 20px;
+}
+
 div.indexTitle {
 	border: none;
 	background-color: #e7e7e7;
-	border-radius: 5px;
+	border-radius: 10px 10px 0px 0px;
 	padding: 10px;
 	margin-top: 10px;
-	margin-bottom: 10px;
+}
+
+div#popularPollContainer, #recentPollContainer, #indexCreatePollContainer {
+	border: solid 2px #e7e7e7;
+	border-radius: 0px 0px 10px 10px;
+	padding: 10px;
+}
+
+#indexCreatePollContainer {
+	padding: 10px;
 }
 
 /* Polls */
@@ -74,7 +89,6 @@ a.pollLink:link, a.pollLink:hover, a.pollLink:visited {
 	border-radius: 7px;
 	text-decoration: none;
 	padding: 5px;
-	margin: 5px 5px 5px 0px;
 	color: #38c;
 	font-weight: bold;
 }
@@ -103,8 +117,12 @@ div.pollInfoVotes {
 	border-radius: 5px;
 }
 
-div.pollQuestion {
-	
+div#pollButtonContainer {
+	text-align: center;
+}
+
+#createPollButton, #addAnswerButton {
+	margin: 0px auto;
 }
 
 div#pollResults {

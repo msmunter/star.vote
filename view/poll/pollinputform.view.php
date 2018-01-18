@@ -1,8 +1,8 @@
 <div id="statusMsg" class="hidden"></div>
 <div class="clear"></div>
 <div class="ui-field-contain">
-	<label for="pollQuestion">Question: </label>
-	<input type="text" data-clear-btn="true" id="pollQuestion" name="pollQuestion" ></input>
+	<label for="pollQuestion">Poll Question:</label>
+	<input type="text" data-clear-btn="true" id="pollQuestion" name="pollQuestion" placeholder="What is this poll about?"></input>
 </div>
 <form id="pollAnswers">
 	<?php 
@@ -20,11 +20,13 @@
 	</select>
 </div>
 <div class="ui-field-contain">
-	<label for="fsRandomOrder">Random Result Order:</label>
+	<label for="fsRandomOrder">Randomize Answers:</label>
 	<select name="fsRandomOrder" id="fsRandomOrder" data-role="flipswitch">
 		<option value="0">No</option>
 		<option selected value="1">Yes</option>
 	</select>
 </div>
-<button id="addAnswerButton" data-inline="inline" onclick="addAnswer()">Add Answer</button>
-<button id="createPollButton" data-inline="inline" onclick="createPoll()">Create Poll</button>
+<div id="pollButtonContainer">
+	<!--<button id="addAnswerButton" data-inline="inline" onclick="addAnswer()">Add Answer</button>-->
+	<button id="createPollButton" data-inline="inline" onclick="createPoll()">Create Poll</button>
+</div>

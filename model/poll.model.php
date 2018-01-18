@@ -72,7 +72,7 @@ class PollModel extends Model
 		global $return;
 		// Poll first
 		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `allowMultiVoting`, `allowComments`, `randomAnswerOrder`, `creatorIP`, `votes`)
-						VALUES ('".$pollID."', '".$question."', '".date('Y-m-d h:i:s')."', ".$private.", 0, 0, ".$randomOrder.", '".$creatorIP."', 0)";
+						VALUES ('".$pollID."', '".$question."', '".date('Y-m-d H:i:s')."', ".$private.", 0, 0, ".$randomOrder.", '".$creatorIP."', 0)";
 		// Insert
 		//echo '<pre>';print_r($this->query);echo '</pre>'; // DEBUG ONLY!!!
 		$this->doInsertQuery();
