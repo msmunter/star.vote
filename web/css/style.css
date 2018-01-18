@@ -79,12 +79,32 @@ a.pollLink:link, a.pollLink:hover, a.pollLink:visited {
 	font-weight: bold;
 }
 
-div.pollInfo, div.pollQuestion {
+div.pollInfo {
 	display: block;
 	font-weight: normal;
 	font-size: 12px;
 	color: black;
-	size: 12px;
+	vertical-align: top;
+	color: #999999;
+	border-radius: 5px;
+}
+
+div.pollInfoVotes {
+	float: left;
+	border: dashed 0px orange;
+	font-size: 14px;
+	vertical-align: top;
+	color: black;
+	padding: 5px;
+	margin-right: 5px;
+	margin-left: 1px;
+	margin-top: 2px;
+	background-color: #ededed;
+	border-radius: 5px;
+}
+
+div.pollQuestion {
+	
 }
 
 div#pollResults {

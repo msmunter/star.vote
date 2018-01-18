@@ -7,9 +7,10 @@ class IndexController extends Controller
 	{
 		$oPoll = new PollController();
 		$mPoll = new PollModel;
-		$this->mostRecentPolls = $mPoll->getMostRecentPolls(10);
+		$this->mostRecentPolls = $mPoll->getMostRecentPolls(0, 10);
 		$oPoll->processPollSet($this->mostRecentPolls);
 		$this->pollSet = $this->mostRecentPolls;
+		$this->mostPopularPolls = $mPoll->getMostPopularPolls(0, 10);
 	}
 }
 ?>

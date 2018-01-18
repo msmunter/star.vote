@@ -153,7 +153,7 @@ class PollModel extends Model
 							VALUES ('".$voterID."', '".$pollID."', '".$answerID."', '".$vote."')";
 		// Insert
 		//echo '<pre>';print_r($this->query);echo '</pre>'; // DEBUG ONLY!!!
-		$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
+		//$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
 		$this->doInsertQuery();
 		
 		// Add to scores/votes
@@ -163,7 +163,19 @@ class PollModel extends Model
 						WHERE `answerID` = $answerID
 						LIMIT 1;";
 		// Insert
-		$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
+		//$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
+		$this->doUpdateQuery();
+	}
+	
+	public function incrementPollVoteCount($pollID)
+	{
+		// Increment vote counter in polls table
+		$this->query = "UPDATE `polls`
+						SET `votes` = `votes` + 1
+						WHERE `pollID` LIKE '$pollID'
+						LIMIT 1;";
+		// Insert
+		//$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
 		$this->doUpdateQuery();
 	}
 	
@@ -181,7 +193,20 @@ class PollModel extends Model
 		$this->doUpdateQuery();
 	}
 	
-	public function getMostRecentPolls($limit)
+	public function getMostRecentPolls($index, $limit)
+	{
+		// Be sure you don't grab ones that are marked private
+		if (!$limit || $limit < 1) $limit = 10;
+		$this->query = "SELECT *
+						FROM `polls`
+						WHERE `private` = 0
+						ORDER BY `polls`.`created` DESC
+						LIMIT $index,$limit;";
+		$this->doSelectQuery();
+		return $this->results;
+	}
+	
+	public function getTrendingPolls($limit)
 	{
 		// Be sure you don't grab ones that are marked private
 		if (!$limit || $limit < 1) $limit = 10;
@@ -190,6 +215,23 @@ class PollModel extends Model
 						WHERE `private` = 0
 						ORDER BY `polls`.`created` DESC
 						LIMIT 0,$limit;";
+		$this->doSelectQuery();
+		return $this->results;
+	}
+	
+	public function getMostPopularPolls($index, $limit)
+	{
+		/*$this->query = "SELECT `polls`.*, COUNT(DISTINCT `votes`.`voterID`, `votes`.`pollID`) AS `ct`
+						FROM `polls`, `votes`
+						WHERE `polls`.`private` = 0
+						AND `polls`.`pollID` = `votes`.`pollID`
+						ORDER BY `ct` DESC, `polls`.`created` DESC
+						LIMIT $index,$limit;";*/
+		$this->query = "SELECT *
+						FROM `polls`
+						WHERE `private` = 0
+						ORDER BY `votes` DESC, `created` DESC
+						LIMIT $index,$limit;";
 		$this->doSelectQuery();
 		return $this->results;
 	}

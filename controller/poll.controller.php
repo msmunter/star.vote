@@ -27,7 +27,7 @@ class PollController extends Controller
 	public function processPollSet($pollSet)
 	{
 		if (empty($this->model)) $this->model = new PollModel();
-		if (empty($pollSet)) $this->model->getMostRecentPolls($count);
+		if (empty($pollSet)) $this->model->getMostRecentPolls(0, $count);
 		if (count($pollSet) > 0) {
 			foreach ($pollSet as $index => $poll) {
 				$this->pollSet[$index]->totalVoterCount = $this->model->getPollVoterCount($poll->pollID);
@@ -39,10 +39,10 @@ class PollController extends Controller
 	public function history()
 	{
 		// Poll history
-		$this->pollSet = $this->model->getMostRecentPolls(10);
+		$this->pollSet = $this->model->getMostRecentPolls(0, 10);
 		$this->processPollSet($this->pollSet);
-		//$this->pollSet = $this->model->getMostRecentPolls(10);
-		//$this->processPollSet($this->pollSet);
+		$this->mostPopularPolls = $this->model->getMostPopularPolls(0, 10);
+		$this->processPollSet($this->mostRecentPolls);
 	}
 	
 	public function ajaxinsertpoll()
@@ -199,6 +199,7 @@ class PollController extends Controller
 			}
 			unset($voteArrayToDestroy[$answerID]);
 		}
+		$this->model->incrementPollVoteCount($this->pollID);
 		//$return['html'] .= $this->model->debugHTML; // DEBUG ONLY!!!
 		$this->poll = $this->model->getPollByID($this->pollID);
 		$this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
