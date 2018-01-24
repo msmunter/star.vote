@@ -1,9 +1,21 @@
 <div id="pollResultsTitle">Results for "<?php echo $this->poll->question; ?>"</div>
-<?php foreach ($this->poll->answers as $answer) { ?>
-	<div><?php echo $answer->text; ?>: <?php echo $answer->points; ?> points</div>
-<?php } ?>
+<div id="pollResultsContainer">
+<div>Scores (Top two advance to runoff):</div>
+<?php
+foreach ($this->poll->answers as $answer) {
+	$answerNum++;
+	if ($answerNum < 3) {
+		echo '<div class="answerResults advances">';
+	} else {
+		echo '<div class="answerResults">';
+	}
+	echo $answer->text.': '.$answer->points.' points</div><div class="clear"></div>';
+}
+?>
+</div>
+<div id="resultsArrow">&rarr;</div>
 <div id="runoffResults">
-	Runoff (between top two by points):<br />
+	Runoff:<br />
 	<?php 
 	// Figure out multi-way tie here, info comes from poll.controller
 	if ($this->poll->runoffResults['tie']) {

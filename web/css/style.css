@@ -143,12 +143,33 @@ form.answerForm {
 	padding-left: 10px;
 }
 
-div#runoffResults {
+div.answerResults {
+	float: left;
+}
+
+div.answerResults.advances {
+	background-color: #dddddd;
+}
+
+div#runoffResults, div#pollResultsContainer {
 	float: left;
 	border-radius: 7px;
 	padding: 5px;
 	background-color: #eeeeee;
 	box-shadow: 2px 2px 4px #cccccc;
+	margin-bottom: 10px;
+}
+
+div#runoffResults {
+	margin-left: 10px;
+}
+
+div#resultsArrow {
+	font-size: 30px;
+	float: left;
+	padding-top: 20px;
+	margin-left: 5px;
+	font-weight: bold;
 }
 
 .answerForm.ui-radio {
