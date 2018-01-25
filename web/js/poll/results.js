@@ -66,7 +66,7 @@ function showResults() {
 			$('#statusMsg').html("ERROR: "+jData.error);
 		} else {
 			// View results
-			$('#pollResults').html(jData.html);
+			$('#pollResultsActual').html(jData.html);
 			//$('#statusMsg').html(jData.html);
 			$('#pollResults').show();
 		}

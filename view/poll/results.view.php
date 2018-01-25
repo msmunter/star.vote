@@ -7,34 +7,34 @@
 //$this->debug($this->poll);
 /* END DEBUG */
 ?>
-<div id="pollTitle">
-	Poll: <?php echo $this->poll->question; ?>
-</div>
 <input type="hidden" id="pollID" value="<?php echo $this->poll->pollID; ?>" />
 <div id="statusMsg" class="hidden"></div>
 <div class="clear"></div>
-<div id="voteInput" class="bigContainer">
 <?php
 if ($this->poll) {
-	if ($this->hasVoted) {
-		// Have voted
-		echo '<div class="bigContainerTitle">How you voted</div>';
-		echo '<div class="bigContainerInner">';
-		include_once('view/poll/yourvote.view.php');
-		echo '<button id="showResultsButton" data-inline="inline" onclick="showResults()">Update Results</button>';
-		echo '</div>';
-	} else {
-		echo '<div class="bigContainerTitle">Place your vote</div>';
-		echo '<div class="bigContainerInner">';
-		include_once('view/poll/voteinput.view.php');
-		echo '<button id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>';
-		echo '<button id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>';
-		echo '</div>';
-	}
-	?>
-	</div>
-	<div id="pollResults" class="<?php if (!$this->hasVoted) echo ' hidden'; ?>">
-		<?php include('view/poll/resultsactual.view.php');?>
+	if ($this->hasVoted) { ?>
+		<div class="bigContainer">
+			<div class="bigContainerTitle">Your vote for "<?php echo $this->poll->question; ?>"</div>
+			<div class="bigContainerInner">
+				<?php include_once('view/poll/yourvote.view.php'); ?>
+				<button id="showResultsButton" data-inline="inline" onclick="showResults()">Update Results</button>
+			</div>
+		</div>
+	<?php } else { ?>
+		<div class="bigContainer">
+			<div class="bigContainerTitle">Vote on "<?php echo $this->poll->question; ?>"</div>
+			<div class="bigContainerInner">
+				<?php include_once('view/poll/voteinput.view.php'); ?>
+				<button id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
+				<button id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
+			</div>
+		</div>
+	<?php } ?>
+	<div id="pollResults" class="bigContainer<?php if (!$this->hasVoted) echo ' hidden'; ?>">
+		<div class="bigContainerTitle">Results for "<?php echo $this->poll->question; ?>"</div>
+		<div id="pollResultsActual" class="bigContainerInner">
+			<?php include('view/poll/resultsactual.view.php');?>
+		</div>
 	</div>
 	<div class="bigContainer">
 		<div class="bigContainerTitle">Share</div>

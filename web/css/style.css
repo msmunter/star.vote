@@ -127,10 +127,6 @@ div#pollButtonContainer {
 	margin: 0px auto;
 }
 
-div#pollResults {
-	border-top: dashed 0px #cccccc;
-}
-
 form.answerForm {
 	float: left;
 	border-radius: 7px;
