@@ -1,13 +1,13 @@
 <div class="indexHeader">Simple, fair voting using the STAR method.</div>
 <div class="bigContainer">
-	<div class="indexTitle">Create Your Own Poll</div>
+	<div class="bigContainerTitle">Create Your Own Poll</div>
 	<div id="indexCreatePollContainer">
 		<?php include('view/poll/pollinputform.view.php'); ?>
 	</div>
 </div>
 
 <div class="bigContainer">
-	<div class="indexTitle">Recent Polls</div>
+	<div class="bigContainerTitle">Recent Polls</div>
 	<div id="recentPollContainer">
 		<?php
 		if (!empty($this->pollSet)) {
@@ -21,7 +21,7 @@
 </div>
 
 <div class="bigContainer">
-	<div class="indexTitle">Popular Polls</div>
+	<div class="bigContainerTitle">Popular Polls</div>
 	<div id="popularPollContainer">
 		<?php
 		$this->pollSet = $this->mostPopularPolls;

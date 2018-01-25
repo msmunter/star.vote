@@ -38,11 +38,6 @@
 
 /* Index */
 
-div.indexTitle {
-	font-size: 13pt;
-	font-weight: bold;
-}
-
 div.indexHeader {
 	text-align: center;
 	font-size: 16pt;
@@ -54,7 +49,9 @@ div.bigContainer {
 	margin-top: 20px;
 }
 
-div.indexTitle {
+div.bigContainerTitle {
+	font-size: 13pt;
+	font-weight: bold;
 	border: none;
 	background-color: #e7e7e7;
 	border-radius: 10px 10px 0px 0px;
@@ -62,7 +59,7 @@ div.indexTitle {
 	margin-top: 10px;
 }
 
-div#popularPollContainer, #recentPollContainer, #indexCreatePollContainer {
+div.bigContainerInner, div#popularPollContainer, #recentPollContainer, #indexCreatePollContainer {
 	border: solid 2px #e7e7e7;
 	border-radius: 0px 0px 10px 10px;
 	padding: 10px;
@@ -78,6 +75,11 @@ div#popularPollContainer, #recentPollContainer, #indexCreatePollContainer {
 	padding: 0px 5px 0px 5px;
 	float: left;
 	border: solid 2px #cccccc;
+}
+
+div#pollTitle {
+	font-weight: bold;
+	font-size: 14pt;
 }
 
 a.pollLink:link, a.pollLink:hover, a.pollLink:visited {
@@ -126,12 +128,7 @@ div#pollButtonContainer {
 }
 
 div#pollResults {
-	border-top: dashed 2px #cccccc;
-}
-
-div#pollResultsTitle, div#voteTitle {
-	font-size: 18px;
-	font-weight: bold;
+	border-top: dashed 0px #cccccc;
 }
 
 form.answerForm {
@@ -186,6 +183,10 @@ div#resultsArrow {
 
 .starText {
 	color: #cccccc;
+}
+
+#shareURLInput {
+	width: 75%;
 }
 
 /* Global */
