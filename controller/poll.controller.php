@@ -156,7 +156,6 @@ class PollController extends Controller
 							$ignoreFirstTwo++;
 						}
 					}
-					
 					$this->poll->totalVoterCount = $this->model->getPollVoterCount($this->URLdata);
 				}
 			}

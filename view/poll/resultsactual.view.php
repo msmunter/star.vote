@@ -1,16 +1,18 @@
 <div id="pollResultsContainer">
-<div>Scores (Top two advance to runoff):</div>
-<?php
-foreach ($this->poll->topAnswers as $answer) {
-	$answerNum++;
-	if ($answerNum < 3) {
-		echo '<div class="answerResults advances">';
-	} else {
-		echo '<div class="answerResults">';
-	}
-	echo $answer->text.': '.$answer->points.' points</div><div class="clear"></div>';
-}
-?>
+	<div>Scores for <?php echo $this->poll->totalVoterCount; ?> voter<?php if ($this->poll->totalVoterCount != 1) echo 's'; ?> (Top two advance):</div>
+	<table id="resultsTable">
+		<tr><th>Option</th><th>Points</th></tr>
+		<?php
+		foreach ($this->poll->topAnswers as $answer) {
+			if ($answer->answerID == $this->poll->runoffResults['first']['answerID'] || $answer->answerID == $this->poll->runoffResults['second']['answerID']) {
+				echo '<tr class="answerResults advances"><td>';
+			} else {
+				echo '<tr class="answerResults"><td>';
+			}
+			echo $answer->text.'</td><td class="alignright">'.$answer->points.'</td></tr>';
+		}
+		?>
+	</table>
 </div>
 <div id="resultsArrow">&rarr;</div>
 
@@ -40,6 +42,6 @@ foreach ($this->poll->topAnswers as $answer) {
 </div>
 <div class="clear"></div>
 <?php
-//echo '<pre>Selection Results: ';print_r($this->poll->topAnswers);echo '<br />Runoff Results: ';print_r($this->poll->runoffResults);echo '</pre>';
+//echo '<pre>Runoff Results: ';print_r($this->poll->runoffResults);echo '</pre>';
 //echo '<pre>Selection Results: ';print_r($this->poll->topAnswers);echo '</pre>';
 ?>

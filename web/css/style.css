@@ -136,11 +136,11 @@ form.answerForm {
 	padding-left: 10px;
 }
 
-div.answerResults {
-	float: left;
+tr.answerResults {
+	
 }
 
-div.answerResults.advances {
+tr.answerResults.advances {
 	background-color: #dddddd;
 }
 
@@ -183,6 +183,18 @@ div#resultsArrow {
 
 #shareURLInput {
 	width: 75%;
+}
+
+table#resultsTable {
+	border-collapse: collapse;
+}
+
+table#resultsTable th {
+	text-align: left;
+}
+
+table#resultsTable tr {
+	border-bottom: dotted 1px #cccccc;
 }
 
 /* Global */
