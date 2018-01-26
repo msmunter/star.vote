@@ -136,12 +136,53 @@ form.answerForm {
 	padding-left: 10px;
 }
 
-tr.answerResults {
-	
+table#resultsTable th {
+	font-size: 12px;
+}
+
+table#resultsTable td.number {
+	font-family: monospace;
+	text-align: right;
+	font-size: 14pt;
+}
+
+td.barGraphTd {
+	position: relative;
+}
+
+div.barGraph {
+	font-size: 10px;
+	height: 20px;
+	width: 1px;
+	background-color: #38C;
+}
+
+div.barGraphData {
+	display: inline;
+	float: left;
+	font-size: 10px;
+	height: 20px;
+	color: white;
+	text-shadow: 1px 1px 2px #000000;
+	position: absolute;
+	top: .4em;
+	left: 5px;
 }
 
 tr.answerResults.advances {
 	background-color: #dddddd;
+}
+
+td.rankCell {
+	width: 20px;
+	text-align: center;
+}
+
+td.rankCell.advances {
+	background-image: url(../../../web/images/icons-png/star-gold.png);
+	background-size: 100%;
+	background-repeat: no-repeat;
+	background-position: center;
 }
 
 div#runoffResults, div#pollResultsContainer {
@@ -191,10 +232,15 @@ table#resultsTable {
 
 table#resultsTable th {
 	text-align: left;
+	border-bottom: solid 1px #cccccc;
 }
 
 table#resultsTable tr {
-	border-bottom: dotted 1px #cccccc;
+	border-top: solid 1px #cccccc;
+}
+
+table#resultsTable tr.barGraphTr, table#resultsTable tr.headerRow {
+	border-top: none;
 }
 
 /* Global */

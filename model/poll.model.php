@@ -245,6 +245,15 @@ class PollModel extends Model
 		return $this->results[0]->ct;
 	}
 	
+	public function getPollPointCount($pollID)
+	{
+		$this->query = "SELECT SUM(`vote`) as `votes`
+						FROM `votes`
+						WHERE `votes`.`pollID` LIKE '$pollID';";
+		$this->doSelectQuery();
+		return $this->results[0]->votes;
+	}
+	
 	public function getAnswerVoterCount($answerID)
 	{
 		$this->query = "SELECT COUNT(*) as `ct`

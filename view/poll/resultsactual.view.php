@@ -1,44 +1,53 @@
-<div id="pollResultsContainer">
-	<div>Scores for <?php echo $this->poll->totalVoterCount; ?> voter<?php if ($this->poll->totalVoterCount != 1) echo 's'; ?> (Top two advance):</div>
-	<table id="resultsTable">
-		<tr><th>Option</th><th>Points</th></tr>
-		<?php
-		foreach ($this->poll->topAnswers as $answer) {
-			if ($answer->answerID == $this->poll->runoffResults['first']['answerID'] || $answer->answerID == $this->poll->runoffResults['second']['answerID']) {
-				echo '<tr class="answerResults advances"><td>';
-			} else {
-				echo '<tr class="answerResults"><td>';
+<div class="floatleft">	
+	<div>Selection Phase (Top two advance):</div>
+	<div id="pollResultsContainer">
+		<div><?php echo $this->poll->totalVoterCount; ?> voter<?php if ($this->poll->totalVoterCount != 1) echo 's'; ?> cast <?php echo $this->poll->totalPointCount; ?> points</div>
+		<table id="resultsTable">
+			<tr class="headerRow"><th>#</th><th>Option</th><th>Points</th><th>Voters</th></tr>
+			<?php
+			foreach ($this->poll->topAnswers as $answer) {
+				$answer->pointsPercent = number_format($answer->points / $this->poll->totalPointCount * 100, 1);
+				$rank++;
+				if ($answer->answerID == $this->poll->runoffResults['first']['answerID'] || $answer->answerID == $this->poll->runoffResults['second']['answerID']) {
+					echo '<tr class="answerResults"><td class="rankCell advances">'.$rank.'</td>';
+				} else {
+					echo '<tr class="answerResults"><td class="rankCell">'.$rank.'</td>';
+				}
+				echo '<td>'.$answer->text.'</td><td class="number">'.$answer->points.'</td><td class="number">'.$answer->votes.'</td></tr>';
+				echo '<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="4"><div class="barGraph" style="width: '.$answer->pointsPercent.'%;"><div class="barGraphData">'.$answer->pointsPercent.'% ('.$answer->points.'/'.$this->poll->totalPointCount.')</div></div></td></tr>';
 			}
-			echo $answer->text.'</td><td class="alignright">'.$answer->points.'</td></tr>';
-		}
-		?>
-	</table>
+			?>
+		</table>
+		<div class="clear"></div>
+	</div>
 </div>
 <div id="resultsArrow">&rarr;</div>
-
-<div id="runoffResults">
-	Runoff:<br />
-	<?php 
-	// Figure out multi-way tie here, info comes from poll.controller
-	if ($this->poll->runoffResults['tie']) {
-		if ($this->poll->runoffResults['tieEndsAt'] > 2) {
-			// Multi-way tie
-			echo 'Tie between '.$this->poll->runoffResults['tieEndsAt'].' questions, '.$this->poll->runoffResults['first']['question'].' and '.$this->poll->runoffResults['second']['question'].' with '.$this->poll->runoffResults['first']['votes'].' votes each';
+<div class="floatleft">	
+	<div>Runoff Phase (Single winner):<br /></div>
+	<div id="runoffResults">
+		<?php 
+		// Figure out multi-way tie here, info comes from poll.controller
+		if ($this->poll->runoffResults['tie']) {
+			if ($this->poll->runoffResults['tieEndsAt'] > 2) {
+				// Multi-way tie
+				echo 'Tie between '.$this->poll->runoffResults['tieEndsAt'].' questions, '.$this->poll->runoffResults['first']['question'].' and '.$this->poll->runoffResults['second']['question'].' with '.$this->poll->runoffResults['first']['votes'].' votes each';
+			} else {
+				// Two-way tie
+				echo 'Tie between '. $this->poll->runoffResults['first']['question'].' and '.$this->poll->runoffResults['second']['question'].' with '.$this->poll->runoffResults['first']['votes'].' votes each';
+			}
 		} else {
-			// Two-way tie
-			echo 'Tie between '. $this->poll->runoffResults['first']['question'].' and '.$this->poll->runoffResults['second']['question'].' with '.$this->poll->runoffResults['first']['votes'].' votes each';
+			?>
+			1st: <?php echo $this->poll->runoffResults['first']['question']; ?>, preferred by <?php echo $this->poll->runoffResults['first']['votes']; ?><br />
+			<?php if ($this->poll->runoffResults['second']['votes'] == 0) { ?>
+				No others preferred
+			<?php } else { ?>
+				2nd: <?php echo $this->poll->runoffResults['second']['question']; ?>, preferred by <?php echo $this->poll->runoffResults['second']['votes']; ?>
+			<?php } ?>
+			<?php
 		}
-	} else {
 		?>
-		1st: <?php echo $this->poll->runoffResults['first']['question']; ?>, preferred by <?php echo $this->poll->runoffResults['first']['votes']; ?><br />
-		<?php if ($this->poll->runoffResults['second']['votes'] == 0) { ?>
-			No others preferred
-		<?php } else { ?>
-			2nd: <?php echo $this->poll->runoffResults['second']['question']; ?>, preferred by <?php echo $this->poll->runoffResults['second']['votes']; ?>
-		<?php } ?>
-		<?php
-	}
-	?>
+		<div class="clear"></div>
+	</div>
 </div>
 <div class="clear"></div>
 <?php

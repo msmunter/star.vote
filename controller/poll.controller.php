@@ -157,6 +157,7 @@ class PollController extends Controller
 						}
 					}
 					$this->poll->totalVoterCount = $this->model->getPollVoterCount($this->URLdata);
+					$this->poll->totalPointCount = $this->model->getPollPointCount($this->URLdata);
 				}
 			}
 		} else {
