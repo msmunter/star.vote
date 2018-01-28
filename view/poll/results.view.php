@@ -15,7 +15,7 @@ if ($this->poll) {
 	if ($this->hasVoted) { ?>
 		<div class="bigContainer">
 			<div class="bigContainerTitle">Your vote for "<?php echo $this->poll->question; ?>"</div>
-			<div class="bigContainerInner">
+			<div id="voteInput" class="bigContainerInner">
 				<?php include_once('view/poll/yourvote.view.php'); ?>
 				<button id="showResultsButton" data-inline="inline" onclick="showResults()">Update Results</button>
 			</div>
@@ -23,7 +23,7 @@ if ($this->poll) {
 	<?php } else { ?>
 		<div class="bigContainer">
 			<div class="bigContainerTitle">Vote on "<?php echo $this->poll->question; ?>"</div>
-			<div class="bigContainerInner">
+			<div id="voteInput" class="bigContainerInner">
 				<?php include_once('view/poll/voteinput.view.php'); ?>
 				<button id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
 				<button id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
