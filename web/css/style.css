@@ -1,14 +1,20 @@
-.ui-page {
+/*.ui-page {
 	font-family: verdana, tahoma, helvetica, sans-serif;
 	height: 100%;
 	/*background-color: #664400;*/
 	/*background-image: url("../images/wood_texture.jpg");*/
 	/*color: white;*/
-}
+/*}*/
 
 html, body {
-	min-height: 100vh;
+	height: 100vh;
 	margin: 0;
+}
+
+#page {
+	font-family: verdana, tahoma, helvetica, sans-serif;
+	min-height: 100vh-20px;
+	padding-bottom: 30px;
 }
 
 /* Page Header */
@@ -254,7 +260,11 @@ div#footer {
 	font-size: 14px;
 	text-align: center;
 	padding: 5px;
-	/*border-top: solid 1px #ddd;*/
+	height: 20px;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
 }
 
 div#footer a:link {
