@@ -31,6 +31,15 @@ class PollModel extends Model
 		return $this->results;
 	}
 	
+	public function getAvgVoteByAnswerID($answerID)
+	{
+		$this->query = "SELECT AVG(`vote`) as `avg`
+						FROM `votes`
+						WHERE `answerID` = $answerID;";
+		$this->doSelectQuery();
+		return $this->results[0]->avg;
+	}
+	
 	public function getRunoffResultsByAnswerID($pollID, $answerID1, $answerID2)
 	{
 		$this->query = "SELECT `votes`

@@ -1,20 +1,21 @@
 <div class="floatleft">	
 	<div>Selection Phase (Top two advance):</div>
 	<div id="pollResultsContainer">
-		<div><?php echo $this->poll->totalVoterCount; ?> voter<?php if ($this->poll->totalVoterCount != 1) echo 's'; ?> cast <?php echo $this->poll->totalPointCount; ?> points</div>
+		<div><?php echo $this->poll->totalVoterCount; ?> voter<?php if ($this->poll->totalVoterCount != 1) echo 's'; ?></div>
 		<table id="resultsTable">
-			<tr class="headerRow"><th>#</th><th>Option</th><th>Points</th><th>Voters</th></tr>
+			<tr class="headerRow"><th>#</th><th>Option</th><th>Points</th><th>Average</th></tr>
 			<?php
 			foreach ($this->poll->topAnswers as $answer) {
 				$answer->pointsPercent = number_format($answer->points / $this->poll->totalPointCount * 100, 1);
+				$answer->avgPercent = number_format($answer->avgVote / 5 * 100, 1);
 				$rank++;
 				if ($answer->answerID == $this->poll->runoffResults['first']['answerID'] || $answer->answerID == $this->poll->runoffResults['second']['answerID']) {
 					echo '<tr class="answerResults"><td class="rankCell advances">'.$rank.'</td>';
 				} else {
 					echo '<tr class="answerResults"><td class="rankCell">'.$rank.'</td>';
 				}
-				echo '<td>'.$answer->text.'</td><td class="number">'.$answer->points.'</td><td class="number">'.$answer->votes.'</td></tr>';
-				echo '<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="4"><div class="barGraph" style="width: '.$answer->pointsPercent.'%;"><div class="barGraphData">'.$answer->pointsPercent.'% ('.$answer->points.'/'.$this->poll->totalPointCount.')</div></div></td></tr>';
+				echo '<td>'.$answer->text.'</td><td class="number">'.$answer->points.'</td><td class="number">'.number_format($answer->avgVote, 1).'</td></tr>';
+				echo '<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="4"><div class="barGraph" style="width: '.$answer->avgPercent.'%;"><div class="barGraphData">'.$answer->avgPercent.'% ('.number_format($answer->avgVote, 1).'/5)</div></div></td></tr>';
 			}
 			?>
 		</table>
