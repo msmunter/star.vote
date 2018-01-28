@@ -56,7 +56,7 @@
 				<div id="breadCrumbs">
 					<a href="/poll/create/">New Poll</a> - 
 					<a href="/poll/history/">Other Polls</a> - 
-					<a href="/learn/">Learn</a>
+					<a href="http://equal.vote/">Learn</a>
 				</div>
 			</div>
 			<!-- /Header -->
