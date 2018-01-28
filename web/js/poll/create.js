@@ -79,7 +79,7 @@ function createPoll()
 		} else if (jData.html) {
 			// Success, update status and go see poll
 			updateStatus(jData.html);
-			window.location = '/poll/results/'+jData.pollID+'/';
+			window.location = '/'+jData.pollID+'/';
 		} else {
 			alert('ERROR: Poll seems to have saved but no ID was returned');
 		}
