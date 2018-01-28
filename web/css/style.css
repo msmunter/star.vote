@@ -1,8 +1,14 @@
 .ui-page {
 	font-family: verdana, tahoma, helvetica, sans-serif;
+	height: 100%;
 	/*background-color: #664400;*/
 	/*background-image: url("../images/wood_texture.jpg");*/
 	/*color: white;*/
+}
+
+html, body {
+	min-height: 100vh;
+	margin: 0;
 }
 
 /* Page Header */
@@ -241,6 +247,18 @@ table#resultsTable tr {
 
 table#resultsTable tr.barGraphTr, table#resultsTable tr.headerRow {
 	border-top: none;
+}
+
+/* Page Footer */
+div#footer {
+	font-size: 14px;
+	text-align: center;
+	padding: 5px;
+	/*border-top: solid 1px #ddd;*/
+}
+
+div#footer a:link {
+	/*text-decoration: none;*/
 }
 
 /* Global */

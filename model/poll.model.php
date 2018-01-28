@@ -5,7 +5,7 @@ class PollModel extends Model
 	{
 		$this->query = "SELECT *
 						FROM `polls`
-						WHERE `polls`.`pollID` LIKE '$pollID'
+						WHERE `polls`.`pollID` LIKE '".$this->escapeString($pollID)."'
 						LIMIT 0,1;";
 		$this->doSelectQuery();
 		return $this->results[0];

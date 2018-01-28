@@ -38,7 +38,7 @@
 		<!--<script src="/web/js/jquery.ui-1.12.1.min.js"></script>-->
 	</head>
 	<body>
-		<div data-role="page">
+		<div id="page" data-role="page">
 			<div id="headerActual" data-role="header" class="ui-bar ui-bar-a">
 				<!-- Header -->
 				<div id="pageHeader">

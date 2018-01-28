@@ -32,10 +32,25 @@ class MasterController
 			// Relinquish control to a specific controller; the MCP's job is done.
 			$this->controller->control();
 		} else {
-			$this->controller->errors[] =  'ERROR: the requested page does not appear to exist.';
-			// Nothing else is going to run after this so we should output errors
-			foreach ($this->controller->errors as $error) {
-				echo $error.'<br />';
+			// Since it isn't a controller see if it's a pollID (safely)
+			include_once('model/model.php');
+			include_once('model/poll.model.php');
+			$mPoll = new PollModel;
+			$poll = $mPoll->getPollByID($requestedController);
+			if ($poll != '') {
+				// Valid poll, load poll controller
+				$this->controller = new PollController;
+				$this->controller->name = 'poll';
+				$this->controller->action = 'results';
+				$this->controller->URLdata = $requestedController;
+				$this->controller->control();
+			} else {
+				// Not a valid controller, not a valid pollID
+				$this->controller->errors[] =  'ERROR: the requested page does not appear to exist.';
+				// Nothing else is going to run after this so we should output errors
+				foreach ($this->controller->errors as $error) {
+					echo $error.'<br />';
+				}
 			}
 		}
 	}

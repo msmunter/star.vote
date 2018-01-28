@@ -76,5 +76,10 @@ class Model
 		// Sanitize query/run
 	    $this->doQuery();
 	}
+	
+	public function escapeString($string)
+	{
+		return $this->mysqliObject->real_escape_string($string);
+	}
 }
 ?>
