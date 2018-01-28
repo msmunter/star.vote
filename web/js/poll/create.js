@@ -3,6 +3,12 @@ $(document).ready(function() {
 	$('#pollAnswers').on('focus','.pollAnswer:last',function(){
 		addAnswer();
 	});
+	// Grab enter to click create poll button
+	$(document).bind('keypress', function(e) {
+		if(e.keyCode==13){
+			 $('#createPollButton').click();
+		 }
+	});
 });
 
 function updateStatus(msg)
