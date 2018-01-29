@@ -4,9 +4,9 @@ class Model
 	// SET THE FOLLOWING DATABASE INFO
 	private $host = 'localhost';
 	private $database = 'starvote';
-	private $table = 'users';
+	private $table = 'voters';
 	private $user = 'starvote';
-	private $pass = '';
+	private $pass = 'Sr9EzFRw6uDpeAeD';
 	// THANKS! NOW STOP SETTING THINGS, PLEASE
 	public $mysqliObject;
 	public $query;
