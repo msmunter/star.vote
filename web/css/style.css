@@ -1,10 +1,8 @@
-/*.ui-page {
+.ui-page {
 	font-family: verdana, tahoma, helvetica, sans-serif;
-	height: 100%;
-	/*background-color: #664400;*/
+	/*background-color: #aaaaaa;*/
 	/*background-image: url("../images/wood_texture.jpg");*/
-	/*color: white;*/
-/*}*/
+}
 
 html, body {
 	height: 100vh;
@@ -74,6 +72,7 @@ div.bigContainer {
 	box-shadow: 4px 4px 4px #cccccc;
 	border-radius: 10px;
 	margin-top: 20px;
+	background-color: #ffffff;
 }
 
 div.bigContainerTitle {
@@ -283,7 +282,7 @@ div#footer {
 }
 
 div#footer a:link {
-	/*text-decoration: none;*/
+	text-decoration: none;
 }
 
 /* Global */
