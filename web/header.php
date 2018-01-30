@@ -8,9 +8,9 @@
 		<meta name="robots" content="follow, index" />
 		<title>
 		<?php if ($_SERVER['SERVER_NAME'] == 'starvote.msmunter.com') { ?>
-			Star.vote [Test]
+			Star.vote [ Dev ]
 		<?php } else { ?>
-			Star.vote
+			Star.vote Beta
 		<?php } ?>
 		<?php if (!empty($this->title)) echo ' - '.$this->title; ?>
 		</title>
@@ -66,7 +66,7 @@
 				</div>
 				<div id="breadCrumbs" data-role="controlgroup" data-type="horizontal" class="ui-mini ui-btn-right">
 					<a href="/poll/create/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-plus">New</a>
-					<a href="/poll/history/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-bullets">Previous</a>
+					<a href="/poll/history/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-bullets">More</a>
 					<a href="http://equal.vote/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-info">Learn</a>
 				</div>
 			</div>
