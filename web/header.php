@@ -50,24 +50,24 @@
 	</head>
 	<body>
 		<div id="page" data-role="page">
-			<div id="headerActual" data-role="header" class="ui-bar ui-bar-a">
+			<div id="headerActual" data-role="header" class="ui-bar">
 				<!-- Header -->
 				<div id="pageHeader">
 					<a href="https://<?php echo $_SERVER['SERVER_NAME']; ?>/">
-						<div id="headerTitle">
-							<!--<img id="headerLogo" src="web/images/starvote_logo.png" alt="Logo" />-->
-							<?php if ($_SERVER['SERVER_NAME'] == 'starvote.msmunter.com') { ?>
-								Star.vote [Test]
-							<?php } else { ?>
-								Star.vote
-							<?php } ?>
-						</div>
+						<img id="headerLogo" src="https://<?php echo $_SERVER['SERVER_NAME']; ?>/web/images/starvote_logo.png" alt="Logo" />
+					</a>
+					<a id="headerTitle" href="https://<?php echo $_SERVER['SERVER_NAME']; ?>/">
+						<?php if ($_SERVER['SERVER_NAME'] == 'starvote.msmunter.com') { ?>
+							[ Dev ]
+						<?php } else { ?>
+							Beta
+						<?php } ?>
 					</a>
 				</div>
-				<div id="breadCrumbs">
-					<a href="/poll/create/">New Poll</a> - 
-					<a href="/poll/history/">Other Polls</a> - 
-					<a href="http://equal.vote/">Learn</a>
+				<div id="breadCrumbs" data-role="controlgroup" data-type="horizontal" class="ui-mini ui-btn-right">
+					<a href="/poll/create/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-plus">New</a>
+					<a href="/poll/history/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-bullets">Previous</a>
+					<a href="http://equal.vote/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-info">Learn</a>
 				</div>
 			</div>
 			<!-- /Header -->

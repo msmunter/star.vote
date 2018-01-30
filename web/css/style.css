@@ -19,33 +19,47 @@ html, body {
 
 /* Page Header */
 
-#pageHeader {
+div#headerActual.ui-bar {
 	float: left;
+	width: 100%;
+	padding: 0 !important;
+	background-color: black;
 }
 
-#headerLogo {
+div#pageHeader {
 	float: left;
-	height: 16px;
+	height: 48px;
+}
+
+img#headerLogo {
+	float: left;
+	height: 48px;
 	margin: none;
 	margin-right: 5px;
-	padding: 2px;
+	padding: none;
 	/*background-color: white;
 	border-radius: 10px;*/
+	border: dashed 0px purple;
 }
 
 #pageHeader a {
-	/*color: white;*/
 	text-decoration: none;
 	cursor: pointer;
 }
 
-#breadCrumbs {
-	float: right;
-	font-size: 14px;
+a#headerTitle {
+	display: block;
+	float: left;
+	padding-top: 15px;
+	font-size: 12px;
+	height: 48px;
+	color: #ededed;
 }
 
-#breadCrumbs a {
-	/*color: #ffffff;*/
+div#breadCrumbs {
+	float: right;
+	font-size: 12px;
+	margin-top: 3px;
 }
 
 /* Index */
