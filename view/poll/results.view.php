@@ -48,6 +48,19 @@ if ($this->poll) {
 			<input type="text" id="shareURLInput" name="shareURLInput" data-mini="true" data-inline="true" value="https://<?php echo $_SERVER['SERVER_NAME']; ?>/<?php echo $this->poll->pollID; ?>/" />
 		</div>
 	</div>
+	<div class="bigContainer">
+		<div class="bigContainerTitle">Data</div>
+		<div class="bigContainerInner">
+			<!--<div>Runoff Matrix</div>
+			<table class="runoffMatrix">
+				<tr>
+				<?php
+				
+				?><td></td><td></td></tr>
+			</table>
+			Ballot Record: <a href="/poll/csv/<?php //echo $this->poll->pollID; ?>/">Download CSV</a>-->
+		</div>
+	</div>
 	<?php
 } else {
 	echo 'ERROR: '.$this->error;
