@@ -39,11 +39,7 @@
 		} else {
 			?>
 			1st: <?php echo $this->poll->runoffResults['first']['question']; ?>, preferred by <?php echo $this->poll->runoffResults['first']['votes']; ?><br />
-			<?php if ($this->poll->runoffResults['second']['votes'] == 0) { ?>
-				No others preferred
-			<?php } else { ?>
-				2nd: <?php echo $this->poll->runoffResults['second']['question']; ?>, preferred by <?php echo $this->poll->runoffResults['second']['votes']; ?>
-			<?php } ?>
+			2nd: <?php echo $this->poll->runoffResults['second']['question']; ?>, preferred by <?php echo $this->poll->runoffResults['second']['votes']; ?>
 			<?php
 		}
 		?>
