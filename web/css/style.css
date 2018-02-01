@@ -162,6 +162,14 @@ div#customSlugInputContainer {
 	display: none;
 }
 
+input#fsCustomSlugInput.highlightInputGreen {
+	border: solid 1px green;
+}
+
+input#fsCustomSlugInput.highlightInputRed {
+	border: solid 1px red;
+}
+
 table#resultsTable th {
 	font-size: 12px;
 }

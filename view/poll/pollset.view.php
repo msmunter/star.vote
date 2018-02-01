@@ -6,7 +6,11 @@ if (count($this->pollSet) > 0) {
 	$pollHalfCount = round($pollCount / 2);
 	echo '<div class="columnOne ui-block-a"><div class="ui-bar">';
 	for ($i = 0; $i < $pollHalfCount; $i++) {
-		echo '<a class="pollLink" href="/'.$this->pollSet[$i]->pollID.'/">';
+		echo '<a class="pollLink" href="/';
+		if ($this->pollSet[$i]->customSlug != '') {
+			echo $this->pollSet[$i]->customSlug;
+		} else echo $this->pollSet[$i]->pollID;
+		echo '/">';
 			echo '<div class="pollInfoVotes">Votes<br />'.$this->pollSet[$i]->votes.'</div>';
 			echo $this->pollSet[$i]->question;
 			echo '<div class="pollInfo">Started '.$this->pollSet[$i]->created.'</div>';
@@ -15,7 +19,11 @@ if (count($this->pollSet) > 0) {
 	echo '</div></div>';
 	echo '<div class="columnTwo ui-block-b"><div class="ui-bar">';
 	for ($i = $pollHalfCount; $i < $pollCount; $i++) {
-		echo '<a class="pollLink" href="/'.$this->pollSet[$i]->pollID.'/">';
+		echo '<a class="pollLink" href="/';
+		if ($this->pollSet[$i]->customSlug != '') {
+			echo $this->pollSet[$i]->customSlug;
+		} else echo $this->pollSet[$i]->pollID;
+		echo '/">';
 			echo '<div class="pollInfoVotes">Votes<br />'.$this->pollSet[$i]->votes.'</div>';
 			echo $this->pollSet[$i]->question;
 			echo '<div class="pollInfo">Started '.$this->pollSet[$i]->created.'</div>';

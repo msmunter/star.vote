@@ -45,7 +45,7 @@ if ($this->poll) {
 	<div class="bigContainer">
 		<div class="bigContainerTitle">Share</div>
 		<div class="bigContainerInner">
-			<input type="text" id="shareURLInput" name="shareURLInput" data-mini="true" data-inline="true" value="https://<?php echo $_SERVER['SERVER_NAME']; ?>/<?php echo $this->poll->pollID; ?>/" />
+			<input type="text" id="shareURLInput" name="shareURLInput" data-mini="true" data-inline="true" value="https://<?php echo $_SERVER['SERVER_NAME']; ?>/<?php if ($this->poll->customSlug != "") {echo $this->poll->customSlug;} else echo $this->poll->pollID; ?>/" />
 		</div>
 	</div>
 	<div class="bigContainer">

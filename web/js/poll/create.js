@@ -1,3 +1,5 @@
+var slugResult;
+
 $(document).ready(function() {
 	$('#pollQuestion').focus();
 	$('#pollAnswers').on('focus','.pollAnswer:last',function(){
@@ -25,6 +27,13 @@ function updateStatus(msg)
 {
 	$('#statusMsg').fadeOut(100, function() {
 		$('#statusMsg').html(msg).fadeIn(100);
+	});
+}
+
+function clearStatus()
+{
+	$('#statusMsg').fadeOut(100, function() {
+		$('#statusMsg').html('');
 	});
 }
 
@@ -75,16 +84,28 @@ function createPoll()
 {
 	// Disable buttons
 	disableButtons();
-	//alert($('#pollQuestion').val()+' :: '+$('#pollAnswers').serialize());
-	if ($('#fsCustomSlugSwitch').val() == 0) {
-		createPollActual();
-	} else {
-		if (checkCustomSlug() == 1) {
+	//alert($('#pollQuestion').val()+' :: '+$('#pollAnswers').serialize()); // DEBUG ONLY!!!
+	console.log('Running createPoll(): Switch value: '+$('#fsCustomSlugSwitch').val()); // DEBUG ONLY!!!
+	if ($('#fsCustomSlugSwitch').val() == 1) {
+		if (slugResult == true) {
+			// Slug already validated
+			console.log('createPoll(): slugResult is TRUE, skipping slug check');
 			createPollActual();
 		} else {
-			// Custom slug didn't work, enable inputs and try again
-			enableButtons();
+			// Need to validate slug
+			checkCustomSlug(function(){
+				console.log('2. createPoll->checkCustomSlug() returned: '+slugResult); // DEBUG ONLY!!!
+				if (slugResult == true) {
+					console.log('createPollActual() after running checkCustomSlug()'); // DEBUG ONLY!!!
+					createPollActual();
+				} else {
+					enableButtons();
+				}
+			});
 		}
+	} else {
+		console.log('createPollActual() directly because switch is off'); // DEBUG ONLY!!!
+		createPollActual();
 	}
 }
 
@@ -104,6 +125,7 @@ function createPollActual()
 		disableInputs();
 		var jData = JSON.parse(data);
 		if (jData.error) {
+			//alert(jData.error);
 			updateStatus("ERROR: "+jData.error);
 			enableInputs();
 			enableButtons();
@@ -118,30 +140,26 @@ function createPollActual()
 	});
 }
 
-function checkCustomSlug()
+function checkCustomSlug(callBack)
 {
 	var slugVal = $('#fsCustomSlugInput').val();
-	if (slugVal.length > 16) {
-		updateStatus("ERROR: custom slug too long; must be 4-16 characters");
-		return 0;
-	} else if (slugVal.length < 4) {
-		updateStatus("ERROR: custom slug too short; must be 4-16 characters.");
-		return 0;
-	} else {
-		$.post("/", { 
-			c: 'poll', 
-			a: 'ajaxcheckcustomslug', 
-			ajax: '1',
-			slug: slugVal
-		}, function(data) {
-			var jData = JSON.parse(data);
+	$.post("/", { 
+		c: 'poll', 
+		a: 'ajaxcheckcustomslug', 
+		ajax: '1',
+		slug: slugVal
+	}, function(data) {
+		var jData = JSON.parse(data);
+		if (jData.returncode == '1') {
+			clearStatus();
+			slugResult = true;
+			$('#fsCustomSlugInput').removeClass('highlightInputRed').addClass('highlightInputGreen');
+		} else {
 			updateStatus(jData.html);
-			if (jData.returncode == '0') {
-				return 0;
-			} else {
-				return 1;
-			}
-		});
-	}
-	
+			slugResult = false;
+			$('#fsCustomSlugInput').removeClass('highlightInputGreen').addClass('highlightInputRed');
+		}
+		console.log('1. checkCustomSlug result: '+slugResult); // DEBUG ONLY!!!
+	});
+	if (typeof callBack === "function") callBack();
 }

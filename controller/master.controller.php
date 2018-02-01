@@ -36,13 +36,25 @@ class MasterController
 			include_once('model/model.php');
 			include_once('model/poll.model.php');
 			$mPoll = new PollModel;
-			$poll = $mPoll->getPollByID($requestedController);
-			if ($poll != '') {
-				// Valid poll, load poll controller
+			$pollByID = $mPoll->getPollByID($requestedController);
+			if (empty($pollByID)) {
+				// Not an ID, check slug
+				$pollBySlug = $mPoll->getPollByCustomSlug($requestedController);
+			}
+			// Both checked, load poll if exists
+			if (!empty($pollByID)) {
+				// Valid poll by ID, load poll controller
 				$this->controller = new PollController;
 				$this->controller->name = 'poll';
 				$this->controller->action = 'results';
 				$this->controller->URLdata = $requestedController;
+				$this->controller->control();
+			} else if (!empty($pollBySlug)) {
+				// Valid poll by Slug, load poll controller
+				$this->controller = new PollController;
+				$this->controller->name = 'poll';
+				$this->controller->action = 'results';
+				$this->controller->URLdata = $pollBySlug->pollID;
 				$this->controller->control();
 			} else {
 				// Not a valid controller, not a valid pollID
