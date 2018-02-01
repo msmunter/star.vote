@@ -81,9 +81,12 @@ class PollController extends Controller
 					$newPollID = $oUtility->generateRandomString($type = 'distinctlower', $length = 8);
 					$pollIDIsTaken = $this->model->isPollIDTaken($newPollID);
 				}
+				if (!empty($_POST['fsCustomSlug'])) {
+					$return['customSlug'] = $_POST['fsCustomSlug'];
+				}
 				$return['pollID'] = $newPollID;
 				// Insert actual
-				$this->model->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR']);
+				$this->model->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug']);
 				$return['html'] .= $this->model->debugHTML; // DEBUG ONLY!!!
 				$return['html'] .= 'Poll saved! Loading results...';
 			} else {

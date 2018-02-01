@@ -86,12 +86,12 @@ class PollModel extends Model
 		return $return;
 	}
 	
-	public function insertPoll($pollID, $question, $answers, $randomOrder, $private, $creatorIP)
+	public function insertPoll($pollID, $question, $answers, $randomOrder, $private, $creatorIP, $customSlug)
 	{
 		global $return;
 		// Poll first
-		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `allowMultiVoting`, `allowComments`, `randomAnswerOrder`, `creatorIP`, `votes`)
-						VALUES ('".$pollID."', '".$question."', '".date('Y-m-d H:i:s')."', ".$private.", 0, 0, ".$randomOrder.", '".$creatorIP."', 0)";
+		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `allowMultiVoting`, `allowComments`, `randomAnswerOrder`, `creatorIP`, `votes`, `customSlug`)
+						VALUES ('".$pollID."', '".$question."', '".date('Y-m-d H:i:s')."', ".$private.", 0, 0, ".$randomOrder.", '".$creatorIP."', 0, '".$customSlug."')";
 		// Insert
 		//echo '<pre>';print_r($this->query);echo '</pre>'; // DEBUG ONLY!!!
 		$this->doInsertQuery();

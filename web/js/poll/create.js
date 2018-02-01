@@ -129,7 +129,10 @@ function createPollActual()
 			updateStatus("ERROR: "+jData.error);
 			enableInputs();
 			enableButtons();
-		} else if (jData.html) {
+		} else if (jData.customSlug) {
+			updateStatus(jData.html);
+			window.location = '/'+jData.customSlug+'/';
+		} else if (jData.pollID) {
 			// Success, update status and go see poll
 			updateStatus(jData.html);
 			window.location = '/'+jData.pollID+'/';
