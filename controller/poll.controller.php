@@ -219,6 +219,36 @@ class PollController extends Controller
 		echo json_encode($return);
 	}
 	
+	public function ajaxloadmorepolls()
+	{
+		if (empty($_POST['index'])) {
+			$index = 0;
+		} else {
+			$index = $_POST['index'];
+		}
+		if ($_POST['pollType'] == 'r') {
+			$this->pollSet = $this->model->getMostRecentPolls($index, 10);
+		} else {
+			$this->pollSet = $this->model->getMostPopularPolls($index, 10);
+		}
+		$this->processPollSet($this->pollSet);
+		$return['html'] = $this->ajaxInclude('view/poll/pollset.view.php');
+		echo json_encode($return);
+	}
+	
+	public function ajaxcheckcustomslug()
+	{
+		if (strlen($_POST['slug']) < 1) {
+			$return['error'] = 'Invalid slug';
+		} else {
+			$pollBySlug = $this->model->getPollByCustomSlug($_POST['slug']);
+			$pollByID = $this->model->getPollByID($_POST['slug']);
+			if (!empty($pollBySlug) || !empty($pollByID)) {
+				echo '1';
+			} else echo '0';
+		}
+	}
+	
 	private function setVoterID()
 	{
 		// Check cookie for voter ID

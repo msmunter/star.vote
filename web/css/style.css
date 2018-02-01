@@ -85,13 +85,9 @@ div.bigContainerTitle {
 	margin-top: 10px;
 }
 
-div.bigContainerInner, div#popularPollContainer, #recentPollContainer, #indexCreatePollContainer {
+div.bigContainerInner, #indexCreatePollContainer {
 	border: solid 2px #e7e7e7;
 	border-radius: 0px 0px 10px 10px;
-	padding: 10px;
-}
-
-#indexCreatePollContainer {
 	padding: 10px;
 }
 
@@ -160,6 +156,10 @@ form.answerForm {
 	margin: 5px 5px 0px 0px;
 	box-shadow: 2px 2px 4px #cccccc;
 	padding-left: 10px;
+}
+
+div#customSlugInputContainer {
+	display: none;
 }
 
 table#resultsTable th {

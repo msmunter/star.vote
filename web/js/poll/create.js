@@ -6,8 +6,18 @@ $(document).ready(function() {
 	// Grab enter to click create poll button
 	$(document).bind('keypress', function(e) {
 		if(e.keyCode==13){
-			 $('#createPollButton').click();
-		 }
+			createPoll();
+		}
+	});
+	$('#fsCustomSlugSwitch').change(function() {
+		if ($('#fsCustomSlugSwitch').val() == 0) {
+			$('#customSlugInputContainer').hide();
+		} else {
+			$('#customSlugInputContainer').show();
+		}
+	});
+	$('#fsCustomSlugInput').focusout(function() {
+		checkCustomSlug();
 	});
 });
 
@@ -73,7 +83,8 @@ function createPoll()
 		pollQuestion: $('#pollQuestion').val(),
 		pollAnswers: $('#pollAnswers').serialize(),
 		fsPrivate: $('#fsPrivate').val(),
-		fsRandomOrder: $('#fsRandomOrder').val()
+		fsRandomOrder: $('#fsRandomOrder').val(),
+		fsCustomSlug: $('#fsCustomSlugInput').val()
 	}, function(data) {
 		// Disable inputs
 		disableInputs();
@@ -88,6 +99,24 @@ function createPoll()
 			window.location = '/'+jData.pollID+'/';
 		} else {
 			alert('ERROR: Poll seems to have saved but no ID was returned');
+		}
+	});
+}
+
+function checkCustomSlug()
+{
+	$.post("/", { 
+		c: 'poll', 
+		a: 'ajaxcheckcustomslug', 
+		ajax: '1',
+		slug: $('#fsCustomSlugInput').val()
+	}, function(data) {
+		if (data == '1') {
+			updateStatus("ERROR: custom slug already taken");
+			return 1;
+		} else {
+			updateStatus("Custom slug available");
+			return 0;
 		}
 	});
 }

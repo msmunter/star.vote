@@ -26,7 +26,17 @@
 		<option selected value="1">Yes</option>
 	</select>
 </div>
+<div class="ui-field-contain">
+	<label for="fsCustomSlugSwitch">Custom URL Slug:</label>
+	<select name="fsCustomSlugSwitch" id="fsCustomSlugSwitch" data-role="flipswitch">
+		<option selected value="0">No</option>
+		<option value="1">Yes</option>
+	</select>
+</div>
+<div class="ui-field-contain" id="customSlugInputContainer">
+	<label for="fsCustomSlugInput">URL Slug Text:</label>
+	<input type="text" data-clear-btn="true" class="pollAnswer" id="fsCustomSlugInput" name="fsCustomSlugInput" placeholder="abcd1234"></input><br />
+</div>
 <div id="pollButtonContainer">
-	<!--<button id="addAnswerButton" data-inline="inline" onclick="addAnswer()">Add Answer</button>-->
 	<button id="createPollButton" data-inline="inline" onclick="createPoll()">Create Poll</button>
 </div>

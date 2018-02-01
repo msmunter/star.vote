@@ -11,6 +11,16 @@ class PollModel extends Model
 		return $this->results[0];
 	}
 	
+	public function getPollByCustomSlug($slug)
+	{
+		$this->query = "SELECT *
+						FROM `polls`
+						WHERE `polls`.`customSlug` LIKE '".$this->escapeString($slug)."'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		return $this->results[0];
+	}
+	
 	public function getAnswersByPollID($pollID)
 	{
 		$this->query = "SELECT `answerID`, `text`, `votes`, `points`
