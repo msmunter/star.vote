@@ -85,18 +85,14 @@ function createPoll()
 	// Disable buttons
 	disableButtons();
 	//alert($('#pollQuestion').val()+' :: '+$('#pollAnswers').serialize()); // DEBUG ONLY!!!
-	console.log('Running createPoll(): Switch value: '+$('#fsCustomSlugSwitch').val()); // DEBUG ONLY!!!
 	if ($('#fsCustomSlugSwitch').val() == 1) {
 		if (slugResult == true) {
 			// Slug already validated
-			console.log('createPoll(): slugResult is TRUE, skipping slug check');
 			createPollActual();
 		} else {
 			// Need to validate slug
 			checkCustomSlug(function(){
-				console.log('2. createPoll->checkCustomSlug() returned: '+slugResult); // DEBUG ONLY!!!
 				if (slugResult == true) {
-					console.log('createPollActual() after running checkCustomSlug()'); // DEBUG ONLY!!!
 					createPollActual();
 				} else {
 					enableButtons();
@@ -104,7 +100,6 @@ function createPoll()
 			});
 		}
 	} else {
-		console.log('createPollActual() directly because switch is off'); // DEBUG ONLY!!!
 		createPollActual();
 	}
 }
@@ -162,7 +157,6 @@ function checkCustomSlug(callBack)
 			slugResult = false;
 			$('#fsCustomSlugInput').removeClass('highlightInputGreen').addClass('highlightInputRed');
 		}
-		console.log('1. checkCustomSlug result: '+slugResult); // DEBUG ONLY!!!
 	});
 	if (typeof callBack === "function") callBack();
 }

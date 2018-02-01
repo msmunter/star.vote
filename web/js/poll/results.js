@@ -30,7 +30,7 @@ function vote()
 			$('#voteInput').html(jData.html);
 			// Hide vote button
 			$('#voteButton').hide();
-			$('#showResultsButton').html('Update Results');
+			$('#showResultsButton').hide(); 
 			// View results
 			$('#statusMsg').hide();
 			showResults();
