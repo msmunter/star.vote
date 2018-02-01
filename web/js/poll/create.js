@@ -76,6 +76,20 @@ function createPoll()
 	// Disable buttons
 	disableButtons();
 	//alert($('#pollQuestion').val()+' :: '+$('#pollAnswers').serialize());
+	if ($('#fsCustomSlugSwitch').val() == 0) {
+		createPollActual();
+	} else {
+		if (checkCustomSlug() == 1) {
+			createPollActual();
+		} else {
+			// Custom slug didn't work, enable inputs and try again
+			enableButtons();
+		}
+	}
+}
+
+function createPollActual()
+{
 	$.post("/", { 
 		c: 'poll', 
 		a: 'ajaxinsertpoll', 
@@ -99,24 +113,35 @@ function createPoll()
 			window.location = '/'+jData.pollID+'/';
 		} else {
 			alert('ERROR: Poll seems to have saved but no ID was returned');
+			window.location = '/poll/history/';
 		}
 	});
 }
 
 function checkCustomSlug()
 {
-	$.post("/", { 
-		c: 'poll', 
-		a: 'ajaxcheckcustomslug', 
-		ajax: '1',
-		slug: $('#fsCustomSlugInput').val()
-	}, function(data) {
-		if (data == '1') {
-			updateStatus("ERROR: custom slug already taken");
-			return 1;
-		} else {
-			updateStatus("Custom slug available");
-			return 0;
-		}
-	});
+	var slugVal = $('#fsCustomSlugInput').val();
+	if (slugVal.length > 16) {
+		updateStatus("ERROR: custom slug too long; must be 4-16 characters");
+		return 0;
+	} else if (slugVal.length < 4) {
+		updateStatus("ERROR: custom slug too short; must be 4-16 characters.");
+		return 0;
+	} else {
+		$.post("/", { 
+			c: 'poll', 
+			a: 'ajaxcheckcustomslug', 
+			ajax: '1',
+			slug: slugVal
+		}, function(data) {
+			var jData = JSON.parse(data);
+			updateStatus(jData.html);
+			if (jData.returncode == '0') {
+				return 0;
+			} else {
+				return 1;
+			}
+		});
+	}
+	
 }

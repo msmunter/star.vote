@@ -238,15 +238,34 @@ class PollController extends Controller
 	
 	public function ajaxcheckcustomslug()
 	{
-		if (strlen($_POST['slug']) < 1) {
-			$return['error'] = 'Invalid slug';
+		$regexResult = preg_match('/^[a-z0-9]{4,16}$/', $_POST['slug']);
+		if ($regexResult === 0 || $regexResult === false) {
+			if (strlen($_POST['slug']) < 4) {
+				$return['html'] = 'Slug too short; must be 4-16 characters';
+				$return['returncode'] = '0';
+			} else if (strlen($_POST['slug']) > 16) {
+				$return['html'] = 'Slug too long; must be 4-16 characters';
+				$return['returncode'] = '0';
+			} else {
+				$return['html'] = 'Slug may only contain a-z (lower case) and 0-9';
+				$return['returncode'] = '0';
+			}
 		} else {
+			// Passes regex
 			$pollBySlug = $this->model->getPollByCustomSlug($_POST['slug']);
 			$pollByID = $this->model->getPollByID($_POST['slug']);
-			if (!empty($pollBySlug) || !empty($pollByID)) {
-				echo '1';
-			} else echo '0';
+			if (!empty($pollBySlug)) {
+				$return['html'] = 'Slug taken';
+				$return['returncode'] = '0';
+			} else if (!empty($pollByID)) {
+				$return['html'] = 'Slug not available, matches existing poll ID';
+				$return['returncode'] = '0';
+			} else {
+				$return['html'] = 'Slug available';
+				$return['returncode'] = '1';
+			}
 		}
+		echo json_encode($return);
 	}
 	
 	private function setVoterID()

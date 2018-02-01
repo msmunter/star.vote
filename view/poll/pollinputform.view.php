@@ -34,7 +34,7 @@
 	</select>
 </div>
 <div class="ui-field-contain" id="customSlugInputContainer">
-	<label for="fsCustomSlugInput">URL Slug Text:</label>
+	<label for="fsCustomSlugInput">URL Slug (a-z, 0-9):</label>
 	<input type="text" data-clear-btn="true" class="pollAnswer" id="fsCustomSlugInput" name="fsCustomSlugInput" placeholder="abcd1234"></input><br />
 </div>
 <div id="pollButtonContainer">
