@@ -162,6 +162,14 @@ class PollController extends Controller
 							$ignoreFirstTwo++;
 						}
 					}
+					$this->poll->rawRunoff = $this->model->getRunoffResultsRawByPollID($this->URLdata);
+					foreach ($this->poll->answers as $index => $answer) {
+						$this->poll->runoffAnswerArray[$answer->answerID] = $answer;
+					}
+					foreach ($this->poll->rawRunoff as $runoff) {
+						$this->poll->orderedRunoff[$runoff->gtID][$runoff->ltID] = $runoff;
+					}
+					// Voter and point counts
 					$this->poll->totalVoterCount = $this->model->getPollVoterCount($this->URLdata);
 					$this->poll->totalPointCount = $this->model->getPollPointCount($this->URLdata);
 				}
@@ -269,6 +277,19 @@ class PollController extends Controller
 			}
 		}
 		echo json_encode($return);
+	}
+	
+	public function csv()
+	{
+		$this->ajax = 1;
+		$this->doHeader = 0;
+		$this->doFooter = 0;
+		$this->poll = $this->model->getPollByID($this->URLdata);
+		if (!empty($this->poll)) {
+			$this->poll->answers = $this->model->getAnswersByPollID($this->URLdata);
+			$this->poll->ballots = $this->model->getBallotsByPollID($this->URLdata);
+		} else $this->error = 'Poll not found';
+		
 	}
 	
 	private function setVoterID()

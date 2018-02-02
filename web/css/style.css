@@ -91,6 +91,10 @@ div.bigContainerInner, #indexCreatePollContainer {
 	padding: 10px;
 }
 
+div.bigContainerSubheader {
+	border-bottom: solid 1px #cccccc;
+}
+
 /* Polls */
 #statusMsg {
 	border-radius: 7px;
@@ -288,6 +292,27 @@ table#resultsTable tr {
 
 table#resultsTable tr.barGraphTr, table#resultsTable tr.headerRow {
 	border-top: none;
+}
+
+table#runoffMatrix {
+	border-collapse: collapse;
+}
+
+table#runoffMatrix td, table#runoffMatrix th {
+	border: none;
+	font-size: 10pt;
+}
+
+table#runoffMatrix td.borderCell {
+	border: solid 1px #cccccc;
+}
+
+table#runoffMatrix td.filled {
+	background-color: #cccccc;
+}
+
+div#ballotRecordContainer, div#runoffMatrixContainer {
+	display: none;
 }
 
 /* Page Footer */

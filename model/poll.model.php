@@ -86,6 +86,26 @@ class PollModel extends Model
 		return $return;
 	}
 	
+	public function getRunoffResultsRawByPollID($pollID)
+	{
+		$this->query = "SELECT `runoff`.*
+						FROM `runoff`
+						WHERE `runoff`.`pollID` LIKE '$pollID'
+						ORDER BY `votes`;";
+		$this->doSelectQuery();
+		return $this->results;
+	}
+	
+	public function getBallotsByPollID($pollID)
+	{
+		$this->query = "SELECT *
+						FROM `votes`
+						WHERE `votes`.`pollID` LIKE '$pollID'
+						ORDER BY `voteTime`, `voterID`, `pollID`, `answerID` ASC;";
+		$this->doSelectQuery();
+		return $this->results;
+	}
+	
 	public function insertPoll($pollID, $question, $answers, $randomOrder, $private, $creatorIP, $customSlug)
 	{
 		global $return;

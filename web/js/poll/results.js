@@ -11,6 +11,13 @@ function updateStatus(msg)
 	});
 }
 
+function showContainer(container)
+{
+	$('#'+container+'ShowButton').hide(0, function(){
+		$('#'+container+'Container').fadeIn(100);
+	});
+}
+
 function vote()
 {
 	$.post("/", { 

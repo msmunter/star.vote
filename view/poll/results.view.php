@@ -49,16 +49,49 @@ if ($this->poll) {
 		</div>
 	</div>
 	<div class="bigContainer">
-		<div class="bigContainerTitle">Data</div>
+		<div class="bigContainerTitle">Runoff Matrix</div>
 		<div class="bigContainerInner">
-			<!--<div>Runoff Matrix</div>
-			<table class="runoffMatrix">
-				<tr>
-				<?php
-				
-				?><td></td><td></td></tr>
-			</table>
-			Ballot Record: <a href="/poll/csv/<?php //echo $this->poll->pollID; ?>/">Download CSV</a>-->
+			<div id="runoffMatrixContainer">
+				<table id="runoffMatrix">
+					<tr><th colspan="2"></th>
+						<?php
+							foreach ($this->poll->runoffAnswerArray as $answer) {
+								echo '<th>';
+								echo $answer->text;
+								echo '</th>';
+							}
+							echo '</tr>';
+							foreach ($this->poll->runoffAnswerArray as $answer) {
+								$empty++;
+								$z = 0;
+								echo '<tr><td>'.$answer->text.'</td><td>&gt;</td>';
+								foreach ($this->poll->runoffAnswerArray as $innerAnswer) {
+									$z++;
+									if ($z == $empty) {
+										echo '<td class="borderCell filled">';
+									} else {
+										echo '<td class="borderCell">';
+										echo $this->poll->orderedRunoff[$answer->answerID][$innerAnswer->answerID]->votes;
+									}
+									//echo '$z: '.$z.', $empty: '.$empty; // DEBUG ONLY!!!
+									echo '</td>';
+								}
+								echo '</tr>';
+							}
+						?>
+					</tr>
+				</table>
+			</div><!-- END ballotRecordContainer -->
+			<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="runoffMatrixShowButton" onclick="showContainer('runoffMatrix')">Show</button>
+		</div>
+	</div>
+	<div class="bigContainer">
+		<div class="bigContainerTitle">Ballot Record</div>
+		<div class="bigContainerInner">
+			<div id="ballotRecordContainer">
+				Download: <a class="ui-btn ui-mini ui-btn-inline ui-corner-all" href="/poll/csv/<?php echo $this->poll->pollID; ?>/">CSV</a>
+			</div>
+			<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="ballotRecordShowButton" onclick="showContainer('ballotRecord')">Show</button>
 		</div>
 	</div>
 	<?php
