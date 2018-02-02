@@ -21,7 +21,7 @@ if ($this->error == '') {
 		} else {
 			// Subsequent runs through
 			if ($currentBallot->voterID == $ballot->voterID) {
-				if ($voteCount > $answerCount) {
+				if ($voteCount >= $answerCount) {
 					// Duplicate, treat as new voter
 					fputcsv($out, $outArray);
 					// Start as if first run
