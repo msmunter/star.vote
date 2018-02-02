@@ -146,7 +146,8 @@ class PollModel extends Model
 		$this->query = "SELECT `answerID`, `vote`
 						FROM `votes`
 						WHERE `votes`.`pollID` LIKE '$pollID'
-						AND `votes`.`voterID` LIKE '$voterID';";
+						AND `votes`.`voterID` LIKE '$voterID'
+						ORDER BY `votes`.`vote` DESC;";
 		//echo '<pre>';print_r($this->query);echo '</pre>'; // DEBUG ONLY!!!
 		$this->doSelectQuery();
 		//echo '<pre>';print_r($this->results);echo '</pre>'; // DEBUG ONLY!!!

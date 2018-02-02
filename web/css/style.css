@@ -170,14 +170,27 @@ input#fsCustomSlugInput.highlightInputRed {
 	border: solid 1px red;
 }
 
-table#resultsTable th {
+table#resultsTable th, table#yourVoteTable th {
 	font-size: 12px;
+	text-align: left;
 }
 
-table#resultsTable td.number {
+table#resultsTable td.number, table#yourVoteTable td.number {
 	font-family: monospace;
 	text-align: right;
 	font-size: 14pt;
+}
+
+table#yourVoteTable {
+	border-collapse: collapse;
+}
+
+table#yourVoteTable td {
+	border-top: solid 1px #cccccc;
+}
+
+table#yourVoteTable td.orderCell {
+	padding-right: 5px;
 }
 
 td.barGraphTd {
