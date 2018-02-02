@@ -143,18 +143,16 @@ class PollModel extends Model
 	
 	public function getYourVote($voterID, $pollID)
 	{
-		$this->query = "SELECT `answerID`, `vote`
-						FROM `votes`
+		$this->query = "SELECT `votes`.`answerID`, `votes`.`vote`, `answers`.`text`
+						FROM `votes`, `answers`
 						WHERE `votes`.`pollID` LIKE '$pollID'
 						AND `votes`.`voterID` LIKE '$voterID'
+						AND `answers`.`answerID` LIKE `votes`.`answerID`
 						ORDER BY `votes`.`vote` DESC;";
 		//echo '<pre>';print_r($this->query);echo '</pre>'; // DEBUG ONLY!!!
 		$this->doSelectQuery();
 		//echo '<pre>';print_r($this->results);echo '</pre>'; // DEBUG ONLY!!!
-		foreach ($this->results as $item) {
-			$this->returnArray[$item->answerID] = $item->vote;
-		}
-		return $this->returnArray;
+		return $this->results;
 	}
 	
 	public function insertVoter($voterID, $ip)
