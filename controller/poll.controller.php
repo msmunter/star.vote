@@ -162,6 +162,7 @@ class PollController extends Controller
 							$ignoreFirstTwo++;
 						}
 					}
+					// Runoff matrix
 					$this->poll->rawRunoff = $this->model->getRunoffResultsRawByPollID($this->URLdata);
 					foreach ($this->poll->answers as $index => $answer) {
 						$this->poll->runoffAnswerArray[$answer->answerID] = $answer;
@@ -226,7 +227,23 @@ class PollController extends Controller
 	{
 		$this->URLdata = $_POST['pollID'];
 		$this->results();
-		$return['html'] = $this->ajaxInclude('view/poll/resultsactual.view.php');
+		$return['results'] = $this->ajaxInclude('view/poll/resultsactual.view.php');
+		$return['runoffmatrix'] = $this->ajaxInclude('view/poll/runoffmatrix.view.php');
+		echo json_encode($return);
+	}
+	
+	public function ajaxrunoffmatrix()
+	{
+		$pollID = $_POST['pollID'];
+		$this->poll->rawRunoff = $this->model->getRunoffResultsRawByPollID($pollID);
+		$this->poll->answers = $this->model->getAnswersByPollID($pollID);
+		foreach ($this->poll->answers as $index => $answer) {
+			$this->poll->runoffAnswerArray[$answer->answerID] = $answer;
+		}
+		foreach ($this->poll->rawRunoff as $runoff) {
+			$this->poll->orderedRunoff[$runoff->gtID][$runoff->ltID] = $runoff;
+		}
+		$return['html'] = $this->ajaxInclude('view/poll/runoffmatrix.view.php');
 		echo json_encode($return);
 	}
 	

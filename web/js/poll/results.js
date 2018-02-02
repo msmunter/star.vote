@@ -73,9 +73,28 @@ function showResults() {
 			$('#statusMsg').html("ERROR: "+jData.error);
 		} else {
 			// View results
-			$('#pollResultsActual').html(jData.html);
-			//$('#statusMsg').html(jData.html);
+			$('#pollResultsActual').html(jData.results);
+			$('#runoffMatrixContainer').html(jData.runoffmatrix);
 			$('#pollResults').show();
+		}
+	});
+}
+
+function showRunoffMatrix() {
+	$.post("/", { 
+		c: 'poll', 
+		a: 'ajaxrunoffmatrix', 
+		ajax: '1',
+		pollID: $('#pollID').val()
+	}, function(data) {
+		var jData = JSON.parse(data);
+		if (jData.error) {
+			$('#statusMsg').html("ERROR: "+jData.error);
+		} else {
+			// Show results
+			$('#runoffMatrixShowButton').hide(0, function(){
+				$('#runoffMatrixContainer').html(jData.html).fadeIn(100);
+			});
 		}
 	});
 }
