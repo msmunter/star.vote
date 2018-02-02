@@ -197,24 +197,31 @@ class PollController extends Controller
 			$this->model->insertVoter($this->voterID, $_SERVER['REMOTE_ADDR']);
 		}
 		$voteArrayToDestroy = $voteArray;
-		foreach ($voteArray as $answerID => $vote) {
-			$this->votes[] = $vote;
-			//$return['html'] .= 'ID: '.$answerID.'; Vote: '.$vote.'<br />'; // DEBUG ONLY!!!
-			// Insert vote
-			$this->model->insertVote($this->pollID, $this->voterID, $answerID, $vote);
-			// Update matrix. Pooh, stop! That's not honey, that's recursion!
-			foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
-				if ($answerID != $answerID2) {
-					if ($vote > $vote2) {
-						$this->model->updateVoteMatrix($this->pollID, $answerID, $answerID2);
-					} else if ($vote < $vote2) {
-						$this->model->updateVoteMatrix($this->pollID, $answerID2, $answerID);
-					} // and do nothing if they're equal
+		// Verify no vote has been entered for this voter on this poll
+		$yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
+		if (empty($yourVote)) {
+			foreach ($voteArray as $answerID => $vote) {
+				$this->votes[] = $vote;
+				//$return['html'] .= 'ID: '.$answerID.'; Vote: '.$vote.'<br />'; // DEBUG ONLY!!!
+				// Insert vote
+				$this->model->insertVote($this->pollID, $this->voterID, $answerID, $vote);
+				// Update the matrix. Maybe replace the windows with bricks?
+				foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
+					if ($answerID != $answerID2) {
+						if ($vote > $vote2) {
+							$this->model->updateVoteMatrix($this->pollID, $answerID, $answerID2);
+						} else if ($vote < $vote2) {
+							$this->model->updateVoteMatrix($this->pollID, $answerID2, $answerID);
+						} // and do nothing if they're equal
+					}
 				}
+				unset($voteArrayToDestroy[$answerID]);
 			}
-			unset($voteArrayToDestroy[$answerID]);
+			$this->model->incrementPollVoteCount($this->pollID);
+		} else {
+			$return['caution'] = 'Your vote had already been recorded for this poll';
 		}
-		$this->model->incrementPollVoteCount($this->pollID);
+		unset($yourVote);
 		//$return['html'] .= $this->model->debugHTML; // DEBUG ONLY!!!
 		$this->poll = $this->model->getPollByID($this->pollID);
 		$this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
