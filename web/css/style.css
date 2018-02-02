@@ -295,12 +295,14 @@ table#resultsTable tr.barGraphTr, table#resultsTable tr.headerRow {
 }
 
 table#runoffMatrix {
+	table-layout: fixed;
+	max-width: 100%;
 	border-collapse: collapse;
 }
 
 table#runoffMatrix td, table#runoffMatrix th {
 	border: none;
-	font-size: 10pt;
+	font-size: 9pt;
 }
 
 table#runoffMatrix td.borderCell {
@@ -313,6 +315,10 @@ table#runoffMatrix td.filled {
 
 div#ballotRecordContainer, div#runoffMatrixContainer {
 	display: none;
+}
+
+div#runoffMatrixContainer {
+	overflow: scroll;
 }
 
 /* Page Footer */
