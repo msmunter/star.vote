@@ -42,6 +42,10 @@
 			2nd: <?php echo $this->poll->runoffResults['second']['question']; ?>, preferred by <?php echo $this->poll->runoffResults['second']['votes']; ?>
 			<?php
 		}
+		// The unpreferred
+		if ($this->poll->noPreferenceCount) {
+			echo '<div> '.$this->poll->noPreferenceCount.' expressed no preference</div>';
+		}
 		?>
 		<div class="clear"></div>
 	</div>
