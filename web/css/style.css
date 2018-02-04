@@ -197,6 +197,14 @@ table#yourVoteTable td.orderCell {
 	padding-right: 5px;
 }
 
+div#voteInstructions {
+	font-size: 10pt;
+}
+
+div#voteInstructions ul {
+	padding-left: 1.5em;
+}
+
 td.barGraphTd {
 	position: relative;
 }
