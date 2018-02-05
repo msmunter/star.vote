@@ -173,7 +173,11 @@ class PollController extends Controller
 					// Voter and point counts
 					$this->poll->totalVoterCount = $this->model->getPollVoterCount($this->URLdata);
 					$this->poll->totalPointCount = $this->model->getPollPointCount($this->URLdata);
-					$this->poll->noPreferenceCount = $this->poll->totalVoterCount - ($this->poll->runoffResults['first']['votes'] + $this->poll->runoffResults['second']['votes']);
+					if ($this->poll->runoffResults['tie']) {
+						$this->poll->noPreferenceCount = $this->poll->totalVoterCount - ($this->poll->runoffResults['first']['votes'] * 2);
+					} else {
+						$this->poll->noPreferenceCount = $this->poll->totalVoterCount - ($this->poll->runoffResults['first']['votes'] + $this->poll->runoffResults['second']['votes']);
+					}
 				}
 			}
 		} else {

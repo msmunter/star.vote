@@ -43,8 +43,8 @@
 			<?php
 		}
 		// The unpreferred
-		if ($this->poll->noPreferenceCount) {
-			echo '<div> '.$this->poll->noPreferenceCount.' expressed no preference</div>';
+		if ($this->poll->noPreferenceCount > 0) {
+			echo '<div>'.$this->poll->noPreferenceCount.' expressed no preference</div>';
 		}
 		?>
 		<div class="clear"></div>
