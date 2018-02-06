@@ -26,29 +26,55 @@
 <div class="floatleft">	
 	<div>Runoff Phase (Single winner):<br /></div>
 	<div id="runoffResults">
-		<?php 
-		// Figure out multi-way tie here, info comes from poll.controller
-		if ($this->poll->runoffResults['tie']) {
-			if ($this->poll->runoffResults['tieEndsAt'] > 2) {
-				// Multi-way tie
-				echo 'Tie between '.$this->poll->runoffResults['tieEndsAt'].' questions, '.$this->poll->runoffResults['first']['question'].' and '.$this->poll->runoffResults['second']['question'].' with '.$this->poll->runoffResults['first']['votes'].' votes each';
+		<table id="runoffResultsTable">
+			<?php 
+			// Figure out multi-way tie here, info comes from poll.controller
+			if ($this->poll->runoffResults['tie']) {
+				if ($this->poll->runoffResults['tieEndsAt'] > 2) {
+					// Multi-way tie
+					echo '<tr class="noTopBorder"><td colspan="3">Tie between '.$this->poll->runoffResults['tieEndsAt'].' questions, '.$this->poll->runoffResults['first']['question'].' and '.$this->poll->runoffResults['second']['question'].' with '.$this->poll->runoffResults['first']['votes'].' votes each</td></tr>';
+				} else {
+					// Two-way tie
+					?>
+					<tr class="headerRow"><th>#</th><th>Option</th><th>Voters</th></tr>
+					
+					<tr><td class="rankCell winner">1</td><td><?php echo $this->poll->runoffResults['first']['question']; ?></td><td class="number"><?php echo $this->poll->runoffResults['first']['votes']; ?></td></tr>
+					
+					<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($this->poll->runoffResults['first']['votes']/$this->poll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($this->poll->runoffResults['first']['votes']/$this->poll->totalVoterCount*100), 2); ?>% (<?php echo $this->poll->runoffResults['first']['votes']; ?>/<?php echo $this->poll->totalVoterCount; ?>)</div></div></td></tr>
+					
+					<tr><td class="rankCell winner">1</td><td><?php echo $this->poll->runoffResults['second']['question']; ?></td><td class="number"><?php echo $this->poll->runoffResults['second']['votes']; ?></td></tr>
+					
+					<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($this->poll->runoffResults['second']['votes']/$this->poll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($this->poll->runoffResults['second']['votes']/$this->poll->totalVoterCount*100), 2); ?>% (<?php echo $this->poll->runoffResults['second']['votes']; ?>/<?php echo $this->poll->totalVoterCount; ?>)</div></div></td></tr>
+					<?php
+					//echo '<tr class="noTopBorder"><td colspan="3">Tie between '. $this->poll->runoffResults['first']['question'].' and '.$this->poll->runoffResults['second']['question'].' with '.$this->poll->runoffResults['first']['votes'].' votes each</td></tr>';
+				}
 			} else {
-				// Two-way tie
-				echo 'Tie between '. $this->poll->runoffResults['first']['question'].' and '.$this->poll->runoffResults['second']['question'].' with '.$this->poll->runoffResults['first']['votes'].' votes each';
+				?>
+				<tr class="headerRow"><th>#</th><th>Option</th><th>Votes</th></tr>
+				
+				<tr><td class="rankCell winner">1</td><td><?php echo $this->poll->runoffResults['first']['question']; ?></td><td class="number"><?php echo $this->poll->runoffResults['first']['votes']; ?></td></tr>
+				
+				<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($this->poll->runoffResults['first']['votes']/$this->poll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($this->poll->runoffResults['first']['votes']/$this->poll->totalVoterCount*100), 2); ?>% (<?php echo $this->poll->runoffResults['first']['votes']; ?>/<?php echo $this->poll->totalVoterCount; ?>)</div></div></td></tr>
+				
+				<tr><td class="rankCell">2</td><td><?php echo $this->poll->runoffResults['second']['question']; ?></td><td class="number"><?php echo $this->poll->runoffResults['second']['votes']; ?></td></tr>
+				
+				<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($this->poll->runoffResults['second']['votes']/$this->poll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($this->poll->runoffResults['second']['votes']/$this->poll->totalVoterCount*100), 2); ?>% (<?php echo $this->poll->runoffResults['second']['votes']; ?>/<?php echo $this->poll->totalVoterCount; ?>)</div></div></td></tr>
+				
+				<?php
 			}
-		} else {
-			?>
-			1st: <?php echo $this->poll->runoffResults['first']['question']; ?>, preferred by <?php echo $this->poll->runoffResults['first']['votes']; ?><br />
-			2nd: <?php echo $this->poll->runoffResults['second']['question']; ?>, preferred by <?php echo $this->poll->runoffResults['second']['votes']; ?>
-			<?php
-		}
-		// The unpreferred
-		if ($this->poll->noPreferenceCount > 0) {
-			echo '<div id="preferenceText">'.$this->poll->noPreferenceCount.' expressed no preference</div>';
-		} else {
-			echo '<div id="preferenceText">All voters expressed a preference</div>';
-		}
 		?>
+			<tr><td class="rankCell"></td><td>No Preference</td><td class="number"><?php echo $this->poll->noPreferenceCount; ?></td></tr>
+			
+			<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($this->poll->noPreferenceCount/$this->poll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($this->poll->noPreferenceCount/$this->poll->totalVoterCount*100), 2); ?>% (<?php echo $this->poll->noPreferenceCount; ?>/<?php echo $this->poll->totalVoterCount; ?>)</div></div></td></tr>
+			</table>
+			<?php
+			// The unpreferred
+			/*if ($this->poll->noPreferenceCount > 0) {
+				echo '<div id="preferenceText">'.$this->poll->noPreferenceCount.' expressed no preference</div>';
+			} else {
+				echo '<div id="preferenceText">All voters expressed a preference</div>';
+			}*/
+			?>
 		<div class="clear"></div>
 	</div>
 </div>

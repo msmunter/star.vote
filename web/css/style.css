@@ -174,12 +174,12 @@ input#fsCustomSlugInput.highlightInputRed {
 	border: solid 1px red;
 }
 
-table#resultsTable th, table#yourVoteTable th {
+table#resultsTable th, table#yourVoteTable th, table#runoffResultsTable th {
 	font-size: 12px;
 	text-align: left;
 }
 
-table#resultsTable td.number, table#yourVoteTable td.number {
+table#resultsTable td.number, table#yourVoteTable td.number, table#runoffResultsTable td.number {
 	font-family: monospace;
 	text-align: right;
 	font-size: 14pt;
@@ -237,11 +237,16 @@ td.rankCell {
 	text-align: center;
 }
 
-td.rankCell.advances {
-	background-image: url(../../../web/images/icons-png/star-gold.png);
+td.rankCell.advances, td.rankCell.winner {
+	background-image: url(../../../web/images/star-gray.png);
 	background-size: 100%;
 	background-repeat: no-repeat;
 	background-position: center;
+	text-shadow: 1px 1px 2px #ffffff;
+}
+
+td.rankCell.winner {
+	background-image: url(../../../web/images/star-gold.png);
 }
 
 div#runoffResults, div#pollResultsContainer {
@@ -285,20 +290,24 @@ div#resultsArrow {
 	width: 75%;
 }
 
-table#resultsTable {
+table#resultsTable, table#runoffResultsTable {
 	border-collapse: collapse;
 }
 
-table#resultsTable th {
+table#resultsTable th, table#runoffResultsTable th {
 	text-align: left;
 	border-bottom: solid 1px #cccccc;
 }
 
-table#resultsTable tr {
+table#resultsTable tr, table#runoffResultsTable tr {
 	border-top: solid 1px #cccccc;
 }
 
-table#resultsTable tr.barGraphTr, table#resultsTable tr.headerRow {
+table#resultsTable tr.barGraphTr, table#resultsTable tr.headerRow, table#runoffResultsTable tr.headerRow {
+	border-top: none;
+}
+
+table#runoffResultsTable tr.noTopBorder {
 	border-top: none;
 }
 
@@ -331,6 +340,7 @@ div#runoffMatrixContainer {
 
 div#preferenceText {
 	border-top: solid 1px #cccccc;
+	font-size: 10pt;
 }
 
 /* Page Footer */
