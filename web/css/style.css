@@ -329,6 +329,10 @@ div#runoffMatrixContainer {
 	overflow: scroll;
 }
 
+div#preferenceText {
+	border-top: solid 1px #cccccc;
+}
+
 /* Page Footer */
 div#footer {
 	font-size: 14px;

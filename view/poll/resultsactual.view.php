@@ -44,7 +44,9 @@
 		}
 		// The unpreferred
 		if ($this->poll->noPreferenceCount > 0) {
-			echo '<div>'.$this->poll->noPreferenceCount.' expressed no preference</div>';
+			echo '<div id="preferenceText">'.$this->poll->noPreferenceCount.' expressed no preference</div>';
+		} else {
+			echo '<div id="preferenceText">All voters expressed a preference</div>';
 		}
 		?>
 		<div class="clear"></div>
