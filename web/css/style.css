@@ -276,7 +276,7 @@ div#resultsArrow {
 }
 
 .starNumber {
-	background-image: url(https://starvote.msmunter.com/web/images/icons-png/star-gold.png);
+	background-image: url(../../../web/images/star-gold.png);
 	background-repeat: no-repeat;
 	background-position: center;
     /*background-size: 60%;*/
