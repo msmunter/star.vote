@@ -8,9 +8,9 @@
 		<meta name="robots" content="follow, index" />
 		<title>
 		<?php if ($_SERVER['SERVER_NAME'] == 'starvote.msmunter.com') { ?>
-			Star.vote [ Dev ]
+			Star.vote [Dev]
 		<?php } else { ?>
-			Star.vote Beta
+			Star.vote
 		<?php } ?>
 		<?php if (!empty($this->title)) echo ' - '.$this->title; ?>
 		</title>

@@ -119,6 +119,8 @@ class PollController extends Controller
 				$this->error = 'Invalid poll ID (characters)';
 			} else {
 				$this->poll = $this->model->getPollByID($this->URLdata);
+				// Set title
+				$this->title = $this->poll->question;
 				// Determine whether user has voted
 				if (!empty($_COOKIE['voterID'])) {
 					$this->setVoterID();
