@@ -1,13 +1,13 @@
 <?php
 class Model
 {
-	// SET THE FOLLOWING DATABASE INFO
-	private $host = 'localhost';
-	private $database = 'starvote';
+	// We'll be needing the following from a config file in /srv/www/dbconfig/
+	private $host;
+	private $database;
+	private $user;
+	private $pass;
+	// Rest of this we acquire/use elsewhere
 	private $table = 'voters';
-	private $user = 'starvote';
-	private $pass = 'Sr9EzFRw6uDpeAeD';
-	// THANKS! NOW STOP SETTING THINGS, PLEASE
 	public $mysqliObject;
 	public $query;
 	public $insertID;
@@ -16,11 +16,21 @@ class Model
 	
 	public function __construct()
 	{
+		// Grab db config file
+		$dbConfig = parse_ini_file('/srv/www/dbconfig/starvote_db.ini');
 		// Use different server for test and live
-		if ($_SERVER['SERVER_NAME'] == 'starvote.msmunter.com') {
-			$this->database = 'starvoteTest';
-			$this->user = 'starvoteTest';
-			$this->pass = 'EQeTRxunXHWzAUnG';
+		if ($_SERVER['SERVER_NAME'] == 'star.vote') {
+			// Live
+			$this->host = $dbConfig['live_host'];
+			$this->database = $dbConfig['live_database'];
+			$this->user = $dbConfig['live_user'];
+			$this->pass = $dbConfig['live_pass'];
+		} else {
+			// Test
+			$this->host = $dbConfig['test_host'];
+			$this->database = $dbConfig['test_database'];
+			$this->user = $dbConfig['test_user'];
+			$this->pass = $dbConfig['test_pass'];
 		}
 		// Instantiate! (Host, username, password, database)
 	    $this->mysqliObject = new mysqli($this->host, $this->user, $this->pass, $this->database);
