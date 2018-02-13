@@ -74,9 +74,8 @@ class MasterController
 		} else if ($_GET[$var] != '') {
 			$return = trim($_GET[$var]);
 		}
-		// Here we remove some of the more common attempts to 'hack' our site
+		// Little bit of protection from trying to jump around in the path
 		$return = str_replace(array('.', '/'), '', $return);
-		// Send the round
 		return $return;
 	}
 	
@@ -88,7 +87,6 @@ class MasterController
 		} else if (strpos($class, 'Model')) {
 			$classPath = 'model/'.strtolower(str_replace('Model', '', $class)).'.model.php';
 		}
-		//echo '<script type="text/javascript">alert("'.$class.'");</script>'; // DEBUG ONLY!!!
 		if (file_exists($classPath)) require_once($classPath);
 	}
 }

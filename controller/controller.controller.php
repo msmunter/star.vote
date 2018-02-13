@@ -22,10 +22,10 @@ class Controller
 	{
 		// Use different servers for test and live
 		$this->server = $_SERVER['SERVER_NAME'];
-		/*if ($this->server == 'starvote.msmunter.com') {
-			$this->staticServer = 'statictest.greenhealtheugene.com';
+		/*if ($this->server == 'star.vote') {
+			$this->staticServer = 'static.star.vote';
 		} else {
-			$this->staticServer = 'static.greenhealtheugene.com';
+			$this->staticServer = 'statictest.star.vote';
 		}*/
 		
 		// Set timezone
@@ -49,7 +49,6 @@ class Controller
 		
 		// Init the user controller
 		/*$this->user = new UserController;
-		// Do as you are told or you will be subject to immediate deresolution
 		$this->user->init();*/
 		
 		// Set view parameters

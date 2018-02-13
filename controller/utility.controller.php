@@ -6,7 +6,7 @@ class UtilityController extends Controller
 	public $utility;
 	// Admin Levels
 	/*public $adminLevel = array(
-		'fixmissingbatchguids' => 1
+		'somefunction' => 1
 	);*/
 	
 	// ------------------------------- Methods --------------------------------

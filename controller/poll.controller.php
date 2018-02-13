@@ -21,7 +21,7 @@ class PollController extends Controller
 	
 	public function create()
 	{
-		// Display of form for poll creation
+		// Display form for poll creation
 	}
 	
 	public function processPollSet($pollSet)
@@ -87,7 +87,6 @@ class PollController extends Controller
 				$return['pollID'] = $newPollID;
 				// Insert actual
 				$this->model->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug']);
-				$return['html'] .= $this->model->debugHTML; // DEBUG ONLY!!!
 				$return['html'] .= 'Poll saved! Loading results...';
 			} else {
 				$return['error'] = 'Must provide at least two possible answers';
@@ -191,7 +190,6 @@ class PollController extends Controller
 	{
 		$this->voterID = $_POST['voterID'];
 		$this->pollID = $_POST['pollID'];
-		//$return['html'] .= 'voterID: '.$this->voterID.'<br />'; // DEBUG ONLY!!!
 		parse_str($_POST['votes'], $dirtyVoteArray);
 		// Cleanup array
 		foreach ($dirtyVoteArray as $index => $vote) {
@@ -209,7 +207,6 @@ class PollController extends Controller
 		if (empty($yourVote)) {
 			foreach ($voteArray as $answerID => $vote) {
 				$this->votes[] = $vote;
-				//$return['html'] .= 'ID: '.$answerID.'; Vote: '.$vote.'<br />'; // DEBUG ONLY!!!
 				// Insert vote
 				$this->model->insertVote($this->pollID, $this->voterID, $answerID, $vote);
 				// Update the matrix. Maybe replace the windows with bricks?
@@ -229,7 +226,6 @@ class PollController extends Controller
 			$return['caution'] = 'Your vote had already been recorded for this poll';
 		}
 		unset($yourVote);
-		//$return['html'] .= $this->model->debugHTML; // DEBUG ONLY!!!
 		$this->poll = $this->model->getPollByID($this->pollID);
 		$this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
 		$this->yourVote = $this->model->getYourVote($this->voterID, $this->pollID);

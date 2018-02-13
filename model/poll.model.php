@@ -113,7 +113,6 @@ class PollModel extends Model
 		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `allowMultiVoting`, `allowComments`, `randomAnswerOrder`, `creatorIP`, `votes`, `customSlug`)
 						VALUES ('".$pollID."', '".$question."', '".date('Y-m-d H:i:s')."', ".$private.", 0, 0, ".$randomOrder.", '".$creatorIP."', 0, '".$customSlug."')";
 		// Insert
-		//echo '<pre>';print_r($this->query);echo '</pre>'; // DEBUG ONLY!!!
 		$this->doInsertQuery();
 		
 		// Now answers
@@ -122,7 +121,6 @@ class PollModel extends Model
 			$this->query = "INSERT INTO `answers` (`pollID`, `text`, `votes`, `points`)
 							VALUES ('".$pollID."', '".$answer."', 0, 0)";
 			// Insert
-			//$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
 			$this->doInsertQuery();
 			$this->answerIDs[] = $this->insertID;
 		}
@@ -135,13 +133,11 @@ class PollModel extends Model
 					$this->query = "INSERT INTO `runoff` (`pollID`, `gtID`, `ltID`, `votes`)
 							VALUES ('".$pollID."', '".$a1."', '".$a2."', 0)";
 					// Insert
-					//$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
 					$this->doInsertQuery();
 					// Now the reverse
 					$this->query = "INSERT INTO `runoff` (`pollID`, `gtID`, `ltID`, `votes`)
 							VALUES ('".$pollID."', '".$a2."', '".$a1."', 0)";
 					// Insert
-					//$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
 					$this->doInsertQuery();
 				}
 			}
@@ -169,9 +165,7 @@ class PollModel extends Model
 						AND `votes`.`voterID` LIKE '$voterID'
 						AND `answers`.`answerID` LIKE `votes`.`answerID`
 						ORDER BY `votes`.`vote` DESC;";
-		//echo '<pre>';print_r($this->query);echo '</pre>'; // DEBUG ONLY!!!
 		$this->doSelectQuery();
-		//echo '<pre>';print_r($this->results);echo '</pre>'; // DEBUG ONLY!!!
 		return $this->results;
 	}
 	
@@ -180,7 +174,6 @@ class PollModel extends Model
 		$this->query = "INSERT INTO `voters` (`voterID`, `ip`)
 							VALUES ('".$voterID."', '".$ip."')";
 		// Insert
-		//echo '<pre>';print_r($this->query);echo '</pre>'; // DEBUG ONLY!!!
 		$this->doInsertQuery();
 	}
 	
@@ -190,8 +183,6 @@ class PollModel extends Model
 		$this->query = "INSERT INTO `votes` (`voterID`, `pollID`, `answerID`, `vote`)
 							VALUES ('".$voterID."', '".$pollID."', '".$answerID."', '".$vote."')";
 		// Insert
-		//echo '<pre>';print_r($this->query);echo '</pre>'; // DEBUG ONLY!!!
-		//$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
 		$this->doInsertQuery();
 		
 		// Add to scores/votes
@@ -201,7 +192,6 @@ class PollModel extends Model
 						WHERE `answerID` = $answerID
 						LIMIT 1;";
 		// Insert
-		//$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
 		$this->doUpdateQuery();
 	}
 	
@@ -213,7 +203,6 @@ class PollModel extends Model
 						WHERE `pollID` LIKE '$pollID'
 						LIMIT 1;";
 		// Insert
-		//$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
 		$this->doUpdateQuery();
 	}
 	
@@ -227,7 +216,6 @@ class PollModel extends Model
 					AND `ltID` = $ltID
 					LIMIT 1;";
 		// Insert
-		$this->debugHTML .= '<pre>'.$this->query.'</pre>'; // DEBUG ONLY!!!
 		$this->doUpdateQuery();
 	}
 	
@@ -259,12 +247,6 @@ class PollModel extends Model
 	
 	public function getMostPopularPolls($index, $limit)
 	{
-		/*$this->query = "SELECT `polls`.*, COUNT(DISTINCT `votes`.`voterID`, `votes`.`pollID`) AS `ct`
-						FROM `polls`, `votes`
-						WHERE `polls`.`private` = 0
-						AND `polls`.`pollID` = `votes`.`pollID`
-						ORDER BY `ct` DESC, `polls`.`created` DESC
-						LIMIT $index,$limit;";*/
 		$this->query = "SELECT *
 						FROM `polls`
 						WHERE `private` = 0

@@ -73,10 +73,10 @@
 						<img id="headerLogo" src="https://<?php echo $_SERVER['SERVER_NAME']; ?>/web/images/starvote_logo.png" alt="Logo" />
 					</a>
 					<a id="headerTitle" href="https://<?php echo $_SERVER['SERVER_NAME']; ?>/">
-						<?php if ($_SERVER['SERVER_NAME'] == 'starvote.msmunter.com') { ?>
-							[ Dev ]
-						<?php } else { ?>
+						<?php if ($_SERVER['SERVER_NAME'] == 'star.vote') { ?>
 							Beta
+						<?php } else { ?>
+							[ Dev ]
 						<?php } ?>
 					</a>
 				</div>
