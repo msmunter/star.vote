@@ -1,4 +1,4 @@
-#Star.vote
+# Star.vote
 
 This project is a tangible example of using the Score Then Automatic Runoff method for polling. PHP7/MariaDB, jQuery, jQuery Mobile.
 
