@@ -7,10 +7,10 @@
 		<meta name="keywords" content="vote, voting" />
 		<meta name="robots" content="follow, index" />
 		<title>
-		<?php if ($_SERVER['SERVER_NAME'] == 'starvote.msmunter.com') { ?>
-			Star.vote [Dev]
-		<?php } else { ?>
+		<?php if ($_SERVER['SERVER_NAME'] == 'star.vote') { ?>
 			Star.vote
+		<?php } else { ?>
+			&#9733;.&#10003; [Dev]
 		<?php } ?>
 		<?php if (!empty($this->title)) echo ' - '.$this->title; ?>
 		</title>
