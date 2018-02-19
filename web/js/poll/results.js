@@ -99,6 +99,25 @@ function showRunoffMatrix() {
 	});
 }
 
+function showCvrHtml() {
+	showContainer('ballotRecord');
+	$.post("/", { 
+		c: 'poll', 
+		a: 'ajaxcvr', 
+		ajax: '1',
+		pollID: $('#pollID').val()
+	}, function(data) {
+		//alert(data);
+		var jData = JSON.parse(data);
+		if (jData.error) {
+			$('#statusMsg').error("ERROR: "+jData.error);
+		} else {
+			// Show results
+			$('#cvrhtml').html(jData.html).fadeIn(100);
+		}
+	});
+}
+
 function selectStar(id, vote) {
 	$('.radioLabel'+id).removeClass('starNumber');
 	$('.radioLabel'+id).removeClass('starText');

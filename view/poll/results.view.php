@@ -1,12 +1,3 @@
-<?php
-/* DEBUG SECTION */
-/*if ($this->hasVoted) {
-	echo '<div>[DEBUG: Has voted]</div>';
-} else echo '<div>[DEBUG: Has NOT voted]</div>';*/
-//$this->debug($this->voterID);
-//$this->debug($this->poll);
-/* END DEBUG */
-?>
 <input type="hidden" id="pollID" value="<?php echo $this->poll->pollID; ?>" />
 <div id="statusMsg" class="hidden"></div>
 <div class="clear"></div>
@@ -60,7 +51,7 @@ if ($this->poll) {
 		<div class="bigContainerTitle">Runoff Matrix</div>
 		<div class="bigContainerInner">
 			<div id="runoffMatrixContainer">
-				<?php include_once('view/poll/runoffmatrix.view.php'); ?>
+				<?php include('view/poll/runoffmatrix.view.php'); ?>
 			</div><!-- END runoffMatrixContainer -->
 			<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="runoffMatrixShowButton" onclick="showRunoffMatrix()">Show</button>
 		</div>
@@ -70,8 +61,11 @@ if ($this->poll) {
 		<div class="bigContainerInner">
 			<div id="ballotRecordContainer">
 				Download: <a class="ui-btn ui-mini ui-btn-inline ui-corner-all" href="/poll/csv/<?php echo $this->poll->pollID; ?>/">CSV</a>
+				<div id="cvrhtml">
+				
+				</div>
 			</div>
-			<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="ballotRecordShowButton" onclick="showContainer('ballotRecord')">Show</button>
+			<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="ballotRecordShowButton" onclick="showCvrHtml()">Show</button>
 		</div>
 	</div>
 	<?php

@@ -316,7 +316,20 @@ class PollController extends Controller
 			$this->poll->answers = $this->model->getAnswersByPollID($this->URLdata);
 			$this->poll->ballots = $this->model->getBallotsByPollID($this->URLdata);
 		} else $this->error = 'Poll not found';
-		
+	}
+	
+	public function ajaxcvr()
+	{
+		$this->ajax = 1;
+		$this->doHeader = 0;
+		$this->doFooter = 0;
+		$this->poll = $this->model->getPollByID($_POST['pollID']);
+		if (!empty($this->poll)) {
+			$this->poll->answers = $this->model->getAnswersByPollID($_POST['pollID']);
+			$this->poll->ballots = $this->model->getBallotsByPollID($_POST['pollID']);
+		} else $return['error'] = 'Poll not found';
+		$return['html'] = $this->ajaxInclude('view/poll/cvrhtml.view.php');
+		echo json_encode($return);
 	}
 	
 	private function setVoterID()

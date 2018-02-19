@@ -79,7 +79,3 @@
 	</div>
 </div>
 <div class="clear"></div>
-<?php
-//echo '<pre>Runoff Results: ';print_r($this->poll->runoffResults);echo '</pre>';
-//echo '<pre>Selection Results: ';print_r($this->poll->topAnswers);echo '</pre>';
-?>

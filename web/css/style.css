@@ -270,6 +270,29 @@ div#resultsArrow {
 	font-weight: bold;
 }
 
+table#cvrTable {
+	overflow: scroll;
+}
+
+table#cvrTable, table#cvrTable td, table#cvrTable th {
+	border-collapse: collapse;
+	border: solid 1px #cccccc;
+}
+
+table#cvrTable th {
+	background-color: #e7e7e7;
+}
+
+table#cvrTable td, table#cvrTable th {
+	padding: 5px;
+}
+
+table#cvrTable tr.yourVoteRow td {
+	background-color: #38C;
+	color: white;
+	text-shadow: 1px 1px 2px #000000;
+}
+
 .answerForm.ui-radio {
 	width: 42px;
 	height: 45px;
