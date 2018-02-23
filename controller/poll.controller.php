@@ -246,6 +246,7 @@ class PollController extends Controller
 	{
 		$pollID = $_POST['pollID'];
 		$this->poll->rawRunoff = $this->model->getRunoffResultsRawByPollID($pollID);
+		$this->poll->voterCount = $this->model->getPollVoterCount($pollID);
 		$this->poll->answers = $this->model->getAnswersByPollID($pollID);
 		foreach ($this->poll->answers as $index => $answer) {
 			$this->poll->runoffAnswerArray[$answer->answerID] = $answer;
