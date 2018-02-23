@@ -31,6 +31,16 @@ class PollModel extends Model
 		return $this->results;
 	}
 	
+	public function getAnswerByPollIDScoreOrder($pollID)
+	{
+		$this->query = "SELECT `answerID`, `text`, `votes`, `points`
+						FROM `answers`
+						WHERE `answers`.`pollID` LIKE '$pollID'
+						ORDER BY `points` DESC;";
+		$this->doSelectQuery();
+		return $this->results;
+	}
+	
 	public function getTopAnswersByPollID($pollID)
 	{
 		$this->query = "SELECT `answerID`, `text`, `votes`, `points`
