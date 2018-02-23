@@ -315,6 +315,8 @@ class PollController extends Controller
 		if (!empty($this->poll)) {
 			$this->poll->answers = $this->model->getAnswersByPollID($this->URLdata);
 			$this->poll->ballots = $this->model->getBallotsByPollID($this->URLdata);
+			// Process ballots into a single, cohesive array
+			$this->poll->processedBallots = $this->processBallots($this->poll->ballots);
 		} else $this->error = 'Poll not found';
 	}
 	
@@ -327,9 +329,27 @@ class PollController extends Controller
 		if (!empty($this->poll)) {
 			$this->poll->answers = $this->model->getAnswersByPollID($_POST['pollID']);
 			$this->poll->ballots = $this->model->getBallotsByPollID($_POST['pollID']);
+			// Process ballots into a single, cohesive array
+			$this->poll->processedBallots = $this->processBallots($this->poll->ballots);
 		} else $return['error'] = 'Poll not found';
 		$return['html'] = $this->ajaxInclude('view/poll/cvrhtml.view.php');
 		echo json_encode($return);
+	}
+	
+	private function processBallots($ballots)
+	{
+		foreach ($ballots as $ballot) {
+			if (empty($return[$ballot->voterID])) {
+				// New, establish a base and populate first vote
+				$return[$ballot->voterID]['voteTime'] = $ballot->voteTime;
+				$return[$ballot->voterID]['pollID'] = $ballot->pollID;
+				$return[$ballot->voterID]['votes'][$ballot->answerID] = $ballot->vote;
+			} else {
+				// Exists, populate
+				$return[$ballot->voterID]['votes'][$ballot->answerID] = $ballot->vote;
+			}
+		}
+		return $return;
 	}
 	
 	private function setVoterID()

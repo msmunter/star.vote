@@ -11,40 +11,14 @@ if ($this->error == '') {
 		array_push($headerArray, $answer->text);
 	}
 	fputcsv($out, $headerArray);
-	// Process ballots
-	foreach ($this->poll->ballots as $ballot) {
-		if (empty($currentBallot)) {
-			// First run through
-			$currentBallot = $ballot;
-			$outArray = array($currentBallot->voterID, $currentBallot->voteTime, $currentBallot->pollID, $currentBallot->vote);
-			$voteCount = 1;
-		} else {
-			// Subsequent runs through
-			if ($currentBallot->voterID == $ballot->voterID) {
-				if ($voteCount >= $answerCount) {
-					// Duplicate, treat as new voter
-					fputcsv($out, $outArray);
-					// Start as if first run
-					$currentBallot = $ballot;
-					$outArray = array($currentBallot->voterID, $currentBallot->voteTime, $currentBallot->pollID, $currentBallot->vote);
-					$voteCount = 1;
-				} else {
-					// Same voter, keep pushing votes onto array
-					array_push($outArray, $ballot->vote);
-					$voteCount++;
-				}
-			} else {
-				// New voter, write previous line
-				fputcsv($out, $outArray);
-				// Start as if first run
-				$currentBallot = $ballot;
-				$outArray = array($currentBallot->voterID, $currentBallot->voteTime, $currentBallot->pollID, $currentBallot->vote);
-				$voteCount = 1;
-			}
+	// Process Ballots
+	foreach ($this->poll->processedBallots as $voterID => $ballot) {
+		$outArray = array($voterID, $ballot['voteTime'], $ballot['pollID']);
+		foreach ($this->poll->answers as $answer) {
+			array_push($outArray, $ballot['votes'][$answer->answerID]);
 		}
+		fputcsv($out, $outArray);
 	}
-	// Do the last ballot
-	fputcsv($out, $outArray);
 	fclose($out);
 } else {
 	echo 'Error: '.$this->error;
