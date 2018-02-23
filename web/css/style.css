@@ -185,6 +185,21 @@ table#resultsTable td.number, table#yourVoteTable td.number, table#runoffResults
 	font-size: 14pt;
 }
 
+div#yourVoterID {
+	float: left;
+	padding-left: 3px;
+	border-bottom: solid 1px #e7e7e7;
+	margin-bottom: 10px;
+	font-size: 10pt;
+}
+
+span#yourVoterIDActual {
+	border-radius: 7px 7px 0px 0px;
+	border: solid 1px #e7e7e7;
+	background-color: #e7e7e7;
+	padding: 0px 5px 0px 5px;
+}
+
 table#yourVoteTable {
 	border-collapse: collapse;
 }
