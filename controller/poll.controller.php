@@ -180,6 +180,14 @@ class PollController extends Controller
 					} else {
 						$this->poll->noPreferenceCount = $this->poll->totalVoterCount - ($this->poll->runoffResults['first']['votes'] + $this->poll->runoffResults['second']['votes']);
 					}
+					// Condorcet
+					$this->poll->condorcet = true;
+					foreach ($this->poll->orderedRunoff[$this->poll->runoffResults['first']['answerID']] as $comIndex => $item) {
+						$comVotes = $this->poll->orderedRunoff[$comIndex][$this->poll->runoffResults['first']['answerID']]->votes;
+						if ($item->votes <= $comVotes) {
+							$this->poll->condorcet = false;
+						}
+					}
 				}
 			}
 		} else {

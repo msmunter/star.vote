@@ -79,3 +79,15 @@
 	</div>
 </div>
 <div class="clear"></div>
+<div>
+<?php
+if ($this->poll->runoffResults['tie']) {
+	echo 'Tie, therefore no Condorcet winner';
+} else if ($this->poll->condorcet === false) {
+	echo 'No Condorcet winner';
+} else {
+	echo $this->poll->runoffResults['first']['question'].' is the Condorcet winner';
+}
+?>
+</div>
+<div class="clear"></div>
