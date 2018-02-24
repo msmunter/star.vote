@@ -84,9 +84,9 @@
 if ($this->poll->runoffResults['tie']) {
 	echo 'Tie, therefore no Condorcet winner';
 } else if ($this->poll->condorcet === false) {
-	echo 'No Condorcet winner';
+	echo $this->poll->runoffResults['first']['question'].' did not win all pairings and therefore is not the Condorcet winner.';
 } else {
-	echo $this->poll->runoffResults['first']['question'].' is the Condorcet winner';
+	echo 'STAR elected the Condorcet winner.';
 }
 ?>
 </div>
