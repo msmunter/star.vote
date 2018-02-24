@@ -378,10 +378,23 @@ table#runoffMatrix td.number {
 	font-family: monospace;
 	text-align: right;
 	width: 1px;
+	text-shadow: 1px 1px 1px #cccccc;
 }
 
 table#runoffMatrix td.padded {
 	padding: 3px;
+}
+
+table#runoffMatrix td.winCell {
+	background-color: #deeede;
+}
+
+table#runoffMatrix td.tieCell {
+	background-color: #ffffe0;
+}
+
+table#runoffMatrix td.loseCell {
+	background-color: #ffeeee;
 }
 
 div#ballotRecordContainer, div#runoffMatrixContainer {
@@ -421,7 +434,7 @@ span.runoffAgainst {
 }
 
 span.runoffNopref {
-	color: darkgray;
+	color: #777777;
 }
 
 span.yeaNay {

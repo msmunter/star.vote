@@ -137,6 +137,7 @@ class PollController extends Controller
 					$this->error = "ERROR: Poll not found";
 				} else {
 					$this->poll->answers = $this->model->getAnswersByPollID($this->URLdata);
+					$this->poll->voterCount = $this->model->getPollVoterCount($this->URLdata);
 					// If we're supposed to randomize answers let's do that now
 					if ($this->poll->randomAnswerOrder && $this->hasVoted == false) shuffle($this->poll->answers);
 					// HEY YOU! Figure out how to do a multi-way tie here, taps into resultsactual.view.php
@@ -165,7 +166,7 @@ class PollController extends Controller
 					}
 					// Runoff matrix
 					$this->poll->rawRunoff = $this->model->getRunoffResultsRawByPollID($this->URLdata);
-					foreach ($this->poll->answers as $index => $answer) {
+					foreach ($this->poll->topAnswers as $index => $answer) {
 						$this->poll->runoffAnswerArray[$answer->answerID] = $answer;
 					}
 					foreach ($this->poll->rawRunoff as $runoff) {

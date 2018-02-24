@@ -24,11 +24,19 @@
 										}
 										echo '</td>';
 									} else {
-										echo '<td class="number leftBorderCell padded"><span class="runoffFor">'.$this->poll->orderedRunoff[$answer->answerID][$innerAnswer->answerID]->votes.'</span></td><td class="number centerBorderCell">-</td>';
-										echo '<td class="number centerBorderCell padded"><span class="runoffAgainst">'.$this->poll->orderedRunoff[$innerAnswer->answerID][$answer->answerID]->votes.'</span></td><td class="number centerBorderCell">-</td>';
-										$itemVoteTotal = $this->poll->orderedRunoff[$answer->answerID][$innerAnswer->answerID]->votes + $this->poll->orderedRunoff[$innerAnswer->answerID][$answer->answerID]->votes;
-										$noPref = $this->poll->voterCount - $itemVoteTotal;
-										echo '<td class="number rightBorderCell padded"><span class="runoffNopref">'.$noPref.'</span></td>';
+										if ($this->poll->orderedRunoff[$answer->answerID][$innerAnswer->answerID]->votes > $this->poll->orderedRunoff[$innerAnswer->answerID][$answer->answerID]->votes) {
+											$winStatus = 'winCell';
+										} else if ($this->poll->orderedRunoff[$answer->answerID][$innerAnswer->answerID]->votes == $this->poll->orderedRunoff[$innerAnswer->answerID][$answer->answerID]->votes) {
+											$winStatus = 'tieCell';
+										} else {
+											$winStatus = 'loseCell';
+										}
+										echo '<td class="number leftBorderCell padded '.$winStatus.'"><span class="runoffFor">'.$this->poll->orderedRunoff[$answer->answerID][$innerAnswer->answerID]->votes.'</span></td>';
+										echo '<td class="number centerBorderCell '.$winStatus.'">-</td>';
+										echo '<td class="number centerBorderCell padded '.$winStatus.'"><span class="runoffAgainst">'.$this->poll->orderedRunoff[$innerAnswer->answerID][$answer->answerID]->votes.'</span></td>';
+										echo '<td class="number centerBorderCell '.$winStatus.'">-</td>';
+										$noPref = $this->poll->voterCount - ($this->poll->orderedRunoff[$answer->answerID][$innerAnswer->answerID]->votes + $this->poll->orderedRunoff[$innerAnswer->answerID][$answer->answerID]->votes);
+										echo '<td class="number rightBorderCell padded '.$winStatus.'"><span class="runoffNopref">'.$noPref.'</span></td>';
 									}
 									//echo '$z: '.$z.', $empty: '.$empty; // DEBUG ONLY!!!
 								}
