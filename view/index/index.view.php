@@ -7,22 +7,6 @@
 </div>
 
 <div class="bigContainer">
-	<div class="bigContainerTitle">Recent Polls</div>
-	<div class="bigContainerInner">
-		<div id="recentPollContainer">
-			<?php
-			if (!empty($this->pollSet)) {
-				include('view/poll/pollset.view.php');
-			}
-			?>
-		</div>
-		<div class="center">
-			<button data-inline="true" onclick="loadMorePolls('r')">Load More</button>
-		</div>
-	</div>
-</div>
-
-<div class="bigContainer">
 	<div class="bigContainerTitle">Popular Polls</div>
 	<div class="bigContainerInner">
 		<div id="popularPollContainer">
@@ -38,5 +22,23 @@
 		</div>
 	</div>
 </div>
+
+<div class="bigContainer">
+	<div class="bigContainerTitle">Recent Polls</div>
+	<div class="bigContainerInner">
+		<div id="recentPollContainer">
+			<?php
+			$this->pollSet = $this->mostRecentPolls;
+			if (!empty($this->pollSet)) {
+				include('view/poll/pollset.view.php');
+			}
+			?>
+		</div>
+		<div class="center">
+			<button data-inline="true" onclick="loadMorePolls('r')">Load More</button>
+		</div>
+	</div>
+</div>
+
 <script><?php include('web/js/poll/create.js'); ?></script>
 <script><?php include('web/js/poll/history.js'); ?></script>

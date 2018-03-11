@@ -38,11 +38,12 @@ class PollController extends Controller
 	
 	public function history()
 	{
+		$this->title = 'More Polls';
 		// Poll history
-		$this->pollSet = $this->model->getMostRecentPolls(0, 10);
-		$this->processPollSet($this->pollSet);
-		$this->mostPopularPolls = $this->model->getMostPopularPolls(0, 10);
+		$this->mostRecentPolls = $this->model->getMostRecentPolls(0, 10);
 		$this->processPollSet($this->mostRecentPolls);
+		$this->mostPopularPolls = $this->model->getMostPopularPolls(0, 10);
+		$this->processPollSet($this->mostPopularPolls);
 	}
 	
 	public function ajaxinsertpoll()

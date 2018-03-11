@@ -153,46 +153,43 @@ div#pollButtonContainer {
 	margin: 0px auto;
 }
 
-form.answerForm {
-	float: left;
-	border-radius: 7px;
-	background-color: #eeeeee;
-	margin: 5px 5px 0px 0px;
-	box-shadow: 2px 2px 4px #cccccc;
-	padding-left: 10px;
-}
-
-.answerForm.ui-radio {
-	width: 42px;
-	height: 45px;
-}
-
-.starNumber {
-	background-image: url(../../../web/images/star-gold.png);
-	background-repeat: no-repeat;
-	background-position: center;
-    /*background-size: 60%;*/
-}
-
-.starText {
-	color: #cccccc;
-}
-
 /* Vote Selector */
+.voteForm {
+	float: left;
+	border: solid 1px #e7e7e7;
+	border-radius: 7px;
+	margin: 0px 0px 5px 0px;
+	padding: 3px 5px 0px 5px;
+}
+
+.voteForm legend {
+	text-align: center;
+}
+
 .voteForm input{
     margin:0;padding:0;
-    visibility: hidden;
+    display: none;
 }
 
-.visa{background-image:url(../../../web/images/star-gold.png);}
-.mastercard{background-image:url(http://i.imgur.com/SJbRQF7.png);}
+.emptystar{background-image:url(../../../web/images/star-empty-blue.png);}
+.fullstar{background-image:url(../../../web/images/star-full-blue.png);}
 
-.voteForm input:active +.voteFormLabel{opacity: .9;}
+.voteForm input:active +.voteFormLabel{
+	opacity: 1;
+	font-weight: bold !important;
+}
 .voteForm input:checked +.voteFormLabel{
     -webkit-filter: none;
        -moz-filter: none;
             filter: none;
+	font-weight: bold !important;
 }
+
+.voteForm input:checked +.voteFormLabel.fullstar{
+	color: white;
+	text-shadow: 1px 1px 2px #000000;
+}
+
 .voteFormLabel{
     float:left;
 	cursor:pointer;
@@ -202,7 +199,7 @@ form.answerForm {
 	font-size: 14px !important;
 	font-weight: bold !important;
 	text-align: center;
-	padding-top: 8px;
+	padding-top: 10px;
     width:34px;height:34px;
     -webkit-transition: all 100ms ease-in;
        -moz-transition: all 100ms ease-in;
@@ -212,9 +209,17 @@ form.answerForm {
             filter: brightness(1.8) grayscale(1) opacity(.7);
 }
 .voteFormLabel:hover{
-    -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
-       -moz-filter: brightness(1.2) grayscale(.5) opacity(.9);
-            filter: brightness(1.2) grayscale(.5) opacity(.9);
+    /*-webkit-filter: brightness(1.2) grayscale(.5) opacity(1);
+       -moz-filter: brightness(1.2) grayscale(.5) opacity(1);
+            filter: brightness(1.2) grayscale(.5) opacity(1);*/
+	-webkit-filter: none;
+       -moz-filter: none;
+            filter: none;
+}
+
+.voteFormLabel.fullstar:hover{
+	color: white;
+	text-shadow: 1px 1px 2px #000000;
 }
 
 /* END Vote Selector*/
