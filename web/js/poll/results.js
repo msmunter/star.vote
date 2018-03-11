@@ -26,7 +26,7 @@ function vote()
 		ajax: '1',
 		voterID: getCookie('voterID'),
 		pollID: $('#pollID').val(),
-		votes: $('.answerForm').serialize()
+		votes: $('.voteForm').serialize()
 	}, function(data) {
 		var jData = JSON.parse(data);
 		if (jData.error) {

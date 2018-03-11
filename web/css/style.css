@@ -162,6 +162,63 @@ form.answerForm {
 	padding-left: 10px;
 }
 
+.answerForm.ui-radio {
+	width: 42px;
+	height: 45px;
+}
+
+.starNumber {
+	background-image: url(../../../web/images/star-gold.png);
+	background-repeat: no-repeat;
+	background-position: center;
+    /*background-size: 60%;*/
+}
+
+.starText {
+	color: #cccccc;
+}
+
+/* Vote Selector */
+.voteForm input{
+    margin:0;padding:0;
+    visibility: hidden;
+}
+
+.visa{background-image:url(../../../web/images/star-gold.png);}
+.mastercard{background-image:url(http://i.imgur.com/SJbRQF7.png);}
+
+.voteForm input:active +.voteFormLabel{opacity: .9;}
+.voteForm input:checked +.voteFormLabel{
+    -webkit-filter: none;
+       -moz-filter: none;
+            filter: none;
+}
+.voteFormLabel{
+    float:left;
+	cursor:pointer;
+    background-size:contain;
+    background-repeat:no-repeat;
+    display:inline-block;
+	font-size: 14px !important;
+	font-weight: bold !important;
+	text-align: center;
+	padding-top: 8px;
+    width:34px;height:34px;
+    -webkit-transition: all 100ms ease-in;
+       -moz-transition: all 100ms ease-in;
+            transition: all 100ms ease-in;
+    -webkit-filter: brightness(1.8) grayscale(1) opacity(.7);
+       -moz-filter: brightness(1.8) grayscale(1) opacity(.7);
+            filter: brightness(1.8) grayscale(1) opacity(.7);
+}
+.voteFormLabel:hover{
+    -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
+       -moz-filter: brightness(1.2) grayscale(.5) opacity(.9);
+            filter: brightness(1.2) grayscale(.5) opacity(.9);
+}
+
+/* END Vote Selector*/
+
 div#customSlugInputContainer {
 	display: none;
 }
@@ -293,22 +350,6 @@ table#cvrTable tr.yourVoteRow td {
 	background-color: #38C;
 	color: white;
 	text-shadow: 1px 1px 2px #000000;
-}
-
-.answerForm.ui-radio {
-	width: 42px;
-	height: 45px;
-}
-
-.starNumber {
-	background-image: url(../../../web/images/star-gold.png);
-	background-repeat: no-repeat;
-	background-position: center;
-    /*background-size: 60%;*/
-}
-
-.starText {
-	color: #cccccc;
 }
 
 #shareURLInput {
