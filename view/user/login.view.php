@@ -24,7 +24,7 @@
 			</select>
 		</div>
 		<div class="center">
-			<button data-inline="true" onclick="ajaxLogin()">Login</button>
+			<button id="loginButton" data-inline="true" onclick="ajaxLogin()">Login</button>
 		</div>
 	</div>
 </div>

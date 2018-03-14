@@ -93,7 +93,7 @@ class UserController extends Controller
 		header("Location: /");
 	}
 	
-	public function dologin()
+	public function ajaxlogin()
 	{
 		//echo '<pre>';print_r($_POST);echo '</pre>'; // DEBUG ONLY!!!
 		if ($_POST['email'] && $_POST['pass']) {
