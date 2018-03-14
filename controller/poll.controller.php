@@ -215,6 +215,13 @@ class PollController extends Controller
 		// Verify no vote has been entered for this voter on this poll
 		$yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
 		if (empty($yourVote)) {
+			// No vote, get the answers to make sure we have a score for each
+			$this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
+			foreach ($this->poll->answers as $answer) {
+				if (!array_key_exists($answer->answerID, $voteArray)) {
+					$voteArray[$answer->answerID] = 0;
+				}
+			}
 			foreach ($voteArray as $answerID => $vote) {
 				$this->votes[] = $vote;
 				// Insert vote
@@ -237,7 +244,7 @@ class PollController extends Controller
 		}
 		unset($yourVote);
 		$this->poll = $this->model->getPollByID($this->pollID);
-		$this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
+		if (empty($this->poll->answers)) $this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
 		$this->yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
 		$return['html'] .= $this->ajaxInclude('view/poll/yourvote.view.php');
 		echo json_encode($return);
