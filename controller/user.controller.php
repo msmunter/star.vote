@@ -11,6 +11,7 @@ class UserController extends Controller
 	public $userToUpdateID;
 	// Admin Levels
 	public $adminLevel = array(
+		'admin' => 2,
 		'insertuser' => 2,
 		'passadmin' => 1,
 		'insertpassadmin' => 1,
@@ -30,6 +31,14 @@ class UserController extends Controller
 		if ($this->userID) {
 			$this->info = $this->model->getUserInfoByID($this->userID);
 		}
+	}
+	
+	public function index() {
+		$this->title = 'Your Polls and Surveys';
+	}
+	
+	public function admin() {
+		//$this->users = $this->model->getUsersAlphabetical($_POST['searchText'], 0, 50);
 	}
 	
 	// View single user
@@ -132,12 +141,6 @@ class UserController extends Controller
 	{
 		$this->title = 'Add User';
 	}
-	
-	/*public function index()
-	{
-		$this->title = 'Manage Users';
-		$this->users = $this->model->getUsersAlphabetical($_POST['searchText'], 0, 50);
-	}*/
 	
 	public function passadmin()
 	{
