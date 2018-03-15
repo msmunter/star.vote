@@ -48,8 +48,8 @@ class Controller
 		}
 		
 		// Init the user controller
-		/*$this->user = new UserController;
-		$this->user->init();*/
+		$this->user = new UserController;
+		$this->user->init();
 		
 		// Set view parameters
 		if ($this->ajax) {

@@ -1,8 +1,6 @@
 <div class="bigContainer">
 	<div class="bigContainerTitle">Login</div>
 	<div class="bigContainerInner">
-		<input type="hidden" name="ajax" value="1" />
-
 		<div class="ui-field-contain">
 			<label for="email">Email:</label>
 			<input type="text" name="email" id="email" placeholder="user@yourmail.domain" />
@@ -24,7 +22,7 @@
 			</select>
 		</div>
 		<div class="center">
-			<button id="loginButton" data-inline="true" onclick="ajaxLogin()">Login</button>
+			<button id="loginButton" data-inline="true" onclick="login()">Login</button>
 		</div>
 	</div>
 </div>

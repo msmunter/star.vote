@@ -12,7 +12,6 @@ class UserController extends Controller
 	// Admin Levels
 	public $adminLevel = array(
 		'insertuser' => 2,
-		'index' => 2,
 		'passadmin' => 1,
 		'insertpassadmin' => 1,
 		'details' => 2
@@ -121,11 +120,12 @@ class UserController extends Controller
 				}
 				//echo '$_COOKIE: <pre>';print_r($_COOKIE);echo '</pre>'; // DEBUG ONLY!!!
 				//echo '$_SESSION: <pre>';print_r($_SESSION);echo '</pre>'; // DEBUG ONLY!!!
-				header('Location: /');
+				$return['html'] = 'Success';
 			} else {
-				header('Location: /user/login/');
+				$return['error'] = 'Invalid login or password';
 			}
 		}
+		echo json_encode($return);
 	}
 	
 	public function add()
@@ -133,11 +133,11 @@ class UserController extends Controller
 		$this->title = 'Add User';
 	}
 	
-	public function index()
+	/*public function index()
 	{
 		$this->title = 'Manage Users';
 		$this->users = $this->model->getUsersAlphabetical($_POST['searchText'], 0, 50);
-	}
+	}*/
 	
 	public function passadmin()
 	{

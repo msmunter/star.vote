@@ -49,7 +49,7 @@ function login()
 	disableButtons();
 	disableInputs();
 	$.post("/", { 
-		c: 'poll', 
+		c: 'user', 
 		a: 'ajaxlogin', 
 		ajax: '1',
 		email: $('#email').val(),
@@ -58,10 +58,13 @@ function login()
 	}, function(data) {
 		var jData = JSON.parse(data);
 		if (jData.error) {
-			//alert(jData.error);
+			alert(jData.error);
 			updateStatus("ERROR: "+jData.error);
-			enableInputs();
-			enableButtons();
+			enableInputs(function() {
+				enableButtons(function() {
+					$('#email').focus();
+				});
+			});
 		} else if (jData.landingPage) {
 			updateStatus(jData.html);
 			window.location = '/'+jData.landingPage+'/';
@@ -70,8 +73,7 @@ function login()
 			updateStatus(jData.html);
 			window.location = '/userpolls/'+jData.userID+'/';
 		} else {
-			alert('ERROR: login failure');
-			//window.location = '/poll/history/';
+			window.location = '/';
 		}
 	});
 }
