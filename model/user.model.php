@@ -60,6 +60,27 @@ class UserModel extends Model
 		return $toReturn;*/
 	}
 	
+	public function getUserPollCount($userID)
+	{
+		$this->query = 'SELECT COUNT(`pollID`) as `count`
+						FROM `polls`
+						WHERE `userID` = '.$userID.';';
+		$this->doSelectQuery();
+		return $this->results[0]->count;
+	}
+	
+	public function getPollsByUserID($userID, $index, $limit)
+	{
+		if (empty($index)) $index = 0;
+		if (empty($limit)) $limit = 50;
+		$this->query = 'SELECT * FROM `polls`
+						WHERE `polls`.`userID` = '.$userID.'
+						LIMIT '.$index.','.$limit.';';
+		$this->doSelectQuery();
+		if (!empty($this->results)) return $this->results;
+		return false;
+	}
+	
 	public function addUser($newUser)
 	{
 		$this->query = 'INSERT INTO `users` (`pass`, `admin_level`, `email`, `added`, `firstName`, `lastName`) VALUES ("'.$newUser['pass'].'", "'.$newUser['adminLevel'].'", "'.$newUser['email'].'", "'.$newUser['added'].'", "'.$newUser['firstName'].'", "'.$newUser['lastName'].'");';

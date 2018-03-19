@@ -574,3 +574,11 @@ div#footer a:link {
 .pageBreak	{
 	display: none;
 }
+
+.noMargin {
+	margin: 0px !important;
+}
+
+.noPadding {
+	padding: 0px !important;
+}
