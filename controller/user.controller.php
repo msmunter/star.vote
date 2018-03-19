@@ -128,6 +128,7 @@ class UserController extends Controller
 			// Good so far, attempt to update
 			$pass = password_hash($_POST['pass1'], PASSWORD_DEFAULT);
 			$this->model->insertPassAdmin($this->user->userID, $pass);
+			$return['html'] = 'Password changed';
 		}
 		echo json_encode($return);
 	}
