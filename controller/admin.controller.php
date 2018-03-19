@@ -14,7 +14,7 @@ class AdminController extends Controller
 	public function index() {
 		$this->title = 'Site/User Admin';
 		$this->userCount = $this->model->getUserCount();
-		$this->users = $this->model->getUsers();
+		$this->users = $this->model->getUsers(50);
 	}
 	
 	public function passadmin()

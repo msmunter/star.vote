@@ -10,8 +10,12 @@
 		<div class="bigContainerTitle">Users (<a href="/admin/admincreateuser/">Add User</a>)</div>
 		<div class="bigContainerInner">
 			<?php
-			foreach ($this->admin->users as $user) {
-				echo '<a href="/admin/userdetails/'.$user->userID.'/">'.$user->firstName.' '.$user->lastName.'</a><br />';
+			if ($this->userCount > 0) {
+				foreach ($this->admin->users as $user) {
+					echo '<a href="/admin/userdetails/'.$user->userID.'/">'.$user->firstName.' '.$user->lastName.'</a><br />';
+				}
+			} else {
+				echo 'No users other than the site admin.';
 			}
 			?>
 		</div>
