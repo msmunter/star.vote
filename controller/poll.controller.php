@@ -91,7 +91,7 @@ class PollController extends Controller
 					$userID = $this->user->userID;
 				} else $userID = 0;
 				// Insert actual
-				$this->model->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug'], $userID);
+        $this->model->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug'], $_POST['fsVerifiedVoting'], $userID);
 				$return['html'] .= 'Poll saved! Loading results...';
 			} else {
 				$return['error'] = 'Must provide at least two possible answers';

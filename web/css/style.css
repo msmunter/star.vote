@@ -225,7 +225,7 @@ div#pollButtonContainer {
 
 /* END Vote Selector*/
 
-div#customSlugInputContainer {
+div#customSlugInputContainer, div#verifiedVotingSelectContainer {
 	display: none;
 }
 
