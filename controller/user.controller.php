@@ -5,17 +5,13 @@ class UserController extends Controller
 	
 	public $userID;
 	public $info;
-	public $newUser;
-	public $users;
-	public $settings;
 	public $userToUpdateID;
 	// Admin Levels
 	public $adminLevel = array(
-		'admin' => 2,
-		'insertuser' => 2,
+		'insertuser' => 1,
 		'passadmin' => 1,
 		'insertpassadmin' => 1,
-		'details' => 2
+		'details' => 1
 	);
 	
 	// ------------------------------- Methods --------------------------------
@@ -30,15 +26,12 @@ class UserController extends Controller
 		// If a userID was found, populate info
 		if ($this->userID) {
 			$this->info = $this->model->getUserInfoByID($this->userID);
+			$this->info->initials = strtoupper(substr($this->info->firstName, 0, 1)).' '.strtoupper(substr($this->info->lastName, 0, 1));
 		}
 	}
 	
 	public function index() {
 		$this->title = 'Your Polls and Surveys';
-	}
-	
-	public function admin() {
-		//$this->users = $this->model->getUsersAlphabetical($_POST['searchText'], 0, 50);
 	}
 	
 	// View single user
@@ -50,18 +43,6 @@ class UserController extends Controller
 		}
 		if ($this->detailUserID) {
 			$this->title = 'User Details';
-			//$this->detailPerson = $this->model->getPersonByUserID($this->detailUserID);
-			/*$this->photoPath = '/srv/www/vhosts/'.$this->staticServer.'/images/org_logos/'.$this->detailUserID;
-			$this->photoURL = 'http://'.$this->staticServer.'/images/org_logos/'.$this->detailUserID;
-			if (file_exists($this->photoPath.'.jpg')) {
-				$this->photoPath .= '.jpg';
-				$this->photoURL .= '.jpg';
-			} else {
-				$this->photoPath .= '.png';
-				$this->photoURL .= '.png';
-			}*/
-			// Get user's phone #s
-			//$this->user->phones = $this->model->getPhonesByUserID($person->person_id) && $this->assemblePhoneNumbers($this->user->phones);
 		}
 	}
 	
@@ -125,9 +106,14 @@ class UserController extends Controller
 		$this->title = 'Add User';
 	}
 	
-	public function passadmin()
+	public function changepass()
 	{
 		$this->title = 'Change Password';
+	}
+	
+	public function passadmin()
+	{
+		$this->title = 'Change User Password';
 		$this->userToUpdateID = $_GET['d'];
 	}
 	
@@ -140,6 +126,20 @@ class UserController extends Controller
 		} else {
 			$this->errors[] = 'Error: passwords do not match';
 		}
+	}
+	
+	public function ajaxchangemypass()
+	{
+		if ($this->user->userID < 1) {
+			$return['error'] = 'User must be logged in';
+		} else if ($_POST['pass1'] != $_POST['pass2']) {
+			$return['error'] = 'Passwords to not match';
+		} else {
+			// Good so far, attempt to update
+			$pass = password_hash($_POST['pass1'], PASSWORD_DEFAULT);
+			$this->model->insertPassAdmin($this->user->userID, $pass);
+		}
+		echo json_encode($return);
 	}
 	
 	public function insertuser()
@@ -195,12 +195,21 @@ class UserController extends Controller
 		} else return false;
 	}
 	
-	public function doesemailexist($email)
+	private function doesemailexist($email)
 	{
 		$this->model->checkExistingEmail($email);
 		if (count($this->results) > 0) {
 			echo '1';
 		} else echo '0';
+	}
+	
+	private function passFailsReqs($pass)
+	{
+		if (strlen($pass) < 8) {
+			return 'Password too short';
+		} else if (strlen($pass) > 64) {
+			return 'Password too long';
+		} else return false;
 	}
 }
 ?>

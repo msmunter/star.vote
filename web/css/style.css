@@ -97,6 +97,7 @@ div.bigContainerSubheader {
 
 /* Polls */
 #statusMsg {
+	display: none;
 	border-radius: 7px;
 	padding: 0px 5px 0px 5px;
 	float: left;

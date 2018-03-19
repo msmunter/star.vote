@@ -1,32 +1,32 @@
 $(document).ready(function() {
 	// Set focus on email input
-	$('#email').focus();
+	$('#pass1').focus();
 	// Grab enter to click 'login' button
 	$(document).bind('keypress', function(e) {
 		if(e.keyCode==13){
-			login();
+			changeMyPass();
 		}
 	});
 });
 
 function disableInputs()
 {
-	$('#email, #pass, #authLength').prop("disabled", true);
+	$('#pass1, #pass2').prop("disabled", true);
 }
 
 function enableInputs()
 {
-	$('#email, #pass, #authLength').prop("disabled", false);
+	$('#pass1, #pass2').prop("disabled", false);
 }
 
 function disableButtons()
 {
-	$('#loginButton').prop("disabled", true);
+	$('#changePassButton').prop("disabled", true);
 }
 
 function enableButtons()
 {
-	$('#loginButton').prop("disabled", false);
+	$('#changePassButton').prop("disabled", false);
 }
 
 function updateStatus(msg)
@@ -43,36 +43,27 @@ function clearStatus()
 	});
 }
 
-function login()
-{
+function changeMyPass() {
 	// Disable inputs, buttons
 	disableButtons();
 	disableInputs();
 	$.post("/", { 
 		c: 'user', 
-		a: 'ajaxlogin', 
+		a: 'ajaxchangemypass', 
 		ajax: '1',
-		email: $('#email').val(),
-		pass: $('#pass').val(),
-		authLength: $('#authLength').val()
+		pass1: $('#pass1').val(),
+		pass2: $('#pass2').val()
 	}, function(data) {
 		var jData = JSON.parse(data);
 		if (jData.error) {
 			updateStatus("ERROR: "+jData.error);
 			enableInputs(function() {
 				enableButtons(function() {
-					$('#email').focus();
+					$('#pass1').focus();
 				});
 			});
-		} else if (jData.landingPage) {
-			updateStatus(jData.html);
-			window.location = '/'+jData.landingPage+'/';
-		} else if (jData.userID) {
-			// Success, update status and go to user's page
-			updateStatus(jData.html);
-			window.location = '/userpolls/'+jData.userID+'/';
 		} else {
-			window.location = '/';
+			window.location = '/user/';
 		}
 	});
 }
