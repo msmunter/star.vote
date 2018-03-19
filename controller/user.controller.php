@@ -101,31 +101,14 @@ class UserController extends Controller
 		echo json_encode($return);
 	}
 	
-	public function add()
+	public function signup()
 	{
-		$this->title = 'Add User';
+		$this->title = 'Signup';
 	}
 	
 	public function changepass()
 	{
 		$this->title = 'Change Password';
-	}
-	
-	public function passadmin()
-	{
-		$this->title = 'Change User Password';
-		$this->userToUpdateID = $_GET['d'];
-	}
-	
-	public function insertpassadmin()
-	{
-		if ($_POST['userToUpdateID'] && $_POST['pass1'] == $_POST['pass2']) {
-			$pass = password_hash($_POST['pass1'], PASSWORD_DEFAULT);
-			$this->model->insertPassAdmin($_POST['userToUpdateID'], $pass);
-			header('Location: /user/');
-		} else {
-			$this->errors[] = 'Error: passwords do not match';
-		}
 	}
 	
 	public function ajaxchangemypass()
@@ -158,6 +141,8 @@ class UserController extends Controller
 			if ($insertID > 0) echo $insertID;
 		} else $this->errors[] = "Error: passwords do not match.";
 	}
+	
+	/* Private Methods */
 	
 	private function loadModel()
 	{

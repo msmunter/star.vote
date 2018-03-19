@@ -1,5 +1,18 @@
 <?php if ($this->user->userID) { ?>
-	Hello, <?php echo $this->user->info->firstName; ?>!
+	<div>Hello, <?php echo $this->user->info->firstName; ?>!</div>
+	<div class="bigContainer">
+		<div class="bigContainerTitle">Surveys</div>
+		<div class="bigContainerInner">
+			<?php
+			if (!empty($this->user->surveys)) { 
+				foreach ($this->user->surveys as $survey) {
+					echo $survey->title.'<br />';
+				}
+			} else { ?>
+				No surveys created yet
+			<?php } ?>
+		</div>
+	</div>
 	<div class="bigContainer">
 		<div class="bigContainerTitle">Polls</div>
 		<div class="bigContainerInner">
