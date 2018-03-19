@@ -48,7 +48,7 @@ function adminCreateUser() {
 	disableButtons();
 	disableInputs();
 	$.post("/", { 
-		c: 'user', 
+		c: 'admin', 
 		a: 'ajaxadmincreateuser', 
 		ajax: '1',
 		firstName: $('#firstName').val(),
@@ -66,7 +66,7 @@ function adminCreateUser() {
 				});
 			});
 		} else {
-			window.location = '/user/';
+			window.location = '/admin/';
 		}
 	});
 }

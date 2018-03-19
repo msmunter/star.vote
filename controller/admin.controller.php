@@ -2,7 +2,8 @@
 class AdminController extends Controller
 {
 	// ------------------------------ Attributes ------------------------------
-	
+	public $userCount;
+	public $users;
 	public $admin;
 	// Admin Levels
 	public $adminLevel = array(
@@ -45,13 +46,16 @@ class AdminController extends Controller
 			$this->newUser['firstName'] = $_POST['firstName'];
 			$this->newUser['lastName'] = $_POST['lastName'];
 			$this->newUser['email'] = $_POST['email'];
-			$this->newUser['adminLevel'] = $_POST['adminLevel'];
+			$this->newUser['adminLevel'] = 0;
 			$this->newUser['pass'] = password_hash($_POST['pass1'], PASSWORD_DEFAULT);
 			$dateTime = new DateTime();
 			$this->newUser['added'] = $dateTime->format('U');
-			$insertID = $this->model->addUser($this->newUser);
-			if ($insertID > 0) echo $insertID;
-		} else $this->errors[] = "Error: passwords do not match.";
+			$userModel = new UserModel;
+			$insertID = $userModel->addUser($this->newUser);
+			unset($userModel);
+			$return['newUserID'] = $insertID;
+		} else $return['error'] = "Error: passwords do not match.";
+		echo json_encode($return);
 	}
 	
 	/* Private Methods */

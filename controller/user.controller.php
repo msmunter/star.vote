@@ -116,7 +116,7 @@ class UserController extends Controller
 		$this->title = 'Change Password';
 	}
 	
-	public function ajaxchangemypass()
+	public function ajaxchangepass()
 	{
 		if ($this->user->userID < 1) {
 			$return['error'] = 'User must be logged in';
@@ -130,7 +130,7 @@ class UserController extends Controller
 		echo json_encode($return);
 	}
 	
-	public function insertuser()
+	/*public function insertuser()
 	{
 		// Parse incoming form (ajax/post)
 		if (!empty($_POST['form'])) $_POST['form'] = parse_str($_POST['form'], $this->form);
@@ -145,7 +145,7 @@ class UserController extends Controller
 			$insertID = $this->model->addUser($this->newUser);
 			if ($insertID > 0) echo $insertID;
 		} else $this->errors[] = "Error: passwords do not match.";
-	}
+	}*/
 	
 	/* Private Methods */
 	

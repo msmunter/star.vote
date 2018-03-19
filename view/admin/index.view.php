@@ -7,15 +7,15 @@
 		</div>
 	</div>
 	<div class="bigContainer">
-		<div class="bigContainerTitle">Users (<a href="/admin/admincreateuser/">Add User</a>)</div>
+		<div class="bigContainerTitle">Users <a class="ui-btn ui-btn-inline ui-icon-plus ui-btn-icon-notext ui-corner-all noMargin" href="/admin/admincreateuser/">Add User</a></div>
 		<div class="bigContainerInner">
 			<?php
 			if ($this->userCount > 0) {
-				foreach ($this->admin->users as $user) {
+				foreach ($this->users as $user) {
 					echo '<a href="/admin/userdetails/'.$user->userID.'/">'.$user->firstName.' '.$user->lastName.'</a><br />';
 				}
 			} else {
-				echo 'No users other than the site admin.';
+				echo 'No users other than you.';
 			}
 			?>
 		</div>

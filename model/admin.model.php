@@ -3,11 +3,10 @@ class AdminModel extends Model
 {
 	public function getUserCount()
 	{
-		$this->query = 'SELECT COUNT(`userID`) FROM `users`
+		$this->query = 'SELECT COUNT(`userID`) as `ct` FROM `users`
 						WHERE `userID` > 1;';
 		$this->doSelectQuery();
-		if (!empty($this->results)) return $this->results[0];
-		return false;
+		return $this->results[0]->ct;
 	}
 	
 	public function getUsers($limit)

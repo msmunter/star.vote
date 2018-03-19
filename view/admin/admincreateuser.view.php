@@ -1,5 +1,5 @@
 <div class="bgbox">
-	<h4><a href="/user/">Admin</a> &#8594; Create User</h4>
+	<h4><a href="/admin/">Admin</a> &#8594; Create User</h4>
 	
 	<div data-role="fieldcontain">
 		<label for="firstName">First Name:</label>

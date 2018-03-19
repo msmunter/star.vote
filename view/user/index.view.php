@@ -2,7 +2,7 @@
 <?php if ($this->user->userID) { ?>
 	<div>Hello, <?php echo $this->user->info->firstName; ?>!</div>
 	<div class="bigContainer">
-		<div class="bigContainerTitle">Surveys <a href="/survey/create/" class="ui-btn ui-btn-inline ui-icon-plus ui-btn-icon-notext ui-corner-all noMargin">New Survey</a></div>
+		<div class="bigContainerTitle">Surveys/Elections <a href="/survey/create/" class="ui-btn ui-btn-inline ui-icon-plus ui-btn-icon-notext ui-corner-all noMargin">New Survey/Election</a></div>
 		<div class="bigContainerInner">
 			<?php
 			if (!empty($this->surveys)) { 
@@ -10,7 +10,7 @@
 					echo $survey->title.'<br />';
 				}
 			} else { ?>
-				No surveys created yet
+				No surveys/elections created yet
 			<?php } ?>
 		</div>
 	</div>
