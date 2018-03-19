@@ -65,23 +65,6 @@ class UserController extends Controller
 		}
 	}
 	
-	/*public function dash()
-	{
-		$this->title = 'User Dashboard';
-		$this->detailUser = $this->model->getUserInfoByID($this->user->userID);
-		// Get user's org
-		$this->detailUser->org = $this->model->getOrgByUserID($this->user->userID);
-		// Get user's batches
-		$mBatches = new BatchesModel();
-		if ($_POST['batchSearchText']) {
-			$this->detailUser->batches = $mBatches->getBatchesByOrgIDAndSearch($this->detailUser->org->org_id, $_POST['batchSearchText'], 0, 25);
-		} else $this->detailUser->batches = $mBatches->getBatchesByOrgIDAndSearch($this->detailUser->org->org_id, null, 0, 25);
-		unset($mBatches);
-		$mOrders = new OrdersModel();
-		//$this->detailUserOrders = $mOrders->getOrdersByUserID($this->user->userID);
-		unset($mOrders);
-	}*/
-	
 	public function login()
 	{
 		$this->title = 'User Login';
@@ -116,7 +99,7 @@ class UserController extends Controller
 					$seObject = new DateTime();
 					$seObject->modify("+24 hours");
 				}
-				// Add token to database and session
+				// Add token to database (and formerly the session)
 				$authToken = $this->createToken($this->userID, $seObject->format('U'));
 				//$_SESSION['authToken'] = $authToken;
 				// Also add token to the cookie
@@ -124,8 +107,8 @@ class UserController extends Controller
 					setcookie("authToken", $authToken, $seObject->format('U'), '/', '.'.$this->server);
 					setcookie("authID", $this->userID, $seObject->format('U'), '/', '.'.$this->server);
 				} else {
-					setcookie("authToken", $authToken, 0, '/', '.greenhealtheugene.com');
-					setcookie("authID", $this->userID, 0, '/', '.greenhealtheugene.com');
+					setcookie("authToken", $authToken, 0, '/', '.'.$this->server);
+					setcookie("authID", $this->userID, 0, '/', '.'.$this->server);
 				}
 				//echo '$_COOKIE: <pre>';print_r($_COOKIE);echo '</pre>'; // DEBUG ONLY!!!
 				//echo '$_SESSION: <pre>';print_r($_SESSION);echo '</pre>'; // DEBUG ONLY!!!
@@ -189,7 +172,7 @@ class UserController extends Controller
 		$tokenExists = true;
 		while ($tokenExists) {
 			// Generate token
-			$token = md5(uniqid(mt_rand(), true));
+			$token = bin2hex(random_bytes(64));
 			// Verify token
 			$tokenExists = $this->verifyToken($token, true);
 		}
