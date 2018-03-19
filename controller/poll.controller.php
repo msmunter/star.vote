@@ -22,6 +22,7 @@ class PollController extends Controller
 	public function create()
 	{
 		// Display form for poll creation
+		$this->title = 'Create Poll';
 	}
 	
 	public function processPollSet($pollSet)
@@ -86,8 +87,11 @@ class PollController extends Controller
 					$return['customSlug'] = $_POST['fsCustomSlug'];
 				}
 				$return['pollID'] = $newPollID;
+				if ($this->user->userID > 0) {
+					$userID = $this->user->userID;
+				} else $userID = 0;
 				// Insert actual
-				$this->model->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug']);
+				$this->model->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug'], $userID);
 				$return['html'] .= 'Poll saved! Loading results...';
 			} else {
 				$return['error'] = 'Must provide at least two possible answers';
@@ -121,18 +125,14 @@ class PollController extends Controller
 				$this->poll = $this->model->getPollByID($this->URLdata);
 				// Set title
 				$this->title = $this->poll->question;
+				// Init voter
+				$this->initVoter(null);
 				// Determine whether user has voted
-				if (!empty($_COOKIE['voterID'])) {
-					$this->setVoterID();
-					if ($this->model->userHasVoted($this->voterID, $this->URLdata)) {
-						$this->hasVoted = true;
-						// Get their vote
-						$this->yourVote = $this->model->getYourVote($this->voterID, $this->poll->pollID);
-					} else $this->hasVoted = false;
-				} else {
-					$this->hasVoted = false;
-					$this->setVoterID();
-				}
+				if ($this->model->userHasVoted($this->voterID, $this->URLdata)) {
+					$this->hasVoted = true;
+					// Get their vote
+					$this->yourVote = $this->model->getYourVote($this->voterID, $this->poll->pollID);
+				} else $this->hasVoted = false;
 				// Load the answers
 				if (empty($this->poll)) {
 					$this->error = "ERROR: Poll not found";
@@ -198,7 +198,8 @@ class PollController extends Controller
 	
 	public function ajaxvote()
 	{
-		$this->voterID = $_POST['voterID'];
+		// Initialize voter (will provide $this->voterID)
+		$this->initVoter($_POST['voterID']);
 		$this->pollID = $_POST['pollID'];
 		parse_str($_POST['votes'], $dirtyVoteArray);
 		// Cleanup array
@@ -207,9 +208,6 @@ class PollController extends Controller
 			$answerID = $indexBoom[1];
 			unset($indexBoom);
 			$voteArray[$answerID] = $vote;
-		}
-		if (!$this->model->voterExists($this->voterID)) {
-			$this->model->insertVoter($this->voterID, $_SERVER['REMOTE_ADDR']);
 		}
 		$voteArrayToDestroy = $voteArray;
 		// Verify no vote has been entered for this voter on this poll
@@ -370,19 +368,47 @@ class PollController extends Controller
 		return $return;
 	}
 	
-	private function setVoterID()
+	private function initVoter($voterID)
 	{
-		// Check cookie for voter ID
-		if (strlen($_COOKIE['voterID']) > 0) {
-			$this->voterID = $_COOKIE['voterID'];
+		$cookieExpires = strtotime('+5 years');
+		// If they passed an ID check it
+		if (strlen($voterID) > 0) {
+			if ($this->model->voterExists($_COOKIE['voterID'])) {
+				// Set voterID in class, cookie, and session
+				$this->voterID = $voterID;
+				setcookie("voterID", $this->voterID, $cookieExpires);
+				$_SESSION['voterID'] = $this->voterID;
+			}
+		} else if (strlen($_COOKIE['voterID']) > 0) {
+			// Determine if valid voter ID exists in cookie
+			if ($this->model->voterExists($_COOKIE['voterID'])) {
+				$this->voterID = $_COOKIE['voterID'];
+				// Set session to cookie
+				$_SESSION['voterID'] = $_COOKIE['voterID'];
+			}
+		} else if (strlen($_SESSION['voterID']) > 0) {
+			// Determine if valid voter ID exists in session.
+			if ($this->model->voterExists($_SESSION['voterID'])) {
+				$this->voterID = $_SESSION['voterID'];
+				// Set cookie to session
+				setcookie("voterID", $this->voterID, $cookieExpires);
+			}
 		}
 		// Generate voter ID if necessary
 		if (strlen($this->voterID) < 1) {
 			$this->voterID = $this->generateUniqueID(10, "voters", "voterID");
+			// Save voter to DB
+			$this->model->insertVoter($this->voterID, $_SERVER['REMOTE_ADDR']);
 			// Save a cookie with their voter ID
-			$cookieExpires = strtotime('+5 years');
 			setcookie("voterID", $this->voterID, $cookieExpires);
+			// Save session variable
+			$_SESSION['voterID'] = $this->voterID;
+			return true;
+		} else {
+			// Didn't get an ID, something went awry
+			return false;
 		}
+		
 	}
 	
 	private function generateUniqueID($length, $table, $column)
