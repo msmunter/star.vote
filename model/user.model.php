@@ -4,7 +4,7 @@ class UserModel extends Model
 	public function getUserInfoByID($userID)
 	{
 		$this->query = 'SELECT * FROM `users`
-						WHERE `users`.`user_id` = '.$userID.'
+						WHERE `users`.`userID` = '.$userID.'
 						LIMIT 0,1;';
 		$this->doSelectQuery();
 		if (!empty($this->results)) return $this->results[0];
@@ -13,7 +13,7 @@ class UserModel extends Model
 	
 	/*public function searchUsers($searchText)
 	{
-		$this->query = 'SELECT `user_id`, `email`, `firstname`, `lastname`, `client_id`, `admin_level`
+		$this->query = 'SELECT `userID`, `email`, `firstname`, `lastname`, `client_id`, `admin_level`
 						FROM `users` ';
 		if ($searchText) {
 			$this->query .= 'WHERE `firstname` LIKE %'.$searchText.'%
@@ -53,7 +53,7 @@ class UserModel extends Model
 	public function getSettings($userID)
 	{
 		// Form a select query to get settings from database
-		/*$this->query = 'SELECT `item`, `value` FROM `settings` WHERE `user_id` = '.$userID.';';
+		/*$this->query = 'SELECT `item`, `value` FROM `settings` WHERE `userID` = '.$userID.';';
 		$this->doSelectQuery();
 		// Make a tidy array
 		foreach ($this->results as $result) $toReturn[$result->item] = $result->value;
@@ -70,7 +70,7 @@ class UserModel extends Model
 	public function insertPassAdmin($userID, $pass)
 	{
 		$this->query = 'UPDATE `users` SET `pass` = "'.$pass.'"
-						WHERE `user_id` = '.$userID.'
+						WHERE `userID` = '.$userID.'
 						LIMIT 1;';
 		$this->doUpdateQuery();
 	}
@@ -78,14 +78,14 @@ class UserModel extends Model
 	public function getUserIDByToken($token)
 	{
 		$timeObject = new DateTime();
-		$this->query = "SELECT `tokens`.`user_id`
+		$this->query = "SELECT `tokens`.`userID`
 						FROM `tokens`
 						WHERE `tokens`.`token` LIKE \"$token\"
 						AND `tokens`.`expires` > ".$timeObject->format('U')."
 						LIMIT 0,1";
 		$this->doSelectQuery();
 		//echo 'getUserIDByToken:<pre>';print_r($this->query);echo '</pre>'; // DEBUG ONLY!!!
-		if (!empty($this->results)) return $this->results[0]->user_id;
+		if (!empty($this->results)) return $this->results[0]->userID;
 		return false;
 	}
 	
@@ -97,7 +97,7 @@ class UserModel extends Model
 		$this->doSelectQuery();
 		// Verify, return userID or false
 		if (password_verify($pass, $this->results[0]->pass)) {
-			return $this->results[0]->user_id;
+			return $this->results[0]->userID;
 		} else return false;
 	}
 	
@@ -105,7 +105,7 @@ class UserModel extends Model
 	{
 		$timeObject = new DateTime();
 		$this->query = "DELETE FROM `tokens`
-						WHERE `tokens`.`user_id` = $userID
+						WHERE `tokens`.`userID` = $userID
 						AND `tokens`.`expires` <= ".$timeObject->format('U').";";
 		if ($this->doDeleteQuery()) return true;
 		return false;
@@ -122,7 +122,7 @@ class UserModel extends Model
 	public function insertToken($userID, $token, $expires)
 	{
 		$this->destroyExpiredTokensByUserID($userID);
-		$this->query = 'INSERT INTO `tokens` (`user_id`, `token`, `expires`) 
+		$this->query = 'INSERT INTO `tokens` (`userID`, `token`, `expires`) 
 						VALUES ("'.$userID.'", "'.$token.'", "'.$expires.'");';
 		if ($this->doInsertQuery()) return true;
 		return false;

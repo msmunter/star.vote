@@ -14,7 +14,7 @@ class AdminModel extends Model
 	{
 		if ($limit < 1) $limit = 1000;
 		$this->query = 'SELECT * FROM `users`
-						WHERE `user_id` > 1
+						WHERE `userID` > 1
 						LIMIT 0,'.$limit.';';
 		$this->doSelectQuery();
 		if (!empty($this->results)) return $this->results;
@@ -24,7 +24,7 @@ class AdminModel extends Model
 	public function getUserInfoByID($userID)
 	{
 		$this->query = 'SELECT * FROM `users`
-						WHERE `users`.`user_id` = '.$userID.'
+						WHERE `users`.`userID` = '.$userID.'
 						LIMIT 0,1;';
 		$this->doSelectQuery();
 		if (!empty($this->results)) return $this->results[0];
@@ -33,7 +33,7 @@ class AdminModel extends Model
 	
 	/*public function searchUsers($searchText)
 	{
-		$this->query = 'SELECT `user_id`, `email`, `firstname`, `lastname`, `client_id`, `admin_level`
+		$this->query = 'SELECT `userID`, `email`, `firstname`, `lastname`, `client_id`, `admin_level`
 						FROM `users` ';
 		if ($searchText) {
 			$this->query .= 'WHERE `firstname` LIKE %'.$searchText.'%
@@ -80,7 +80,7 @@ class AdminModel extends Model
 	public function insertPassAdmin($userID, $pass)
 	{
 		$this->query = 'UPDATE `users` SET `pass` = "'.$pass.'"
-						WHERE `user_id` = '.$userID.'
+						WHERE `userID` = '.$userID.'
 						LIMIT 1;';
 		$this->doUpdateQuery();
 	}
