@@ -32,10 +32,12 @@ class UserController extends Controller
 	
 	public function index() {
 		$this->title = 'Your Polls and Surveys';
-		$this->pollCount = $this->model->getUserPollCount($this->user->userID);
-		if ($this->pollCount > 0) {
-			if ($this->pollCount > 20) $limit = 20;
-			$this->polls = $this->model->getPollsByUserID($this->user->userID, 0, $limit);
+		if ($this->user->userID > 0) {
+			$this->pollCount = $this->model->getUserPollCount($this->user->userID);
+			if ($this->pollCount > 0) {
+				if ($this->pollCount > 20) $limit = 20;
+				$this->polls = $this->model->getPollsByUserID($this->user->userID, 0, $limit);
+			}
 		}
 	}
 	
