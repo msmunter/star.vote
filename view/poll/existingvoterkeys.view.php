@@ -1,4 +1,6 @@
-<p>There are <?php echo $this->voterKeyCount; ?> voter keys <a href="/poll/voterkeyscsv/<?php echo $this->poll->pollID; ?>/">CSV</a></p>
+<div>
+	There are <?php echo $this->voterKeyCount; ?> voter keys <a class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all" href="/poll/voterkeyscsv/<?php echo $this->poll->pollID; ?>/">CSV</a>
+</div>
 <?php
 if ($this->voterKeyCount > 0) {
 	echo '<table id="voterKeyTable">';
