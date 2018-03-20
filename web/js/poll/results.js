@@ -113,7 +113,7 @@ function showCvrHtml() {
 			$('#statusMsg').error("ERROR: "+jData.error);
 		} else {
 			// Show results
-			$('#cvrhtml').html(jData.html).fadeIn(100);
+			$('#ballotRecordContainer').html(jData.html).fadeIn(100);
 		}
 	});
 }

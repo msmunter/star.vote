@@ -301,24 +301,36 @@ class PollController extends Controller
 	{
 		$this->URLdata = $_POST['pollID'];
 		$this->results();
-		$return['results'] = $this->ajaxInclude('view/poll/resultsactual.view.php');
-		$return['runoffmatrix'] = $this->ajaxInclude('view/poll/runoffmatrix.view.php');
+		// Is eligible to see the results?
+		if (($this->poll->verifiedVoting && $this->user->userID == $this->poll->userID) || ($this->poll->verifiedVoting && $this->hasVoted) || $this->poll->verifiedVoting == false) {
+			$return['results'] = $this->ajaxInclude('view/poll/resultsactual.view.php');
+			$return['runoffmatrix'] = $this->ajaxInclude('view/poll/runoffmatrix.view.php');
+		} else {
+			$return['results'] = 'Results cannot be viewed yet';
+			$return['runoffmatrix'] = '';
+		}
 		echo json_encode($return);
 	}
 	
 	public function ajaxrunoffmatrix()
 	{
 		$pollID = $_POST['pollID'];
-		$this->poll->rawRunoff = $this->model->getRunoffResultsRawByPollID($pollID);
-		$this->poll->voterCount = $this->model->getPollVoterCount($pollID);
-		$this->poll->answers = $this->model->getAnswerByPollIDScoreOrder($pollID);
-		foreach ($this->poll->answers as $index => $answer) {
-			$this->poll->runoffAnswerArray[$answer->answerID] = $answer;
+		$this->poll = $this->model->getPollByID($pollID);
+		// Is eligible to see the results?
+		if (($this->poll->verifiedVoting && $this->user->userID == $this->poll->userID) || ($this->poll->verifiedVoting && $this->hasVoted) || $this->poll->verifiedVoting == false) {
+			$this->poll->rawRunoff = $this->model->getRunoffResultsRawByPollID($pollID);
+			$this->poll->voterCount = $this->model->getPollVoterCount($pollID);
+			$this->poll->answers = $this->model->getAnswerByPollIDScoreOrder($pollID);
+			foreach ($this->poll->answers as $index => $answer) {
+				$this->poll->runoffAnswerArray[$answer->answerID] = $answer;
+			}
+			foreach ($this->poll->rawRunoff as $runoff) {
+				$this->poll->orderedRunoff[$runoff->gtID][$runoff->ltID] = $runoff;
+			}
+			$return['html'] = $this->ajaxInclude('view/poll/runoffmatrix.view.php');
+		} else {
+			$return['html'] = 'Results cannot be viewed yet';
 		}
-		foreach ($this->poll->rawRunoff as $runoff) {
-			$this->poll->orderedRunoff[$runoff->gtID][$runoff->ltID] = $runoff;
-		}
-		$return['html'] = $this->ajaxInclude('view/poll/runoffmatrix.view.php');
 		echo json_encode($return);
 	}
 	
@@ -402,13 +414,17 @@ class PollController extends Controller
 		$this->doHeader = 0;
 		$this->doFooter = 0;
 		$this->poll = $this->model->getPollByID($_POST['pollID']);
-		if (!empty($this->poll)) {
-			$this->poll->answers = $this->model->getAnswersByPollID($_POST['pollID']);
-			$this->poll->ballots = $this->model->getBallotsByPollID($_POST['pollID']);
-			// Process ballots into a single, cohesive array
-			$this->poll->processedBallots = $this->processBallots($this->poll->ballots);
-		} else $return['error'] = 'Poll not found';
-		$return['html'] = $this->ajaxInclude('view/poll/cvrhtml.view.php');
+		if (($this->poll->verifiedVoting && $this->user->userID == $this->poll->userID) || ($this->poll->verifiedVoting && $this->hasVoted) || $this->poll->verifiedVoting == false) {
+			if (!empty($this->poll)) {
+				$this->poll->answers = $this->model->getAnswersByPollID($_POST['pollID']);
+				$this->poll->ballots = $this->model->getBallotsByPollID($_POST['pollID']);
+				// Process ballots into a single, cohesive array
+				$this->poll->processedBallots = $this->processBallots($this->poll->ballots);
+			} else $return['error'] = 'Poll not found';
+			$return['html'] = $this->ajaxInclude('view/poll/cvrhtml.view.php');
+		} else {
+			$return['html'] = 'Results cannot be viewed yet';
+		}
 		echo json_encode($return);
 	}
 	

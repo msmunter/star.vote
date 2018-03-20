@@ -2,8 +2,12 @@
 <input type="hidden" id="pollID" value="<?php echo $this->poll->pollID; ?>" />
 <div id="statusMsg" class="hidden"></div>
 <div class="clear"></div>
-<?php if ($this->user->userID == $this->poll->userID) { ?>
-	<div class="yourPollMsg">Your poll: "<?php echo $this->poll->question; ?>" - <a href="/poll/voterkeys/<?php echo $this->poll->pollID; ?>/">Voter Keys</a></div>
+<?php if ($this->user->userID != '' && $this->user->userID == $this->poll->userID) { ?>
+	<div class="yourPollMsg">Your poll: "<?php echo $this->poll->question; ?>"
+	<?php if ($this->poll->verifiedVoting) { ?>
+		 - <a href="/poll/voterkeys/<?php echo $this->poll->pollID; ?>/">Voter Keys</a>
+	<?php } ?>
+	</div>
 <?php } ?>
 <div id="voteInstructions">
 	<ul>
@@ -66,12 +70,13 @@ if ($this->poll) {
 			<input type="text" id="shareURLInput" name="shareURLInput" data-mini="true" data-inline="true" value="https://<?php echo $_SERVER['SERVER_NAME']; ?>/<?php if ($this->poll->customSlug != "") {echo $this->poll->customSlug;} else echo $this->poll->pollID; ?>/" />
 		</div>
 	</div>
+	
 	<div class="bigContainer">
 		<div class="bigContainerTitle">Runoff Matrix</div>
 		<div class="bigContainerInner">
 			<div id="runoffMatrixContainer">
-				<?php include('view/poll/runoffmatrix.view.php'); ?>
-			</div><!-- END runoffMatrixContainer -->
+				<!-- AJAX -->
+			</div>
 			<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="runoffMatrixShowButton" onclick="showRunoffMatrix()">Show</button>
 		</div>
 	</div>
@@ -79,10 +84,7 @@ if ($this->poll) {
 		<div class="bigContainerTitle">Ballot Record</div>
 		<div class="bigContainerInner">
 			<div id="ballotRecordContainer">
-				Download: <a class="ui-btn ui-mini ui-btn-inline ui-corner-all" href="/poll/csv/<?php echo $this->poll->pollID; ?>/">CSV</a>
-				<div id="cvrhtml">
-				
-				</div>
+				<!-- AJAX -->
 			</div>
 			<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="ballotRecordShowButton" onclick="showCvrHtml()">Show</button>
 		</div>

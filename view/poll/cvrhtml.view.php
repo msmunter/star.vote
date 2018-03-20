@@ -1,3 +1,4 @@
+Download: <a class="ui-btn ui-mini ui-btn-inline ui-corner-all" href="/poll/csv/<?php echo $this->poll->pollID; ?>/">CSV</a>
 <table id="cvrTable">
 <?php
 $headerArray = array('voterID', 'voteTime', 'pollID');
