@@ -116,12 +116,22 @@ class PollModel extends Model
 		return $this->results;
 	}
 	
-	public function insertPoll($pollID, $question, $answers, $randomOrder, $private, $creatorIP, $customSlug, $verifiedVoting, $userID)
+	public function getVoterKeysByPollID($pollID)
+	{
+		$this->query = "SELECT *
+						FROM `voterKeys`
+						WHERE `pollID` LIKE '".$this->escapeString($pollID)."'
+						ORDER BY `createdTime` ASC;";
+		$this->doSelectQuery();
+		return $this->results;
+	}
+	
+	public function insertPoll($pollID, $question, $answers, $randomOrder, $private, $creatorIP, $customSlug, $verifiedVoting, $verifiedVotingType, $userID)
 	{
 		global $return;
 		// Poll first
-		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `verifiedVoting`, `allowComments`, `randomAnswerOrder`, `creatorIP`, `votes`, `customSlug`, `userID`)
-						VALUES ('".$pollID."', '".$question."', '".date('Y-m-d H:i:s')."', ".$private.", 0, 0, ".$randomOrder.", '".$creatorIP."', 0, '".$customSlug."', '".$userID."')";
+		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `verifiedVoting`, `verifiedVotingType`, `allowComments`, `randomAnswerOrder`, `creatorIP`, `votes`, `customSlug`, `userID`)
+						VALUES ('".$pollID."', '".$question."', '".date('Y-m-d H:i:s')."', ".$private.", ".$verifiedVoting.", '".$verifiedVotingType."', 0, ".$randomOrder.", '".$creatorIP."', 0, '".$customSlug."', '".$userID."')";
 		// Insert
 		$this->doInsertQuery();
 		
@@ -152,6 +162,16 @@ class PollModel extends Model
 				}
 			}
 			array_shift($answerIDsToDestroy);
+		}
+	}
+	
+	public function insertVoterKey($pollID, $key)
+	{
+		if (!empty($pollID) && !empty($key)) {
+			$this->query = "INSERT INTO `voterKeys` (`pollID`, `voterKey`, `createdTime`, `votedTime`, `invalid`)
+						VALUES ('".$pollID."', '".$key."', '".date('Y-m-d H:i:s')."', null, 0)";
+			// Insert
+			$this->doInsertQuery();
 		}
 	}
 	

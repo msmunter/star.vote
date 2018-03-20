@@ -7,6 +7,8 @@ class PollController extends Controller
 	);*/
 	public $poll;
 	public $polls;
+	public $verifiedVotingTypes;
+	public $currentUserVerified;
 	
 	/*public function __construct()
 	{
@@ -49,6 +51,7 @@ class PollController extends Controller
 	
 	public function ajaxinsertpoll()
 	{
+		$this->verifiedVotingTypes = array('gkc', 'eml', 'gau');
 		// Actually saves the poll
 		if ($_POST['pollQuestion'] != "") {
 			$this->pollQuestion = $_POST['pollQuestion'];
@@ -90,8 +93,10 @@ class PollController extends Controller
 				if ($this->user->userID > 0) {
 					$userID = $this->user->userID;
 				} else $userID = 0;
+				// Cleanup type if needed
+				if (!in_array($_POST['fsVerifiedVotingType'], $this->verifiedVotingTypes)) $_POST['fsVerifiedVotingType'] = 'gkc';
 				// Insert actual
-        $this->model->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug'], $_POST['fsVerifiedVoting'], $userID);
+				$this->model->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug'], $_POST['fsVerifiedVoting'], $_POST['fsVerifiedVotingType'], $userID);
 				$return['html'] .= 'Poll saved! Loading results...';
 			} else {
 				$return['error'] = 'Must provide at least two possible answers';
@@ -194,6 +199,50 @@ class PollController extends Controller
 		} else {
 			$this->error = 'Must provide poll ID';
 		}
+	}
+	
+	public function voterkeys()
+	{
+		$this->pollID = $this->URLdata;
+		if (!empty($this->pollID)) {
+			$this->poll = $this->model->getPollByID($this->pollID);
+			if ($this->poll) {
+				$this->title = 'Voter Keys for "'.$this->poll->question.'"';
+				$this->voterKeys = $this->model->getVoterKeysByPollID($this->pollID);
+				$this->voterKeyCount = count($this->voterKeys);
+			} else $this->error = 'Invalid poll ID';
+		} else $this->error = 'Must provide a poll ID';
+	}
+	
+	public function ajaxgeneratevoterkeys()
+	{
+		if (!empty($_POST['pollID'])) {
+			// Get poll
+			$this->poll = $this->model->getPollByID($_POST['pollID']);
+			if ($this->poll) {
+				if ($this->user->userID == $this->poll->userID) {
+					$keys = $this->generateVoterKeys($this->poll->pollID, 16, $_POST['numKeys']);
+					$return['keysGenerated'] = $_POST['numKeys'];
+					// Fetch codes fresh from DB in case something didn't make it in
+					$this->voterKeys = $this->model->getVoterKeysByPollID($this->poll->pollID);
+					$this->voterKeyCount = count($this->voterKeys);
+					$return['html'] .= $this->ajaxInclude('view/poll/existingvoterkeys.view.php');
+					$return['html'] .= '</p>';
+				} else $return['error'] = 'Not admin of requested poll';
+			} else $return['error'] = 'Invalid Poll ID';
+		} else $return['error'] = 'Invalid Poll ID';
+		echo json_encode($return);
+	}
+	
+	private function generateVoterKeys($pollID, $keyLength, $numKeys)
+	{
+		if (!$keyLength || $keyLength < 8) $keyLength = 8;
+		for ($i = 0; $i < $numKeys; $i++) {
+			$key = bin2hex(random_bytes($keyLength / 2));
+			$keys[] = $key;
+			$this->model->insertVoterKey($pollID, $key);
+		}
+		return $keys;
 	}
 	
 	public function ajaxvote()
@@ -333,6 +382,17 @@ class PollController extends Controller
 			$this->poll->ballots = $this->model->getBallotsByPollID($this->URLdata);
 			// Process ballots into a single, cohesive array
 			$this->poll->processedBallots = $this->processBallots($this->poll->ballots);
+		} else $this->error = 'Poll not found';
+	}
+	
+	public function voterkeyscsv()
+	{
+		$this->ajax = 1;
+		$this->doHeader = 0;
+		$this->doFooter = 0;
+		$this->poll = $this->model->getPollByID($this->URLdata); 
+		if (!empty($this->poll->pollID)) {
+			$this->voterKeys = $this->model->getVoterKeysByPollID($this->poll->pollID);
 		} else $this->error = 'Poll not found';
 	}
 	

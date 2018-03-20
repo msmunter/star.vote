@@ -1,6 +1,10 @@
+<pre><?php //$this->debug($this->poll); ?></pre>
 <input type="hidden" id="pollID" value="<?php echo $this->poll->pollID; ?>" />
 <div id="statusMsg" class="hidden"></div>
 <div class="clear"></div>
+<?php if ($this->user->userID == $this->poll->userID) { ?>
+	<div class="yourPollMsg">Your poll: "<?php echo $this->poll->question; ?>" - <a href="/poll/voterkeys/<?php echo $this->poll->pollID; ?>/">Voter Keys</a></div>
+<?php } ?>
 <div id="voteInstructions">
 	<ul>
 		<li>You may score as many candidates as you like from 0 (no support) to 5 (max support).</li>
@@ -10,8 +14,19 @@
 	</ul>
 </div>
 <?php
-if ($this->poll) {
-	if ($this->hasVoted) { ?>
+if ($this->poll) { 
+	if ($this->user->userID == $this->poll->userID) {
+		// This user's poll ?>
+		<div class="bigContainer">
+			<div class="bigContainerTitle">What voters see: "<?php echo $this->poll->question; ?>"</div>
+			<div class="bigContainerInner">
+				<div id="voteInput">
+					<?php include_once('view/poll/voteinput.view.php'); ?>
+				</div>
+				<button id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
+			</div>
+		</div>
+	<?php } else if ($this->hasVoted) { ?>
 		<div class="bigContainer">
 			<div class="bigContainerTitle">Your vote for "<?php echo $this->poll->question; ?>"</div>
 			<div class="bigContainerInner">
@@ -26,9 +41,13 @@ if ($this->poll) {
 			<div class="bigContainerInner">
 				<div id="voteInput">
 					<?php include_once('view/poll/voteinput.view.php'); ?>
+					<?php if ($this->poll->verifiedVoting) { ?>
+						<label for="voterKey">Voter Key:</label>
+						<input id="voterKey" />
+					<?php } ?>
 				</div>
-				<button id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
-				<button id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
+				<button <?php if ($this->poll->verifiedVoting) echo 'disabled="disabled" '; ?>id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
+				<button <?php if ($this->poll->verifiedVoting) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
 			</div>
 		</div>
 	<?php } ?>
@@ -68,8 +87,6 @@ if ($this->poll) {
 			<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="ballotRecordShowButton" onclick="showCvrHtml()">Show</button>
 		</div>
 	</div>
-	<?php
-} else {
-	echo 'ERROR: '.$this->error;
-}
-?>
+<?php } else { ?>
+	ERROR: Poll not found
+<?php } ?>

@@ -122,7 +122,8 @@ function createPollActual()
 		fsPrivate: $('#fsPrivate').val(),
 		fsRandomOrder: $('#fsRandomOrder').val(),
 		fsCustomSlug: $('#fsCustomSlugInput').val(),
-		fsVerifiedVoting: $('#fsVerifiedVoting').val()
+		fsVerifiedVoting: $('#fsVerifiedVoting').val(),
+		fsVerifiedVotingType: $('#fsVerifiedVotingType').val()
 	}, function(data) {
 		// Disable inputs
 		disableInputs();

@@ -37,6 +37,7 @@
 	<label for="fsCustomSlugInput">URL Slug (a-z, 0-9, 4-16 chars):</label>
 	<input type="text" data-clear-btn="true" class="pollAnswer" id="fsCustomSlugInput" name="fsCustomSlugInput" placeholder="abcd1234"></input><br />
 </div>
+<?php if ($this->user->userID > 0) { ?>
 <div class="ui-field-contain">
 	<label for="fsVerifiedVoting">Verified Voting:</label>
 	<select name="fsVerifiedVoting" id="fsVerifiedVoting" data-role="flipswitch">
@@ -52,6 +53,7 @@
 		<option disabled value="gau">Google Auth</option>
 	</select>
 </div>
+<?php } ?>
 <div id="pollButtonContainer">
 	<button id="createPollButton" data-inline="inline" onclick="createPoll()">Create Poll</button>
 </div>
