@@ -44,11 +44,11 @@ if ($this->poll) {
 			<div class="bigContainerTitle">Vote on "<?php echo $this->poll->question; ?>"</div>
 			<div class="bigContainerInner">
 				<div id="voteInput">
-					<?php include_once('view/poll/voteinput.view.php'); ?>
 					<?php if ($this->poll->verifiedVoting) { ?>
 						<label for="voterKey">Voter Key:</label>
 						<input id="voterKey" />
 					<?php } ?>
+					<?php include_once('view/poll/voteinput.view.php'); ?>
 				</div>
 				<button <?php if ($this->poll->verifiedVoting) echo 'disabled="disabled" '; ?>id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
 				<button <?php if ($this->poll->verifiedVoting) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>

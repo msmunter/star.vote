@@ -9,7 +9,7 @@ if ($this->voterKeyCount > 0) {
 		echo '<tr>';
 		echo '<td class="voterKeyCell">'.$key->voterKey.'</td>';
 		echo '<td>';
-		if ($key->votedTime) echo '&#10003;';
+		if ($key->voteTime) echo '&#10003;';
 		echo '</td>';
 		echo '<td>';
 		if ($key->invalid) echo 'X';

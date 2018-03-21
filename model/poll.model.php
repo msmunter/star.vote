@@ -128,7 +128,7 @@ class PollModel extends Model
 	
 	public function verifyVoterKey($voterKey, $pollID)
 	{
-		$this->query = "SELECT `pollID`
+		$this->query = "SELECT `pollID`, `voterID`, `voteTime`
 						FROM `voterKeys`
 						WHERE `pollID` LIKE '".$this->escapeString($pollID)."'
 						AND `voterKey` LIKE '".$this->escapeString($voterKey)."'
@@ -181,7 +181,7 @@ class PollModel extends Model
 	public function insertVoterKey($pollID, $key)
 	{
 		if (!empty($pollID) && !empty($key)) {
-			$this->query = "INSERT INTO `voterKeys` (`pollID`, `voterKey`, `createdTime`, `votedTime`, `invalid`)
+			$this->query = "INSERT INTO `voterKeys` (`pollID`, `voterKey`, `createdTime`, `voteTime`, `invalid`)
 						VALUES ('".$pollID."', '".$key."', '".date('Y-m-d H:i:s')."', null, 0)";
 			// Insert
 			$this->doInsertQuery();
@@ -220,11 +220,11 @@ class PollModel extends Model
 		$this->doInsertQuery();
 	}
 	
-	public function insertVote($pollID, $voterID, $answerID, $vote)
+	public function insertVote($pollID, $voterID, $answerID, $vote, $voteTime)
 	{
 		// Add vote record
-		$this->query = "INSERT INTO `votes` (`voterID`, `pollID`, `answerID`, `vote`)
-							VALUES ('".$voterID."', '".$pollID."', '".$answerID."', '".$vote."')";
+		$this->query = "INSERT INTO `votes` (`voterID`, `pollID`, `answerID`, `vote`, `voteTime`)
+							VALUES ('".$voterID."', '".$pollID."', '".$answerID."', '".$vote."', '".$voteTime."')";
 		// Insert
 		$this->doInsertQuery();
 		
@@ -257,6 +257,18 @@ class PollModel extends Model
 					WHERE `pollID` LIKE '$pollID'
 					AND `gtID` = $gtID
 					AND `ltID` = $ltID
+					LIMIT 1;";
+		// Insert
+		$this->doUpdateQuery();
+	}
+	
+	public function updateVoterKeyEntry($voterKey, $pollID, $voterID, $voteTime)
+	{
+		// Update
+		$this->query = "UPDATE `voterKeys`
+					SET `voterID` = '$voterID', `voteTime` = '$voteTime'
+					WHERE `voterKey` LIKE '$voterKey'
+					AND `pollID` LIKE '$pollID'
 					LIMIT 1;";
 		// Insert
 		$this->doUpdateQuery();
