@@ -126,6 +126,19 @@ class PollModel extends Model
 		return $this->results;
 	}
 	
+	public function verifyVoterKey($voterKey, $pollID)
+	{
+		$this->query = "SELECT `pollID`
+						FROM `voterKeys`
+						WHERE `pollID` LIKE '".$this->escapeString($pollID)."'
+						AND `voterKey` LIKE '".$this->escapeString($voterKey)."'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (!empty($this->results[0])) {
+			return $this->results[0];
+		} else return false;
+	}
+	
 	public function insertPoll($pollID, $question, $answers, $randomOrder, $private, $creatorIP, $customSlug, $verifiedVoting, $verifiedVotingType, $userID)
 	{
 		global $return;

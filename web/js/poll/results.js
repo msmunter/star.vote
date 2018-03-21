@@ -1,6 +1,11 @@
+var voterKeyResult;
+
 $(document).ready(function() {
 	$('#shareURLInput').focus(function(){
 		$('#shareURLInput').select();
+	});
+	$('#voterKey').focusout(function() {
+		checkVoterKey();
 	});
 });
 
@@ -11,6 +16,13 @@ function updateStatus(msg)
 	});
 }
 
+function clearStatus()
+{
+	$('#statusMsg').fadeOut(100, function() {
+		$('#statusMsg').html('');
+	});
+}
+
 function showContainer(container)
 {
 	$('#'+container+'ShowButton').hide(0, function(){
@@ -18,7 +30,78 @@ function showContainer(container)
 	});
 }
 
+function disableInputs()
+{
+	$('#voterKey').prop("disabled", true);
+	/*$("#pollAnswers :input").prop("disabled", true);*/
+}
+
+function enableInputs()
+{
+	$('#voterKey').prop("disabled", false);
+	/*$("#pollAnswers :input").prop("disabled", false);*/
+}
+
+function hideButtons()
+{
+	$('#voteButton, #showResultsButton').hide();
+}
+
+function showButtons()
+{
+	$('#voteButton, #showResultsButton').show();
+}
+
+function disableButtons()
+{
+	$('#voteButton, #showResultsButton').prop("disabled", true);
+}
+
+function enableButtons()
+{
+	$('#voteButton, #showResultsButton').prop("disabled", false);
+}
+
+function checkVoterKey(callBack)
+{
+	var voterKeyVal = $('#voterKey').val();
+	$.post("/", { 
+		c: 'poll', 
+		a: 'ajaxcheckvoterkey', 
+		ajax: '1',
+		voterKey: voterKeyVal,
+		pollID: $('#pollID').val()
+	}, function(data) {
+		var jData = JSON.parse(data);
+		if (jData.returncode == '1') {
+			clearStatus();
+			voterKeyResult = true;
+			$('#voterKey').removeClass('highlightInputRed').addClass('highlightInputGreen');
+			enableButtons();
+		} else {
+			updateStatus(jData.html);
+			voterKeyResult = false;
+			$('#voterKey').removeClass('highlightInputGreen').addClass('highlightInputRed');
+			disableButtons();
+		}
+	});
+	if (typeof callBack === "function") callBack();
+}
+
 function vote()
+{
+	disableButtons();
+	// Need to validate slug
+	checkVoterKey(function(){
+		if (voterKeyResult == true) {
+			voteActual();
+		} else {
+			enableButtons();
+		}
+	});
+}
+
+function voteActual()
 {
 	$.post("/", { 
 		c: 'poll', 
@@ -26,20 +109,21 @@ function vote()
 		ajax: '1',
 		voterID: getCookie('voterID'),
 		pollID: $('#pollID').val(),
-		votes: $('.voteForm').serialize()
+		votes: $('.voteForm').serialize(),
+		voterKey: $('#voterKey').val()
 	}, function(data) {
 		var jData = JSON.parse(data);
 		if (jData.error) {
-			//$('#statusMsg').html("ERROR: "+jData.error);
 			updateStatus("ERROR: "+jData.error);
+			enableButtons();
 		} else {
 			// Replace voting mechanism with personal results
 			$('#voteInput').html(jData.html);
-			// Hide vote button
-			$('#voteButton').hide();
-			$('#showResultsButton').hide(); 
+			// Hide vote, results buttons
+			disableButtons();
+			hideButtons();
 			// View results
-			$('#statusMsg').hide();
+			clearStatus();
 			showResults();
 		}
 	});

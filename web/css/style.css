@@ -229,11 +229,11 @@ div#customSlugInputContainer, div#verifiedVotingSelectContainer {
 	display: none;
 }
 
-input#fsCustomSlugInput.highlightInputGreen {
+input#fsCustomSlugInput.highlightInputGreen, input#voterKey.highlightInputGreen {
 	border: solid 1px green;
 }
 
-input#fsCustomSlugInput.highlightInputRed {
+input#fsCustomSlugInput.highlightInputRed, input#voterKey.highlightInputRed {
 	border: solid 1px red;
 }
 

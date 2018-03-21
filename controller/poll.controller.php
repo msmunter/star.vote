@@ -250,50 +250,56 @@ class PollController extends Controller
 		// Initialize voter (will provide $this->voterID)
 		$this->initVoter($_POST['voterID']);
 		$this->pollID = $_POST['pollID'];
-		parse_str($_POST['votes'], $dirtyVoteArray);
-		// Cleanup array
-		foreach ($dirtyVoteArray as $index => $vote) {
-			$indexBoom = explode('|', $index);
-			$answerID = $indexBoom[1];
-			unset($indexBoom);
-			$voteArray[$answerID] = $vote;
-		}
-		$voteArrayToDestroy = $voteArray;
-		// Verify no vote has been entered for this voter on this poll
-		$yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
-		if (empty($yourVote)) {
-			// No vote, get the answers to make sure we have a score for each
-			$this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
-			foreach ($this->poll->answers as $answer) {
-				if (!array_key_exists($answer->answerID, $voteArray)) {
-					$voteArray[$answer->answerID] = 0;
-				}
+		// Determine eligibility if necessary
+		if (($this->poll->verifiedVoting && $this->model->verifyVoterKey($_POST['voterKey'], $_POST['pollID'])) || $this->poll->verifiedVoting == false) {
+			parse_str($_POST['votes'], $dirtyVoteArray);
+			// Cleanup array
+			foreach ($dirtyVoteArray as $index => $vote) {
+				$indexBoom = explode('|', $index);
+				$answerID = $indexBoom[1];
+				unset($indexBoom);
+				$voteArray[$answerID] = $vote;
 			}
-			foreach ($voteArray as $answerID => $vote) {
-				$this->votes[] = $vote;
-				// Insert vote
-				$this->model->insertVote($this->pollID, $this->voterID, $answerID, $vote);
-				// Update the matrix. Maybe replace the windows with bricks?
-				foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
-					if ($answerID != $answerID2) {
-						if ($vote > $vote2) {
-							$this->model->updateVoteMatrix($this->pollID, $answerID, $answerID2);
-						} else if ($vote < $vote2) {
-							$this->model->updateVoteMatrix($this->pollID, $answerID2, $answerID);
-						} // and do nothing if they're equal
+			$voteArrayToDestroy = $voteArray;
+			// Verify no vote has been entered for this voter on this poll
+			$yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
+			if (empty($yourVote)) {
+				// No vote, get the answers to make sure we have a score for each
+				$this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
+				foreach ($this->poll->answers as $answer) {
+					if (!array_key_exists($answer->answerID, $voteArray)) {
+						$voteArray[$answer->answerID] = 0;
 					}
 				}
-				unset($voteArrayToDestroy[$answerID]);
+				foreach ($voteArray as $answerID => $vote) {
+					$this->votes[] = $vote;
+					// Insert vote
+					$this->model->insertVote($this->pollID, $this->voterID, $answerID, $vote);
+					// Update the matrix. Maybe replace the windows with bricks?
+					foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
+						if ($answerID != $answerID2) {
+							if ($vote > $vote2) {
+								$this->model->updateVoteMatrix($this->pollID, $answerID, $answerID2);
+							} else if ($vote < $vote2) {
+								$this->model->updateVoteMatrix($this->pollID, $answerID2, $answerID);
+							} // and do nothing if they're equal
+						}
+					}
+					unset($voteArrayToDestroy[$answerID]);
+				}
+				$this->model->incrementPollVoteCount($this->pollID);
+			} else {
+				$return['caution'] = 'Your vote had already been recorded for this poll';
 			}
-			$this->model->incrementPollVoteCount($this->pollID);
+			unset($yourVote);
+			$this->poll = $this->model->getPollByID($this->pollID);
+			if (empty($this->poll->answers)) $this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
+			$this->yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
+			$return['html'] .= $this->ajaxInclude('view/poll/yourvote.view.php');
 		} else {
-			$return['caution'] = 'Your vote had already been recorded for this poll';
+			// Failed eligibility
+			$return['error'] .= 'Invalid voter key';
 		}
-		unset($yourVote);
-		$this->poll = $this->model->getPollByID($this->pollID);
-		if (empty($this->poll->answers)) $this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
-		$this->yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
-		$return['html'] .= $this->ajaxInclude('view/poll/yourvote.view.php');
 		echo json_encode($return);
 	}
 	
@@ -316,8 +322,9 @@ class PollController extends Controller
 	{
 		$pollID = $_POST['pollID'];
 		$this->poll = $this->model->getPollByID($pollID);
+		$this->initVoter(false);
 		// Is eligible to see the results?
-		if (($this->poll->verifiedVoting && $this->user->userID == $this->poll->userID) || ($this->poll->verifiedVoting && $this->hasVoted) || $this->poll->verifiedVoting == false) {
+		if (($this->poll->verifiedVoting && $this->user->userID == $this->poll->userID) || ($this->poll->verifiedVoting && $this->model->userHasVoted($this->voterID, $pollID)) || $this->poll->verifiedVoting == false) {
 			$this->poll->rawRunoff = $this->model->getRunoffResultsRawByPollID($pollID);
 			$this->poll->voterCount = $this->model->getPollVoterCount($pollID);
 			$this->poll->answers = $this->model->getAnswerByPollIDScoreOrder($pollID);
@@ -408,13 +415,42 @@ class PollController extends Controller
 		} else $this->error = 'Poll not found';
 	}
 	
+	public function ajaxcheckvoterkey()
+	{
+		$regexResult = preg_match('/^[a-z0-9]{16}$/', $_POST['voterKey']);
+		if ($regexResult === 0 || $regexResult === false) {
+			if (strlen($_POST['voterKey']) < 4) {
+				$return['html'] = 'Key too short; must be 16 characters';
+				$return['returncode'] = '0';
+			} else if (strlen($_POST['voterKey']) > 16) {
+				$return['html'] = 'Key too long; must be 16 characters';
+				$return['returncode'] = '0';
+			} else {
+				$return['html'] = 'Key will only contain a-z (lower case) and 0-9';
+				$return['returncode'] = '0';
+			}
+		} else {
+			// Passes regex
+			$pollID = $this->model->verifyVoterKey($_POST['voterKey'], $_POST['pollID']);
+			if (!empty($pollID)) {
+				$return['html'] = 'Voter Key valid';
+				$return['returncode'] = '1';
+			} else {
+				$return['html'] = 'Voter Key invalid';
+				$return['returncode'] = '0';
+			}
+		}
+		echo json_encode($return);
+	}
+	
 	public function ajaxcvr()
 	{
 		$this->ajax = 1;
 		$this->doHeader = 0;
 		$this->doFooter = 0;
 		$this->poll = $this->model->getPollByID($_POST['pollID']);
-		if (($this->poll->verifiedVoting && $this->user->userID == $this->poll->userID) || ($this->poll->verifiedVoting && $this->hasVoted) || $this->poll->verifiedVoting == false) {
+		$this->initVoter(false);
+		if (($this->poll->verifiedVoting && $this->user->userID == $this->poll->userID) || ($this->poll->verifiedVoting && $this->model->userHasVoted($this->voterID, $this->poll->pollID)) || $this->poll->verifiedVoting == false) {
 			if (!empty($this->poll)) {
 				$this->poll->answers = $this->model->getAnswersByPollID($_POST['pollID']);
 				$this->poll->ballots = $this->model->getBallotsByPollID($_POST['pollID']);
