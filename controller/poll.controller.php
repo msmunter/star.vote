@@ -429,35 +429,47 @@ class PollController extends Controller
 	
 	public function ajaxcheckvoterkey()
 	{
-		$regexResult = preg_match('/^[a-z0-9]{16}$/', $_POST['voterKey']);
-		if ($regexResult === 0 || $regexResult === false) {
-			if (strlen($_POST['voterKey']) < 4) {
-				$return['html'] = 'Key too short; must be 16 characters';
-				$return['returncode'] = '0';
-			} else if (strlen($_POST['voterKey']) > 16) {
-				$return['html'] = 'Key too long; must be 16 characters';
-				$return['returncode'] = '0';
-			} else {
-				$return['html'] = 'Key will only contain a-z (lower case) and 0-9';
-				$return['returncode'] = '0';
-			}
-		} else {
-			// Passes regex
-			$voterKeyResult = $this->model->verifyVoterKey($_POST['voterKey'], $_POST['pollID']);
-			if (!empty($voterKeyResult->pollID)) {
-				// Valid key, see if used already
-				if (!empty($voterKeyResult->voteTime)) {
-					$return['html'] = 'Voter key already used';
-					$return['returncode'] = '0';
+		$this->poll = $this->model->getPollByID($_POST['pollID']);
+		if (!empty($this->poll)) {
+			if ($this->poll->verifiedVoting) {
+				$regexResult = preg_match('/^[a-z0-9]{16}$/', $_POST['voterKey']);
+				if ($regexResult === 0 || $regexResult === false) {
+					if (strlen($_POST['voterKey']) < 4) {
+						$return['html'] = 'Key too short; must be 16 characters';
+						$return['returncode'] = '0';
+					} else if (strlen($_POST['voterKey']) > 16) {
+						$return['html'] = 'Key too long; must be 16 characters';
+						$return['returncode'] = '0';
+					} else {
+						$return['html'] = 'Key will only contain a-z (lower case) and 0-9';
+						$return['returncode'] = '0';
+					}
 				} else {
-					$return['html'] = 'Voter key valid';
-					$return['returncode'] = '1';
+					// Passes regex
+					$voterKeyResult = $this->model->verifyVoterKey($_POST['voterKey'], $_POST['pollID']);
+					if (!empty($voterKeyResult->pollID)) {
+						// Valid key, see if used already
+						if (!empty($voterKeyResult->voteTime)) {
+							$return['html'] = 'Voter key already used';
+							$return['returncode'] = '0';
+						} else {
+							$return['html'] = 'Voter key valid';
+							$return['returncode'] = '1';
+						}
+					} else {
+						$return['html'] = 'Voter key invalid';
+						$return['returncode'] = '0';
+					}
 				}
 			} else {
-				$return['html'] = 'Voter key invalid';
-				$return['returncode'] = '0';
+				$return['html'] = 'Poll valid, no key required';
+				$return['returncode'] = '1';
 			}
+		} else {
+			$return['html'] = 'Poll ID invalid';
+			$return['returncode'] = '0';
 		}
+		
 		echo json_encode($return);
 	}
 	

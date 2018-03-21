@@ -1,4 +1,4 @@
-var voterKeyResult;
+var voterKeyResult = false;
 
 $(document).ready(function() {
 	$('#shareURLInput').focus(function(){
@@ -62,7 +62,7 @@ function enableButtons()
 	$('#voteButton, #showResultsButton').prop("disabled", false);
 }
 
-function checkVoterKey(callBack)
+function checkVoterKey(callbackFunction)
 {
 	var voterKeyVal = $('#voterKey').val();
 	$.post("/", { 
@@ -84,14 +84,14 @@ function checkVoterKey(callBack)
 			$('#voterKey').removeClass('highlightInputGreen').addClass('highlightInputRed');
 			disableButtons();
 		}
+		if (typeof callbackFunction === "function") callbackFunction();
 	});
-	if (typeof callBack === "function") callBack();
 }
 
 function vote()
 {
 	disableButtons();
-	// Need to validate slug
+	// Need to validate key
 	checkVoterKey(function(){
 		if (voterKeyResult == true) {
 			voteActual();
