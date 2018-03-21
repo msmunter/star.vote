@@ -1,5 +1,5 @@
 <div>
-	There are <?php echo $this->voterKeyCount; ?> voter keys <a class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all" href="/poll/voterkeyscsv/<?php echo $this->poll->pollID; ?>/">CSV</a>
+	Voted: <?php echo $this->usedVoterKeyCount; ?>/<?php echo $this->voterKeyCount; ?> keys<a class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all" href="/poll/voterkeyscsv/<?php echo $this->poll->pollID; ?>/">CSV</a>
 </div>
 <?php
 if ($this->voterKeyCount > 0) {

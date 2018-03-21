@@ -4,11 +4,11 @@ if ($this->error == '') {
 	header('Content-Type: text/csv; charset=utf-8');
 	header('Content-Disposition: attachment; filename='.$fileName.'.csv');
 	$out = fopen('php://output', 'w');
-	$headerArray = array('pollID', 'voterKey', 'createdTime', 'votedTime');
+	$headerArray = array('pollID', 'voterKey', 'createdTime', 'voteTime');
 	fputcsv($out, $headerArray);
 	// Process Ballots
 	foreach ($this->voterKeys as $voterKey) {
-		$outArray = array($this->poll->pollID, $voterKey->voterKey, $voterKey->createdTime, $voterKey->votedTime);
+		$outArray = array($this->poll->pollID, $voterKey->voterKey, $voterKey->createdTime, $voterKey->voteTime);
 		fputcsv($out, $outArray);
 	}
 	fclose($out);

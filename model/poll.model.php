@@ -126,6 +126,16 @@ class PollModel extends Model
 		return $this->results;
 	}
 	
+	public function getUsedVoterKeyCountByPollID($pollID)
+	{
+		$this->query = "SELECT COUNT(`pollID`) as `ct`
+						FROM `voterKeys`
+						WHERE `pollID` LIKE '".$this->escapeString($pollID)."'
+						AND `voteTime` IS NOT NULL;";
+		$this->doSelectQuery();
+		return $this->results[0]->ct;
+	}
+	
 	public function verifyVoterKey($voterKey, $pollID)
 	{
 		$this->query = "SELECT `pollID`, `voterID`, `voteTime`

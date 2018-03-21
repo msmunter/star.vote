@@ -210,6 +210,7 @@ class PollController extends Controller
 				$this->title = 'Voter Keys for "'.$this->poll->question.'"';
 				$this->voterKeys = $this->model->getVoterKeysByPollID($this->pollID);
 				$this->voterKeyCount = count($this->voterKeys);
+				$this->usedVoterKeyCount = $this->model->getUsedVoterKeyCountByPollID($this->pollID);
 			} else $this->error = 'Invalid poll ID';
 		} else $this->error = 'Must provide a poll ID';
 	}
