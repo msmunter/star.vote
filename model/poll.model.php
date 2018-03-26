@@ -291,6 +291,7 @@ class PollModel extends Model
 		$this->query = "SELECT *
 						FROM `polls`
 						WHERE `private` = 0
+						AND `surveyID` LIKE '0'
 						ORDER BY `polls`.`created` DESC
 						LIMIT $index,$limit;";
 		$this->doSelectQuery();
@@ -304,6 +305,7 @@ class PollModel extends Model
 		$this->query = "SELECT *
 						FROM `polls`
 						WHERE `private` = 0
+						AND `surveyID` LIKE '0'
 						ORDER BY `polls`.`created` DESC
 						LIMIT 0,$limit;";
 		$this->doSelectQuery();
@@ -315,6 +317,7 @@ class PollModel extends Model
 		$this->query = "SELECT *
 						FROM `polls`
 						WHERE `private` = 0
+						AND `surveyID` LIKE '0'
 						ORDER BY `votes` DESC, `created` DESC
 						LIMIT $index,$limit;";
 		$this->doSelectQuery();
