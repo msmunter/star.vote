@@ -24,7 +24,7 @@ class VoterController extends Controller
 			if ($this->model->voterExists($_COOKIE['voterID'])) {
 				// Set voterID in class, cookie, and session
 				$this->voterID = $voterID;
-				setcookie("voterID", $this->voterID, $cookieExpires);
+				setcookie("voterID", $this->voterID, $cookieExpires, '/');
 				$_SESSION['voterID'] = $this->voterID;
 			}
 		} else if (strlen($_COOKIE['voterID']) > 0) {
@@ -39,7 +39,7 @@ class VoterController extends Controller
 			if ($this->model->voterExists($_SESSION['voterID'])) {
 				$this->voterID = $_SESSION['voterID'];
 				// Set cookie to session
-				setcookie("voterID", $this->voterID, $cookieExpires);
+				setcookie("voterID", $this->voterID, $cookieExpires, '/');
 			}
 		}
 		// Generate voter ID if necessary
@@ -48,7 +48,7 @@ class VoterController extends Controller
 			// Save voter to DB
 			$this->model->insertVoter($this->voterID, $_SERVER['REMOTE_ADDR']);
 			// Save a cookie with their voter ID
-			setcookie("voterID", $this->voterID, $cookieExpires);
+			setcookie("voterID", $this->voterID, $cookieExpires, '/');
 			// Save session variable
 			$_SESSION['voterID'] = $this->voterID;
 			return true;
