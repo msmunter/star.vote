@@ -13,7 +13,50 @@ class VoterController extends Controller
 	public function __construct()
 	{
 		$this->voterIDLength = 10;
-		$this->voterKeyLength = 12;
+		$this->voterKeyLength = 16;
+	}
+	
+	public function initVoter($voterID)
+	{
+		$cookieExpires = strtotime('+5 years');
+		// If they passed an ID check it
+		if (strlen($voterID) > 0) {
+			if ($this->model->voterExists($_COOKIE['voterID'])) {
+				// Set voterID in class, cookie, and session
+				$this->voterID = $voterID;
+				setcookie("voterID", $this->voterID, $cookieExpires);
+				$_SESSION['voterID'] = $this->voterID;
+			}
+		} else if (strlen($_COOKIE['voterID']) > 0) {
+			// Determine if valid voter ID exists in cookie
+			if ($this->model->voterExists($_COOKIE['voterID'])) {
+				$this->voterID = $_COOKIE['voterID'];
+				// Set session to cookie
+				$_SESSION['voterID'] = $_COOKIE['voterID'];
+			}
+		} else if (strlen($_SESSION['voterID']) > 0) {
+			// Determine if valid voter ID exists in session.
+			if ($this->model->voterExists($_SESSION['voterID'])) {
+				$this->voterID = $_SESSION['voterID'];
+				// Set cookie to session
+				setcookie("voterID", $this->voterID, $cookieExpires);
+			}
+		}
+		// Generate voter ID if necessary
+		if (strlen($this->voterID) < 1) {
+			$this->voterID = $this->generateUniqueID(10, "voters", "voterID");
+			// Save voter to DB
+			$this->model->insertVoter($this->voterID, $_SERVER['REMOTE_ADDR']);
+			// Save a cookie with their voter ID
+			setcookie("voterID", $this->voterID, $cookieExpires);
+			// Save session variable
+			$_SESSION['voterID'] = $this->voterID;
+			return true;
+		} else {
+			// Didn't get an ID, something went awry
+			return false;
+		}
+		
 	}
 	
 	private function verifyVoterKey($pollID, $voterKey)
@@ -38,84 +81,10 @@ class VoterController extends Controller
 		}
 	}
 	
-	private function invalidateVoterKey($key)
-	{
-		// 
-	}
-	
 	private function generateVoterKey()
 	{
 		$this->voterID = $this->generateUniqueID($this->voterKeyLength, "voterKeys", "voterKey");
 	}
-	
-	/*public function ajaxvote()
-	{
-		$this->voterID = $_POST['voterID'];
-		$this->pollID = $_POST['pollID'];
-		parse_str($_POST['votes'], $dirtyVoteArray);
-		// Cleanup array
-		foreach ($dirtyVoteArray as $index => $vote) {
-			$indexBoom = explode('|', $index);
-			$answerID = $indexBoom[1];
-			unset($indexBoom);
-			$voteArray[$answerID] = $vote;
-		}
-		if (!$this->model->voterExists($this->voterID)) {
-			$this->model->insertVoter($this->voterID, $_SERVER['REMOTE_ADDR']);
-		}
-		$voteArrayToDestroy = $voteArray;
-		// Verify no vote has been entered for this voter on this poll
-		$yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
-		if (empty($yourVote)) {
-			// No vote, get the answers to make sure we have a score for each
-			$this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
-			foreach ($this->poll->answers as $answer) {
-				if (!array_key_exists($answer->answerID, $voteArray)) {
-					$voteArray[$answer->answerID] = 0;
-				}
-			}
-			foreach ($voteArray as $answerID => $vote) {
-				$this->votes[] = $vote;
-				// Insert vote
-				$this->model->insertVote($this->pollID, $this->voterID, $answerID, $vote);
-				// Update the matrix. Maybe replace the windows with bricks?
-				foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
-					if ($answerID != $answerID2) {
-						if ($vote > $vote2) {
-							$this->model->updateVoteMatrix($this->pollID, $answerID, $answerID2);
-						} else if ($vote < $vote2) {
-							$this->model->updateVoteMatrix($this->pollID, $answerID2, $answerID);
-						} // and do nothing if they're equal
-					}
-				}
-				unset($voteArrayToDestroy[$answerID]);
-			}
-			$this->model->incrementPollVoteCount($this->pollID);
-		} else {
-			$return['caution'] = 'Your vote had already been recorded for this poll';
-		}
-		unset($yourVote);
-		$this->poll = $this->model->getPollByID($this->pollID);
-		if (empty($this->poll->answers)) $this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
-		$this->yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
-		$return['html'] .= $this->ajaxInclude('view/poll/yourvote.view.php');
-		echo json_encode($return);
-	}
-	
-	private function setVoterID()
-	{
-		// Check cookie for voter ID
-		if (strlen($_COOKIE['voterID']) > 0) {
-			$this->voterID = $_COOKIE['voterID'];
-		}
-		// Generate voter ID if necessary
-		if (strlen($this->voterID) < 1) {
-			$this->voterID = $this->generateUniqueID(10, "voters", "voterID");
-			// Save a cookie with their voter ID
-			$cookieExpires = strtotime('+5 years');
-			setcookie("voterID", $this->voterID, $cookieExpires);
-		}
-	}*/
 	
 	private function generateUniqueID($length, $table, $column)
 	{

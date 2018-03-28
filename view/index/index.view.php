@@ -1,4 +1,8 @@
-<div class="indexHeader">Simple, fair voting using the STAR method.</div>
+<div id="indexHeaderContainer">
+	<div id="indexHeader">
+		Simple, fair voting using the STAR method. Learn more: <a href="http://equal.vote"><img id="equalVoteLogo" src="web/images/equalvote_logo.png" /></a>
+	</div>
+</div>
 <div class="bigContainer">
 	<div class="bigContainerTitle">Create Your Own Poll</div>
 	<div id="indexCreatePollContainer">

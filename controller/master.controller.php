@@ -35,29 +35,53 @@ class MasterController
 			// Since it isn't a controller see if it's a pollID (safely)
 			include_once('model/model.php');
 			include_once('model/poll.model.php');
+			include_once('model/survey.model.php');
 			$mPoll = new PollModel;
+			$mSurvey = new SurveyModel;
 			$pollByID = $mPoll->getPollByID($requestedController);
+			$validKey = false;
 			if (empty($pollByID)) {
-				// Not an ID, check slug
+				// Not a poll ID, check poll slug
 				$pollBySlug = $mPoll->getPollByCustomSlug($requestedController);
 			}
+			if (empty($pollBySlug)) {
+				// Not a poll slug, check survey ID
+				$surveyByID = $mSurvey->getSurveyByID($requestedController);
+			}
+			if (empty($surveyByID)) {
+				// Not a survey ID, check survey slug
+				$surveyBySlug = $mSurvey->getSurveyByCustomSlug($requestedController);
+			}
 			// Both checked, load poll if exists
-			if (!empty($pollByID)) {
-				// Valid poll by ID, load poll controller
-				$this->controller = new PollController;
-				$this->controller->name = 'poll';
-				$this->controller->action = 'results';
-				$this->controller->URLdata = $requestedController;
-				$this->controller->control();
-			} else if (!empty($pollBySlug)) {
-				// Valid poll by Slug, load poll controller
-				$this->controller = new PollController;
-				$this->controller->name = 'poll';
-				$this->controller->action = 'results';
-				$this->controller->URLdata = $pollBySlug->pollID;
+			if ($pollByID || $pollBySlug || $surveyByID || $surveyBySlug) {
+				if ($pollByID) {
+					// Valid poll by ID, load poll controller
+					$this->controller = new PollController;
+					$this->controller->name = 'poll';
+					$this->controller->action = 'results';
+					$this->controller->URLdata = $requestedController;
+				} else if ($pollBySlug) {
+					// Valid poll by Slug, load poll controller
+					$this->controller = new PollController;
+					$this->controller->name = 'poll';
+					$this->controller->action = 'results';
+					$this->controller->URLdata = $pollBySlug->pollID;
+				} else if ($surveyByID) {
+					// Valid survey by ID, load survey controller
+					$this->controller = new SurveyController;
+					$this->controller->name = 'survey';
+					$this->controller->action = 'results';
+					$this->controller->URLdata = $requestedController;
+				} else if ($surveyBySlug) {
+					// Valid survey by Slug, load survey controller
+					$this->controller = new SurveyController;
+					$this->controller->name = 'survey';
+					$this->controller->action = 'results';
+					$this->controller->URLdata = $surveyBySlug->surveyID;
+				}
 				$this->controller->control();
 			} else {
-				// Not a valid controller, not a valid pollID
+				// Not a valid controller, not a valid ID/Slug for a poll/survey
 				$this->controller->errors[] =  'ERROR: the requested page does not appear to exist.';
 				// Nothing else is going to run after this so we should output errors
 				foreach ($this->controller->errors as $error) {

@@ -1,31 +1,31 @@
 <?php
-class VotersModel extends Model
-{
-	public function verifyVoterKey($pollID, $voterKey)
-	{
-		$this->query = "SELECT COUNT(*) as `count`
-						FROM `voterKeys`
-						WHERE `pollID` LIKE '".$this->escapeString($pollID)."
-						AND `voterKey` LIKE '".$this->escapeString($voterKey)."';";
-		$this->doSelectQuery();
-		return $this->results[0]['count'];
-	}
-	
-	/*public function getPollByIDExampleUsingEscapeString($pollID)
-	{
-		$this->query = "SELECT *
-						FROM `polls`
-						WHERE `polls`.`pollID` LIKE '".$this->escapeString($pollID)."'
-						LIMIT 0,1;";
-		$this->doSelectQuery();
-		return $this->results[0];
-	}
-	
+class VoterModel extends Model
+{	
 	public function voterExists($voterID)
 	{
 		$this->query = "SELECT `voters`.`voterID`
 						FROM `voters`
 						WHERE `voterID` LIKE '".$voterID."'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (!empty($this->results)) {
+			return true;
+		} else return false;
+	}
+	
+	public function insertVoter($voterID, $ip)
+	{
+		$this->query = "INSERT INTO `voters` (`voterID`, `ip`)
+							VALUES ('".$voterID."', '".$ip."')";
+		// Insert
+		$this->doInsertQuery();
+	}
+	
+	public function isGeneratedIDTaken($table, $column, $newID)
+	{
+		$this->query = "SELECT `$table`.`$column`
+						FROM `$table`
+						WHERE `$column` LIKE '".$newID."'
 						LIMIT 0,1;";
 		$this->doSelectQuery();
 		if (!empty($this->results)) {
@@ -45,12 +45,14 @@ class VotersModel extends Model
 		return $this->results;
 	}
 	
-	public function insertVoter($voterID, $ip)
+	/*public function getPollByIDExampleUsingEscapeString($pollID)
 	{
-		$this->query = "INSERT INTO `voters` (`voterID`, `ip`)
-							VALUES ('".$voterID."', '".$ip."')";
-		// Insert
-		$this->doInsertQuery();
+		$this->query = "SELECT *
+						FROM `polls`
+						WHERE `polls`.`pollID` LIKE '".$this->escapeString($pollID)."'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		return $this->results[0];
 	}
 	
 	public function insertVote($pollID, $voterID, $answerID, $vote)
@@ -69,18 +71,6 @@ class VotersModel extends Model
 						LIMIT 1;";
 		// Insert
 		$this->doUpdateQuery();
-	}
-	
-	public function isGeneratedIDTaken($table, $column, $newID)
-	{
-		$this->query = "SELECT `$table`.`$column`
-						FROM `$table`
-						WHERE `$column` LIKE '".$newID."'
-						LIMIT 0,1;";
-		$this->doSelectQuery();
-		if (!empty($this->results)) {
-			return true;
-		} else return false;
 	}
 	
 	public function userHasVoted($voterID, $pollID)

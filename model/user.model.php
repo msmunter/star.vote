@@ -81,6 +81,27 @@ class UserModel extends Model
 		return false;
 	}
 	
+	public function getUserSurveyCount($userID)
+	{
+		$this->query = 'SELECT COUNT(`surveyID`) as `ct`
+						FROM `surveys`
+						WHERE `userID` = '.$userID.';';
+		$this->doSelectQuery();
+		return $this->results[0]->ct;
+	}
+	
+	public function getSurveysByUserID($userID, $index, $limit)
+	{
+		if (empty($index)) $index = 0;
+		if (empty($limit)) $limit = 50;
+		$this->query = 'SELECT * FROM `surveys`
+						WHERE `userID` = '.$userID.'
+						LIMIT '.$index.','.$limit.';';
+		$this->doSelectQuery();
+		if (!empty($this->results)) return $this->results;
+		return false;
+	}
+	
 	public function addUser($newUser)
 	{
 		$this->query = 'INSERT INTO `users` (`pass`, `admin_level`, `email`, `added`, `firstName`, `lastName`) VALUES ("'.$newUser['pass'].'", "'.$newUser['adminLevel'].'", "'.$newUser['email'].'", "'.$newUser['added'].'", "'.$newUser['firstName'].'", "'.$newUser['lastName'].'");';

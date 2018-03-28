@@ -6,9 +6,7 @@
 		<div class="bigContainerInner">
 			<?php
 			if (!empty($this->surveys)) { 
-				foreach ($this->surveys as $survey) {
-					echo $survey->title.'<br />';
-				}
+				include('view/survey/surveyset.view.php');
 			} else { ?>
 				No surveys/elections created yet
 			<?php } ?>

@@ -38,6 +38,11 @@ class UserController extends Controller
 				if ($this->pollCount > 20) $limit = 20;
 				$this->polls = $this->model->getPollsByUserID($this->user->userID, 0, $limit);
 			}
+			$this->surveyCount = $this->model->getUserSurveyCount($this->user->userID);
+			if ($this->surveyCount > 0) {
+				if ($this->surveyCount > 20) $limit = 20;
+				$this->surveys = $this->model->getSurveysByUserID($this->user->userID, 0, $limit);
+			}
 		}
 	}
 	

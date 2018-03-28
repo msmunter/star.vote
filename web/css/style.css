@@ -63,9 +63,26 @@ div#breadCrumbs {
 
 /* Index */
 
-div.indexHeader {
+div#indexHeaderContainer {
+	display: table;
+	margin: 0px auto;
+}
+
+div#indexHeader {
 	text-align: center;
 	font-size: 16pt;
+	border: solid 0px orange;
+	display: table-cell;
+	vertical-align: middle;
+}
+
+img#equalVoteLogo {
+	width: 140px;
+	padding: 2px;
+	margin-bottom: -6px;
+	background-color: #34424B;
+	border-radius: 7px;
+	border: dashed 0px purple;
 }
 
 div.bigContainer {
@@ -307,6 +324,26 @@ table#voterKeyTable, table#voterKeyTable th, table#voterKeyTable td {
 
 table#voterKeyTable td.voterKeyCell {
 	font-family: monospace;
+}
+
+div.surveyPollContainer {
+	float: left;
+	border: solid 1px #cccccc;
+	background-color: #e7e7e7;
+	border-radius: 5px;
+	padding: 5px;
+	margin-bottom: 10px;
+	margin-right: 10px;
+	/*box-shadow: 4px 4px 4px #cccccc;*/
+}
+
+div.surveyPollContainer form.voteForm {
+	background-color: #ffffff;
+}
+
+div.surveyPollTitle {
+	font-weight: bold;
+	margin-bottom: 5px;
 }
 
 td.barGraphTd {
