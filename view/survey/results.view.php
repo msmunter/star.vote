@@ -17,11 +17,11 @@ if ($this->survey) {
 		<div class="bigContainer">
 			<div class="bigContainerTitle">Polls in survey: "<?php echo $this->survey->title; ?>" <a class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all" href="/survey/addpoll/<?php echo $this->survey->surveyID; ?>/">Add Poll</a></div>
 			<div class="bigContainerInner">
-				<div id="prevNextPollButtons">
-					<button id="prevPollButton" disabled="disabled" data-inline="inline" data-mini="mini" onclick="changePoll('d')">&larr;</button>Part <span id="pollIndex">1</span> of <?php echo count($this->survey->polls); ?><button id="nextPollButton" data-inline="inline" data-mini="mini" onclick="changePoll('u')">&rarr;</button>
-				</div>
 				<div id="voteInput">
 					<?php include_once('view/survey/voteinput.view.php'); ?>
+				</div>
+				<div id="prevNextPollButtons">
+					<button id="prevPollButton" disabled="disabled" data-inline="inline" data-mini="mini" onclick="changePoll('d')">&larr;</button>Part <span id="pollIndex">1</span> of <?php echo count($this->survey->polls); ?><button id="nextPollButton" data-inline="inline" data-mini="mini" onclick="changePoll('u')">&rarr;</button>
 				</div>
 				<button id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
 			</div>
@@ -52,11 +52,11 @@ if ($this->survey) {
 					<label for="voterKey">Voter Key:</label>
 					<input id="voterKey" />
 				<?php } ?>
-				<div id="prevNextPollButtons">
-					<button id="prevPollButton" disabled="disabled" data-inline="inline" data-mini="mini" onclick="changePoll('d')">&larr;</button>Part <span id="pollIndex">1</span> of <?php echo count($this->survey->polls); ?><button id="nextPollButton" data-inline="inline" data-mini="mini" onclick="changePoll('u')">&rarr;</button>
-				</div>
 				<div id="voteInput">
 					<?php include_once('view/survey/voteinput.view.php'); ?>
+				</div>
+				<div id="prevNextPollButtons">
+					<button id="prevPollButton" disabled="disabled" data-inline="inline" data-mini="mini" onclick="changePoll('d')">&larr;</button>Part <span id="pollIndex">1</span> of <?php echo count($this->survey->polls); ?><button id="nextPollButton" data-inline="inline" data-mini="mini" onclick="changePoll('u')">&rarr;</button>
 				</div>
 				<button <?php if ($this->survey->verifiedVoting) echo 'disabled="disabled" '; ?>id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
 				<button <?php if ($this->survey->verifiedVoting) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
