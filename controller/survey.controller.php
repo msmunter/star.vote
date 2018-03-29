@@ -39,18 +39,78 @@ class SurveyController extends Controller
 					$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
 					// Populate polls
 					$mPoll = new PollModel();
-					foreach ($this->survey->polls as $poll) {
-						$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
+					foreach ($this->survey->polls as $tPoll) {
+						$tPoll->answers = $mPoll->getAnswersByPollID($tPoll->pollID);
+						$tPoll->voterCount = $mPoll->getPollVoterCount($tPoll->pollID);
+						
+						
+						
+						// Get top answers
+						$tPoll->topAnswers = $mPoll->getTopAnswersByPollID($tPoll->pollID);
+						foreach ($tPoll->topAnswers as $index => $answer) {
+							$tPoll->topAnswers[$index]->avgVote = $mPoll->getAvgVoteByAnswerID($answer->answerID);
+						}
+						$tPoll->runoffResults = $mPoll->getRunoffResultsByAnswerID($tPoll->pollID, $tPoll->topAnswers[0]->answerID, $tPoll->topAnswers[1]->answerID);
+						if ($tPoll->runoffResults['first']['answerID'] == $tPoll->topAnswers[0]->answerID) {
+							$tPoll->runoffResults['first']['question'] = $tPoll->topAnswers[0]->text;
+							$tPoll->runoffResults['second']['question'] = $tPoll->topAnswers[1]->text;
+						} else {
+							$tPoll->runoffResults['first']['question'] = $tPoll->topAnswers[1]->text;
+							$tPoll->runoffResults['second']['question'] = $tPoll->topAnswers[0]->text;
+						}
+						// Check for ties beyond this
+						if ($tPoll->runoffResults['tie']) {
+							$ignoreFirstTwo = 1;
+							$tPoll->runoffResults['tieEndsAt'] = 2;
+							foreach ($tPoll->topAnswers as $topAnswer) {
+								if ($ignoreFirstTwo > 2 && $tPoll->runoffResults['second']['votes'] == $topAnswer->votes) {
+									$tPoll->runoffResults['tieEndsAt']++;
+								}
+								$ignoreFirstTwo++;
+							}
+						}
+						// Runoff matrix
+						$tPoll->rawRunoff = $mPoll->getRunoffResultsRawByPollID($tPoll->pollID);
+						foreach ($tPoll->topAnswers as $index => $answer) {
+							$tPoll->runoffAnswerArray[$answer->answerID] = $answer;
+						}
+						foreach ($tPoll->rawRunoff as $runoff) {
+							$tPoll->orderedRunoff[$runoff->gtID][$runoff->ltID] = $runoff;
+						}
+						// Voter and point counts
+						$tPoll->totalVoterCount = $mPoll->getPollVoterCount($tPoll->pollID);
+						$tPoll->totalPointCount = $mPoll->getPollPointCount($tPoll->pollID);
+						if ($tPoll->runoffResults['tie']) {
+							$tPoll->noPreferenceCount = $tPoll->totalVoterCount - ($tPoll->runoffResults['first']['votes'] * 2);
+						} else {
+							$tPoll->noPreferenceCount = $tPoll->totalVoterCount - ($tPoll->runoffResults['first']['votes'] + $tPoll->runoffResults['second']['votes']);
+						}
+						// Condorcet
+						$tPoll->condorcet = true;
+						foreach ($tPoll->orderedRunoff[$tPoll->runoffResults['first']['answerID']] as $comIndex => $item) {
+							$comVotes = $tPoll->orderedRunoff[$comIndex][$tPoll->runoffResults['first']['answerID']]->votes;
+							if ($item->votes <= $comVotes) {
+								$tPoll->condorcet = false;
+							}
+						}
+						
+						
+						
+						
 					}
 					unset($mPoll);
 					// Init voter
-					/*$this->initVoter(null);
+					$this->voter = new VoterController();
+					$this->voter->model = new VoterModel();
+					$this->voter->initVoter(null);
 					// Determine whether user has voted
-					if ($this->model->userHasVoted($this->voterID, $this->URLdata)) {
+					foreach ($this->survey->polls as $zPoll) {
+						$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
+						if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
+					}
+					if (!empty($this->yourVotes)) {
 						$this->hasVoted = true;
-						// Get their vote
-						$this->yourVote = $this->model->getYourVote($this->voterID, $this->poll->pollID);
-					} else $this->hasVoted = false;*/
+					} else $this->hasVoted = false;
 					// Randomize answers if necessary
 					if ($this->survey->randomOrder && $this->hasVoted == false) {
 						foreach ($this->survey->polls as $poll) {
@@ -64,6 +124,21 @@ class SurveyController extends Controller
 		} else {
 			$this->error = 'Must provide survey ID';
 		}
+	}
+	
+	public function ajaxresults()
+	{
+		$this->URLdata = $_POST['surveyID'];
+		$this->results();
+		// Is eligible to see the results?
+		if (($this->survey->verifiedVoting && $this->user->userID == $this->survey->userID && $this->survey->userID > 0) || ($this->survey->verifiedVoting && $this->hasVoted) || $this->survey->verifiedVoting == false) {
+			$return['results'] = $this->ajaxInclude('view/survey/pollresultsactual.view.php');
+			//$return['runoffmatrix'] = $this->ajaxInclude('view/survey/runoffmatrix.view.php');
+		} else {
+			$return['results'] = 'Results cannot be viewed yet';
+			$return['runoffmatrix'] = '';
+		}
+		echo json_encode($return);
 	}
 	
 	public function voterkeys()
@@ -127,8 +202,9 @@ class SurveyController extends Controller
 			}
 		} else {
 			// Passes regex
-			$pollBySlug = $this->model->getPollByCustomSlug($_POST['slug']);
-			$pollByID = $this->model->getPollByID($_POST['slug']);
+			$mPoll = new PollModel();
+			$pollBySlug = $mPoll->getPollByCustomSlug($_POST['slug']);
+			$pollByID = $mPoll->getPollByID($_POST['slug']);
 			$surveyBySlug = $this->model->getSurveyByCustomSlug($_POST['slug']);
 			$surveyByID = $this->model->getSurveyByID($_POST['slug']);
 			if (!empty($pollBySlug)) {
@@ -234,11 +310,22 @@ class SurveyController extends Controller
 	public function ajaxvote()
 	{
 		// Initialize voter (will provide $this->voterID)
-		$oVoter = new VoterController();
-		$oVoter->model = new VoterModel();
-		$oVoter->initVoter($_POST['voterID']);
+		$this->voter = new VoterController();
+		$this->voter->model = new VoterModel();
+		$this->voter->initVoter($_POST['voterID']);
 		$this->surveyID = $_POST['surveyID'];
 		$this->survey = $this->model->getSurveyByID($this->surveyID);
+		$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
+		$mPoll = new PollModel();
+		foreach ($this->survey->polls as $poll) {
+			$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
+		}
+		unset($mPoll);
+		foreach ($this->survey->polls as $xPoll) {
+			foreach ($xPoll->answers as $xAnswer) {
+				$this->answerToPollArray[$xAnswer->answerID] = $xPoll->pollID;
+			}
+		}
 		$voterKeyResult = $this->model->verifyVoterKey($_POST['voterKey'], $this->surveyID);
 		// Determine eligibility if necessary
 		if (($this->survey->verifiedVoting && $voterKeyResult->surveyID) || $this->survey->verifiedVoting == false) {
@@ -254,11 +341,14 @@ class SurveyController extends Controller
 				}
 				$voteArrayToDestroy = $voteArray;
 				// Verify no vote has been entered for this voter on this poll
-				foreach ($this->survey->polls as $poll) {
-					$existingVote = $oVoter->model->getYourVote($this->voterID, $poll->pollID);
-					if ($existingVote->answerID != '') $yourVotes[$poll->pollID] = $existingVote;
+				foreach ($this->survey->polls as $zPoll) {
+					$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
+					if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
 				}
-				if (empty($yourVotes)) {
+				if (!empty($this->yourVotes)) {
+					$this->hasVoted = true;
+				} else $this->hasVoted = false;
+				if (!$this->hasVoted) {
 					// No vote, get the answers to make sure we have a score for each
 					$this->survey->allAnswers = $this->model->getAllAnswersBySurveyID($this->surveyID);
 					foreach ($this->survey->allAnswers as $answer) {
@@ -266,20 +356,23 @@ class SurveyController extends Controller
 							$voteArray[$answer->answerID] = 0;
 						}
 					}
-					$this->votesTogether = $voteArray; // DEBUG ONLY!!!
 					$oDate = new DateTime();	
 					$voteTime = $oDate->format("Y-m-d H:i:s");
-					/*foreach ($voteArray as $answerID => $vote) {
+					// Populate an array with 
+					// Submit the votes and update matrices
+					foreach ($voteArray as $answerID => $vote) {
 						$this->votes[] = $vote;
+						// Determine pollID
+						$pollID = $this->answerToPollArray[$answerID];
 						// Insert vote
-						$this->model->insertVote($this->pollID, $this->voterID, $answerID, $vote, $voteTime);
-						// Update the matrix. Maybe replace the windows with bricks?
+						$this->model->insertVote($pollID, $this->voter->voterID, $answerID, $vote, $voteTime);
+						// Update the matrix; maybe replace the windows with bricks?
 						foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
 							if ($answerID != $answerID2) {
 								if ($vote > $vote2) {
-									$this->model->updateVoteMatrix($this->pollID, $answerID, $answerID2);
+									$this->model->updateVoteMatrix($pollID, $answerID, $answerID2);
 								} else if ($vote < $vote2) {
-									$this->model->updateVoteMatrix($this->pollID, $answerID2, $answerID);
+									$this->model->updateVoteMatrix($pollID, $answerID2, $answerID);
 								} // and do nothing if they're equal
 							}
 						}
@@ -288,13 +381,13 @@ class SurveyController extends Controller
 					$this->model->incrementSurveyVoteCount($this->surveyID);
 					// If a verified vote, write extra db info
 					if ($this->survey->verifiedVoting) {
-						$this->model->updateVoterKeyEntry($_POST['voterKey'], $this->surveyID, $this->voterID, $voteTime);
-					}*/
+						$this->model->updateVoterKeyEntry($_POST['voterKey'], $this->surveyID, $this->voter->voterID, $voteTime);
+					}
 					unset($voteTime, $oDate);
 				} else {
 					$return['caution'] = 'Your vote had already been recorded for this poll';
 				}
-				unset($yourVotes);
+				// Load the survey fresh
 				$this->survey = $this->model->getSurveyByID($this->surveyID);
 				$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
 				$mPoll = new PollModel();
@@ -302,8 +395,9 @@ class SurveyController extends Controller
 					$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
 				}
 				unset($mPoll);
-				foreach ($this->survey->polls as $poll) {
-					$this->yourVotes[$poll->pollID] = $oVoter->model->getYourVote($this->voterID, $poll->pollID);
+				foreach ($this->survey->polls as $zPoll) {
+					$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
+					if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
 				}
 				$return['html'] .= $this->ajaxInclude('view/survey/yourvote.view.php');
 			} else {

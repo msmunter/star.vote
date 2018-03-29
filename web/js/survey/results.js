@@ -199,7 +199,7 @@ function showResults() {
 		c: 'survey', 
 		a: 'ajaxresults', 
 		ajax: '1',
-		pollID: $('#pollID').val()
+		surveyID: $('#surveyID').val()
 	}, function(data) {
 		var jData = JSON.parse(data);
 		if (jData.error) {

@@ -68,7 +68,11 @@ if ($this->survey) {
 		<div class="bigContainerTitle">Results for "<?php echo $this->survey->title; ?>"</div>
 		<div class="bigContainerInner">
 			<div id="pollResultsActual">
-				<?php include('view/poll/resultsactual.view.php');?>
+				<?php 
+				/*foreach ($this->survey->polls as $currentPoll) {
+					include('view/survey/pollresultsactual.view.php');
+				}*/
+				?>
 			</div>
 			<button id="showResultsButton" data-inline="inline" onclick="showResults()">Update Results</button>
 		</div>

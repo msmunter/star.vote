@@ -166,5 +166,85 @@ class SurveyModel extends Model
 			return true;
 		} else return false;
 	}
+	
+	public function insertVote($pollID, $voterID, $answerID, $vote, $voteTime)
+	{
+		// Add vote record
+		$this->query = "INSERT INTO `votes` (`voterID`, `pollID`, `answerID`, `vote`, `voteTime`)
+							VALUES ('".$voterID."', '".$pollID."', '".$answerID."', '".$vote."', '".$voteTime."')";
+		// Insert
+		$this->doInsertQuery();
+		
+		// Add to scores/votes
+		$this->query = "UPDATE `answers`
+						SET `points` = `points` + $vote,
+							`votes` = `votes` + 1
+						WHERE `answerID` = $answerID
+						LIMIT 1;";
+		// Insert
+		$this->doUpdateQuery();
+	}
+	
+	public function incrementSurveyVoteCount($surveyID)
+	{
+		// Increment vote counter in surveys table
+		$this->query = "UPDATE `surveys`
+						SET `votes` = `votes` + 1
+						WHERE `surveyID` LIKE '$surveyID'
+						LIMIT 1;";
+		// Insert
+		$this->doUpdateQuery();
+	}
+	
+	public function updateVoteMatrix($pollID, $gtID, $ltID)
+	{
+		// Update
+		$this->query = "UPDATE `runoff`
+					SET `votes` = `votes` + 1
+					WHERE `pollID` LIKE '$pollID'
+					AND `gtID` = $gtID
+					AND `ltID` = $ltID
+					LIMIT 1;";
+		// Insert
+		$this->doUpdateQuery();
+	}
+	
+	public function updateVoterKeyEntry($voterKey, $surveyID, $voterID, $voteTime)
+	{
+		// Update
+		$this->query = "UPDATE `surveyVoterKeys`
+					SET `voterID` = '$voterID', `voteTime` = '$voteTime'
+					WHERE `voterKey` LIKE '$voterKey'
+					AND `surveyID` LIKE '$surveyID'
+					LIMIT 1;";
+		// Insert
+		$this->doUpdateQuery();
+	}
+	
+	/*public function userHasVotedInSurvey($voterID, $surveyID)
+	{
+		$this->query = "SELECT `votes`.`pollID`
+						FROM `votes`
+						WHERE `voterID` LIKE '".$voterID."'
+						AND `pollID` LIKE '".$pollID."'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (!empty($this->results)) {
+			return true;
+		} else return false;
+	}*/
+	
+	public function userHasVotedInPoll($voterID, $pollID)
+	{
+		$this->query = "SELECT `votes`.`pollID`
+						FROM `votes`
+						WHERE `voterID` LIKE '".$voterID."'
+						AND `pollID` LIKE '".$pollID."'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (!empty($this->results)) {
+			return true;
+		} else return false;
+	}
 }
 ?>

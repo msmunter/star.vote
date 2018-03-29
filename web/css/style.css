@@ -254,12 +254,18 @@ input#fsCustomSlugInput.highlightInputRed, input#voterKey.highlightInputRed {
 	border: solid 1px red;
 }
 
-table#resultsTable th, table#yourVoteTable th, table#runoffResultsTable th {
+table#resultsTable th, table#yourVoteTable th, table.yourVoteTable th, table#runoffResultsTable th {
 	font-size: 12px;
 	text-align: left;
 }
 
-table#resultsTable td.number, table#yourVoteTable td.number, table#runoffResultsTable td.number {
+table.yourVoteTable th.pollHeader {
+	text-align: center;
+	background-color: #e7e7e7;
+	border: solid 1px #e7e7e7;
+}
+
+table#resultsTable td.number, table#yourVoteTable td.number, table.yourVoteTable td.number, table#runoffResultsTable td.number {
 	font-family: monospace;
 	text-align: right;
 	font-size: 14pt;
@@ -280,15 +286,15 @@ span#yourVoterIDActual {
 	padding: 0px 5px 0px 5px;
 }
 
-table#yourVoteTable {
+table#yourVoteTable, table.yourVoteTable {
 	border-collapse: collapse;
 }
 
-table#yourVoteTable td {
+table#yourVoteTable td, table.yourVoteTable td {
 	border-top: solid 1px #cccccc;
 }
 
-table#yourVoteTable td.orderCell {
+table#yourVoteTable td.orderCell, table.yourVoteTable td.orderCell {
 	padding-right: 5px;
 }
 
@@ -343,6 +349,17 @@ div.surveyPollContainer form.voteForm {
 
 div.surveyPollTitle {
 	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+div.surveyResultsPollTitle {
+	background-color: #38c;
+	color: white;
+	text-shadow: 1px 1px 2px #333333;
+	padding: 5px;
+	border-radius: 7px;
+	font-weight: bold;
+	margin-top: 5px;
 	margin-bottom: 5px;
 }
 
