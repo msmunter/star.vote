@@ -410,28 +410,34 @@ class SurveyController extends Controller
 		echo json_encode($return);
 	}
 	
-	/*public function ajaxrunoffmatrix()
+	public function ajaxrunoffmatrix()
 	{
-		$pollID = $_POST['pollID'];
-		$this->poll = $this->model->getPollByID($pollID);
-		$this->initVoter(false);
+		$surveyID = $_POST['surveyID'];
+		$this->survey = $this->model->getSurveyByID($surveyID);
+		$oVoter = new VoterController();
+		$oVoter->model = new VoterModel();
+		$oVoter->initVoter(false);
+		$mPoll = new PollModel();
 		// Is eligible to see the results?
-		if (($this->poll->verifiedVoting && $this->user->userID == $this->poll->userID) || ($this->poll->verifiedVoting && $this->model->userHasVoted($this->voterID, $pollID)) || $this->poll->verifiedVoting == false) {
-			$this->poll->rawRunoff = $this->model->getRunoffResultsRawByPollID($pollID);
-			$this->poll->voterCount = $this->model->getPollVoterCount($pollID);
-			$this->poll->answers = $this->model->getAnswerByPollIDScoreOrder($pollID);
-			foreach ($this->poll->answers as $index => $answer) {
-				$this->poll->runoffAnswerArray[$answer->answerID] = $answer;
+		if (($this->survey->verifiedVoting && $this->user->userID == $this->survey->userID && $this->user->userID > 0) || ($this->survey->verifiedVoting && $this->model->userHasVoted($this->voterID, $surveyID)) || $this->survey->verifiedVoting == false) {
+			$this->survey->polls = $this->model->getPollsBySurveyID($surveyID);
+			foreach ($this->survey->polls as $qPoll) {
+				$qPoll->rawRunoff = $mPoll->getRunoffResultsRawByPollID($qPoll->pollID);
+				$qPoll->voterCount = $mPoll->getPollVoterCount($qPoll->pollID);
+				$qPoll->answers = $mPoll->getAnswerByPollIDScoreOrder($qPoll->pollID);
+				foreach ($qPoll->answers as $index => $answer) {
+					$qPoll->runoffAnswerArray[$answer->answerID] = $answer;
+				}
+				foreach ($qPoll->rawRunoff as $runoff) {
+					$qPoll->orderedRunoff[$runoff->gtID][$runoff->ltID] = $runoff;
+				}
 			}
-			foreach ($this->poll->rawRunoff as $runoff) {
-				$this->poll->orderedRunoff[$runoff->gtID][$runoff->ltID] = $runoff;
-			}
-			$return['html'] = $this->ajaxInclude('view/poll/runoffmatrix.view.php');
+			$return['html'] .= $this->ajaxInclude('view/survey/runoffmatrix.view.php');
 		} else {
 			$return['html'] = 'Results cannot be viewed yet';
 		}
 		echo json_encode($return);
-	}*/
+	}
 	
 	/*public function csv()
 	{

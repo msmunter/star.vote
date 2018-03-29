@@ -463,64 +463,64 @@ table#runoffResultsTable tr.noTopBorder {
 	border-top: none;
 }
 
-table#runoffMatrix {
+table#runoffMatrix, table.runoffMatrix {
 	table-layout: fixed;
 	max-width: 100%;
 	border-collapse: collapse;
 }
 
-table#runoffMatrix td, table#runoffMatrix th {
+table#runoffMatrix td, table#runoffMatrix th, table.runoffMatrix td, table.runoffMatrix th {
 	border: none;
 	font-size: 9pt;
 }
 
-table#runoffMatrix th {
+table#runoffMatrix th, table.runoffMatrix th {
 	width: 1px;
 }
 
-table#runoffMatrix td.borderCell {
+table#runoffMatrix td.borderCell, table.runoffMatrix td.borderCell {
 	border: solid 1px #cccccc;
 }
 
-table#runoffMatrix td.leftBorderCell {
+table#runoffMatrix td.leftBorderCell, table.runoffMatrix td.leftBorderCell {
 	border: solid 1px #cccccc;
 	border-right: none;
 }
 
-table#runoffMatrix td.centerBorderCell {
+table#runoffMatrix td.centerBorderCell, table.runoffMatrix td.centerBorderCell {
 	border-top: solid 1px #cccccc;
 	border-bottom: solid 1px #cccccc;
 }
 
-table#runoffMatrix td.rightBorderCell {
+table#runoffMatrix td.rightBorderCell, table.runoffMatrix td.rightBorderCell {
 	border: solid 1px #cccccc;
 	border-left: none;
 }
 
-table#runoffMatrix td.filled {
+table#runoffMatrix td.filled, table.runoffMatrix td.filled {
 	background-color: #cccccc;
 }
 
-table#runoffMatrix td.number {
+table#runoffMatrix td.number, table.runoffMatrix td.number {
 	font-family: monospace;
 	text-align: right;
 	width: 1px;
 	text-shadow: 1px 1px 1px #cccccc;
 }
 
-table#runoffMatrix td.padded {
+table#runoffMatrix td.padded, table.runoffMatrix td.padded {
 	padding: 3px;
 }
 
-table#runoffMatrix td.winCell {
+table#runoffMatrix td.winCell, table.runoffMatrix td.winCell {
 	background-color: #deeede;
 }
 
-table#runoffMatrix td.tieCell {
+table#runoffMatrix td.tieCell, table.runoffMatrix td.tieCell {
 	background-color: #ffffe0;
 }
 
-table#runoffMatrix td.loseCell {
+table#runoffMatrix td.loseCell, table.runoffMatrix td.loseCell {
 	background-color: #ffeeee;
 }
 
@@ -545,7 +545,7 @@ div#runoffResults {
 	margin-left: 10px;
 }
 
-div#runoffLegend {
+div.runoffLegend {
 	float: left;
 	font-size: 10pt;
 	border-bottom: solid 1px #e7e7e7;
