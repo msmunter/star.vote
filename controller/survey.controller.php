@@ -352,7 +352,7 @@ class SurveyController extends Controller
 					// No vote, get the answers to make sure we have a score for each
 					$this->survey->allAnswers = $this->model->getAllAnswersBySurveyID($this->surveyID);
 					foreach ($this->survey->allAnswers as $answer) {
-						if (!array_key_exists($answer->answerID, $voteArray)) {
+						if (!array_key_exists($answer->answerID, $voteArray) || $voteArray[$answer->answerID] == '') {
 							$voteArray[$answer->answerID] = 0;
 						}
 					}
@@ -468,26 +468,32 @@ class SurveyController extends Controller
 		} else $this->error = 'Poll not found';
 	}
 	
-	/*public function ajaxcvr()
+	public function ajaxcvr()
 	{
 		$this->ajax = 1;
 		$this->doHeader = 0;
 		$this->doFooter = 0;
-		$this->poll = $this->model->getPollByID($_POST['pollID']);
-		$this->initVoter(false);
-		if (($this->poll->verifiedVoting && $this->user->userID == $this->poll->userID) || ($this->poll->verifiedVoting && $this->model->userHasVoted($this->voterID, $this->poll->pollID)) || $this->poll->verifiedVoting == false) {
-			if (!empty($this->poll)) {
-				$this->poll->answers = $this->model->getAnswersByPollID($_POST['pollID']);
-				$this->poll->ballots = $this->model->getBallotsByPollID($_POST['pollID']);
-				// Process ballots into a single, cohesive array
-				$this->poll->processedBallots = $this->processBallots($this->poll->ballots);
-			} else $return['error'] = 'Poll not found';
-			$return['html'] = $this->ajaxInclude('view/poll/cvrhtml.view.php');
+		$this->survey = $this->model->getSurveyByID($_POST['surveyID']);
+		$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
+		$oVoter = new VoterController();
+		$oVoter->model = new VoterModel();
+		$oVoter->initVoter(false);
+		$mPoll = new PollModel();
+		if (($this->survey->verifiedVoting && $this->user->userID == $this->survey->userID && $this->user->userID > 0) || ($this->survey->verifiedVoting && $this->model->userHasVoted($this->voterID, $this->survey->surveyID)) || $this->survey->verifiedVoting == false) {
+			foreach ($this->survey->polls as $zPoll) {
+				if (!empty($zPoll)) {
+					$zPoll->answers = $mPoll->getAnswersByPollID($zPoll->pollID);
+					$zPoll->ballots = $mPoll->getBallotsByPollID($zPoll->pollID);
+					// Process ballots into a single, cohesive array
+					$zPoll->processedBallots = $this->processBallots($zPoll->ballots);
+				} else $return['error'] = 'Poll not found';
+			}
+			$return['html'] = $this->ajaxInclude('view/survey/cvrhtml.view.php');
 		} else {
 			$return['html'] = 'Results cannot be viewed yet';
 		}
 		echo json_encode($return);
-	}*/
+	}
 	
 	private function processBallots($ballots)
 	{

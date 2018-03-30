@@ -524,12 +524,13 @@ table#runoffMatrix td.loseCell, table.runoffMatrix td.loseCell {
 	background-color: #ffeeee;
 }
 
-div#ballotRecordContainer, div#runoffMatrixContainer {
+div#runoffMatrixContainer, div#ballotRecordContainer {
 	display: none;
+	overflow: scroll;
 }
 
-div#runoffMatrixContainer {
-	overflow: scroll;
+div#ballotRecordContainer {
+	font-size: 12px;
 }
 
 div#runoffResults, div#pollResultsContainer {
