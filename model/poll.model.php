@@ -151,10 +151,11 @@ class PollModel extends Model
 	
 	public function insertPoll($pollID, $question, $answers, $randomOrder, $private, $creatorIP, $customSlug, $verifiedVoting, $verifiedVotingType, $userID, $surveyID)
 	{
-		global $return;
+		if ($verifiedVoting == '') $verifiedVoting = 0;
 		// Poll first
 		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `verifiedVoting`, `verifiedVotingType`, `allowComments`, `randomAnswerOrder`, `creatorIP`, `votes`, `customSlug`, `userID`, `surveyID`)
 						VALUES ('".$pollID."', '".$question."', '".date('Y-m-d H:i:s')."', ".$private.", ".$verifiedVoting.", '".$verifiedVotingType."', 0, ".$randomOrder.", '".$creatorIP."', 0, '".$customSlug."', '".$userID."', '".$surveyID."')";
+		$this->firstQuery = $this->query; // DEBUG ONLY!!!
 		// Insert
 		$this->doInsertQuery();
 		
@@ -292,6 +293,8 @@ class PollModel extends Model
 						FROM `polls`
 						WHERE `private` = 0
 						AND `surveyID` LIKE '0'
+						OR `private` = 0
+						AND `surveyID` LIKE ''
 						ORDER BY `polls`.`created` DESC
 						LIMIT $index,$limit;";
 		$this->doSelectQuery();
@@ -306,6 +309,8 @@ class PollModel extends Model
 						FROM `polls`
 						WHERE `private` = 0
 						AND `surveyID` LIKE '0'
+						OR `private` = 0
+						AND `surveyID` LIKE ''
 						ORDER BY `polls`.`created` DESC
 						LIMIT 0,$limit;";
 		$this->doSelectQuery();
@@ -318,6 +323,8 @@ class PollModel extends Model
 						FROM `polls`
 						WHERE `private` = 0
 						AND `surveyID` LIKE '0'
+						OR `private` = 0
+						AND `surveyID` LIKE ''
 						ORDER BY `votes` DESC, `created` DESC
 						LIMIT $index,$limit;";
 		$this->doSelectQuery();

@@ -316,7 +316,6 @@ class SurveyController extends Controller
 				$oDate = new DateTime();
 				// Insert actual
 				$mPoll->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, 0, 1, $_SERVER['REMOTE_ADDR'], "", 0, "gkc", $userID, $surveyID);
-				//$return['html'] = $newPollID.', '.$this->pollQuestion.', '.$this->pollAnswers.', 0, 1, '.$_SERVER['REMOTE_ADDR'].', "", 0, "gkc", '.$userID.', '.$surveyID;
 				unset($mPoll);
 				$return['html'] .= 'Poll saved! Loading results...';
 			} else {
