@@ -15,7 +15,7 @@ if ($this->survey) {
 	if ($this->user->userID > 0 && $this->user->userID == $this->survey->userID) {
 		// This user's survey ?>
 		<div class="bigContainer">
-			<div class="bigContainerTitle">Polls in survey: "<?php echo $this->survey->title; ?>" <a class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all" href="/survey/addpoll/<?php echo $this->survey->surveyID; ?>/">Add Poll</a></div>
+			<div class="bigContainerTitle">Polls in survey: "<?php echo $this->survey->title; ?>" <a class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all" href="/survey/createpoll/<?php echo $this->survey->surveyID; ?>/">Add Poll</a></div>
 			<div class="bigContainerInner">
 				<div id="voteInput">
 					<?php include_once('view/survey/voteinput.view.php'); ?>

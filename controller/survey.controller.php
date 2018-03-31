@@ -261,6 +261,73 @@ class SurveyController extends Controller
 		echo json_encode($return);
 	}
 	
+	public function createpoll()
+	{
+		// Display form for poll creation
+		$this->surveyID = $this->URLdata;
+		$this->survey = $this->model->getSurveyByID($this->surveyID);
+		$this->title = 'Create Poll For Survey "'.$this->survey->title.'"';
+	}
+	
+	public function ajaxinsertpoll()
+	{
+		// Actually saves the poll
+		if ($_POST['pollQuestion'] != "") {
+			$this->pollQuestion = $_POST['pollQuestion'];
+			// Parse form string
+			parse_str($_POST['pollAnswers'], $this->pollAnswerSet);
+			// Rearrange into a more useful array
+			foreach ($this->pollAnswerSet as $pollInputName => $pollAnswer) {
+				$inBoom = explode('answer', $pollInputName);
+				if (trim($pollAnswer) != "") $this->pollAnswers[$inBoom[1]] = $pollAnswer;
+			}
+			unset($this->pollAnswerSet);
+			// See that we have some answers and they aren't blank
+			$answerCount = 0;
+			foreach ($this->pollAnswers as $index => $answer) {
+				if ($answer == '') {
+					// Last question exception
+					if (array_key_exists($index+1, $this->pollAnswers)) {
+						// Next item exists, this one can't be blank
+						$return['error'] = 'Answers cannot be blank';
+						break;
+					}
+				} else {
+					$answerCount++;
+				}
+			}
+			if ($answerCount >= 2 && !$return['error']) {
+				// ALL SET, let's save this poll
+				// Generate ID
+				$oUtility = new UtilityController();
+				$pollIDIsTaken = true;
+				$mPoll = new PollModel();
+				while ($pollIDIsTaken) {
+					$newPollID = $oUtility->generateRandomString($type = 'distinctlower', $length = 8);
+					$pollIDIsTaken = $mPoll->isPollIDTaken($newPollID);
+				}
+				$return['pollID'] = $newPollID;
+				if ($this->user->userID > 0) {
+					$userID = $this->user->userID;
+				} else $userID = 0;
+				if (strlen($_POST['surveyID']) > 0) {
+					$surveyID = $_POST['surveyID'];
+				} else $surveyID = '';
+				$oDate = new DateTime();
+				// Insert actual
+				$mPoll->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, 0, 1, $_SERVER['REMOTE_ADDR'], "", 0, "gkc", $userID, $surveyID);
+				//$return['html'] = $newPollID.', '.$this->pollQuestion.', '.$this->pollAnswers.', 0, 1, '.$_SERVER['REMOTE_ADDR'].', "", 0, "gkc", '.$userID.', '.$surveyID;
+				unset($mPoll);
+				$return['html'] .= 'Poll saved! Loading results...';
+			} else {
+				$return['error'] = 'Must provide at least two possible answers';
+			}
+		} else {
+			$return['error'] = 'Must provide a question';
+		}
+		echo json_encode($return);
+	}
+	
 	public function ajaxcheckvoterkey()
 	{
 		$this->survey = $this->model->getSurveyByID($_POST['surveyID']);
