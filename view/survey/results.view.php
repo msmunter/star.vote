@@ -16,7 +16,7 @@ if ($this->survey) {
 		<div class="bigContainer">
 			<div class="bigContainerTitle">Polls in survey: "<?php echo $this->survey->title; ?>" <a class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all" href="/survey/createpoll/<?php echo $this->survey->surveyID; ?>/">Add Poll</a></div>
 			<div class="bigContainerInner">
-				<div class="startEndString"><?php echo $this->startEndString; ?></div>
+				<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
 				<div class="clear"></div>
 				<div id="voteInput">
 					<?php include_once('view/survey/voteinput.view.php'); ?>
@@ -40,7 +40,7 @@ if ($this->survey) {
 		<div class="bigContainer">
 			<div class="bigContainerTitle">Your vote for "<?php echo $this->survey->title; ?>"</div>
 			<div class="bigContainerInner">
-				<div class="startEndString"><?php echo $this->startEndString; ?></div>
+				<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
 				<div class="clear"></div>
 				<div id="voteInput">
 					<?php include_once('view/survey/yourvote.view.php'); ?>
@@ -55,7 +55,7 @@ if ($this->survey) {
 					<label for="voterKey">Voter Key:</label>
 					<input id="voterKey" />
 				<?php } ?>
-				<div class="startEndString"><?php echo $this->startEndString; ?></div>
+				<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
 				<div class="clear"></div>
 				<div id="voteInput">
 					<?php include_once('view/survey/voteinput.view.php'); ?>

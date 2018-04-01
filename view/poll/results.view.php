@@ -29,7 +29,7 @@ if ($this->poll) {
 			<div class="bigContainer">
 				<div class="bigContainerTitle">What voters see: "<?php echo $this->poll->question; ?>"</div>
 				<div class="bigContainerInner">
-					<div class="startEndString"><?php echo $this->startEndString; ?></div>
+					<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
 					<div class="clear"></div>
 					<div id="voteInput">
 						<?php include_once('view/poll/voteinput.view.php'); ?>
@@ -41,7 +41,7 @@ if ($this->poll) {
 			<div class="bigContainer">
 				<div class="bigContainerTitle">Your vote for "<?php echo $this->poll->question; ?>"</div>
 				<div class="bigContainerInner">
-					<div class="startEndString"><?php echo $this->startEndString; ?></div>
+					<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
 					<div class="clear"></div>
 					<div id="voteInput">
 						<?php include_once('view/poll/yourvote.view.php'); ?>
@@ -52,7 +52,7 @@ if ($this->poll) {
 			<div class="bigContainer">
 				<div class="bigContainerTitle">Vote on "<?php echo $this->poll->question; ?>"</div>
 				<div class="bigContainerInner">
-					<div class="startEndString"><?php echo $this->startEndString; ?></div>
+					<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
 					<div class="clear"></div>
 					<div id="voteInput">
 						<?php if ($this->poll->verifiedVoting) { ?>
