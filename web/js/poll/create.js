@@ -25,6 +25,13 @@ $(document).ready(function() {
 			$('#verifiedVotingSelectContainer').show();
 		}
 	});
+	$('#fsStartEndSwitch').change(function() {
+		if ($('#fsStartEndSwitch').val() == 0) {
+			$('#startEndInputContainer').hide();
+		} else {
+			$('#startEndInputContainer').show();
+		}
+	});
 	$('#fsCustomSlugInput').focusout(function() {
 		checkCustomSlug();
 	});
@@ -123,7 +130,11 @@ function createPollActual()
 		fsRandomOrder: $('#fsRandomOrder').val(),
 		fsCustomSlug: $('#fsCustomSlugInput').val(),
 		fsVerifiedVoting: $('#fsVerifiedVoting').val(),
-		fsVerifiedVotingType: $('#fsVerifiedVotingType').val()
+		fsVerifiedVotingType: $('#fsVerifiedVotingType').val(),
+		fsStartDate: $('#fsStartDate').val(),
+		fsStartTime: $('#fsStartTime').val(),
+		fsEndDate: $('#fsEndDate').val(),
+		fsEndTime: $('#fsEndTime').val()
 	}, function(data) {
 		// Disable inputs
 		disableInputs();

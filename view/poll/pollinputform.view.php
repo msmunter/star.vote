@@ -54,6 +54,22 @@
 	</select>
 </div>
 <?php } ?>
+<div class="ui-field-contain">
+	<label for="fsStartEndSwitch">Start/End Times:</label>
+	<select name="fsStartEndSwitch" id="fsStartEndSwitch" data-role="flipswitch">
+		<option selected value="0">No</option>
+		<option value="1">Yes</option>
+	</select>
+</div>
+<div class="ui-field-contain" id="startEndInputContainer">
+	<label for="fsStartDate">Start:</label>
+	<input id="fsStartDate" type="date" data-inline="true" data-mini="true" value="<?php $oDate = new DateTime();echo $oDate->format('Y-m-d'); ?>" />
+	<input id="fsStartTime" type="time" data-inline="true" data-mini="true" value="00:00" />
+	<div class="clear"></div>
+	<label for="fsEndDate">End:</label>
+	<input id="fsEndDate" type="date" data-inline="true" data-mini="true" value="<?php echo $oDate->format('Y-m-d'); ?>" />
+	<input id="fsEndTime" type="time" data-inline="true" data-mini="true" value="00:00" />
+</div>
 <div id="pollButtonContainer">
 	<button id="createPollButton" data-inline="inline" onclick="createPoll()">Create Poll</button>
 </div>

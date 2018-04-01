@@ -242,7 +242,7 @@ div#pollButtonContainer {
 
 /* END Vote Selector*/
 
-div#customSlugInputContainer, div#verifiedVotingSelectContainer {
+div#customSlugInputContainer, div#verifiedVotingSelectContainer, div#startEndInputContainer {
 	display: none;
 }
 
@@ -257,6 +257,20 @@ input#fsCustomSlugInput.highlightInputRed, input#voterKey.highlightInputRed {
 table#resultsTable th, table#yourVoteTable th, table.yourVoteTable th, table#runoffResultsTable th {
 	font-size: 12px;
 	text-align: left;
+}
+
+div#startEndInputContainer div.ui-input-text {
+	width: 150px;
+}
+
+div.startEndString {
+	float: left;
+	font-size: 11pt;
+	margin-bottom: 5px;
+	border: solid 1px #38c;
+	background-color: #e7e7e7;
+	border-radius: 7px;
+	padding: 5px;
 }
 
 table.yourVoteTable th.pollHeader {

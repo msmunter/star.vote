@@ -149,15 +149,22 @@ class PollModel extends Model
 		} else return false;
 	}
 	
-	public function insertPoll($pollID, $question, $answers, $randomOrder, $private, $creatorIP, $customSlug, $verifiedVoting, $verifiedVotingType, $userID, $surveyID)
+	public function insertPoll($pollID, $question, $answers, $randomOrder, $private, $creatorIP, $customSlug, $verifiedVoting, $verifiedVotingType, $userID, $surveyID, $oDateCreated, $startDate, $startTime, $endDate, $endTime)
 	{
 		if ($verifiedVoting == '') $verifiedVoting = 0;
+		$oDateStart = new DateTime($startDate.' '.$startTime);
+		$oDateEnd = new DateTime($endDate.' '.$endTime);
+		if ($oDateStart < $oDateCreated) $oDateStart = $oDateCreated;
+		if ($oDateEnd <= $oDateStart) {
+			$endDateActual = 'NULL';
+		} else $endDateActual = "'".$oDateEnd->format('Y-m-d H:i:s')."'";
 		// Poll first
-		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `verifiedVoting`, `verifiedVotingType`, `allowComments`, `randomAnswerOrder`, `creatorIP`, `votes`, `customSlug`, `userID`, `surveyID`)
-						VALUES ('".$pollID."', '".$question."', '".date('Y-m-d H:i:s')."', ".$private.", ".$verifiedVoting.", '".$verifiedVotingType."', 0, ".$randomOrder.", '".$creatorIP."', 0, '".$customSlug."', '".$userID."', '".$surveyID."')";
-		$this->firstQuery = $this->query; // DEBUG ONLY!!!
+		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `verifiedVoting`, `verifiedVotingType`, `allowComments`, `randomAnswerOrder`, `creatorIP`, `votes`, `customSlug`, `userID`, `surveyID`, `startTime`, `endTime`)
+						VALUES ('".$pollID."', '".$question."', '".$oDateCreated->format('Y-m-d H:i:s')."', ".$private.", ".$verifiedVoting.", '".$verifiedVotingType."', 0, ".$randomOrder.", '".$creatorIP."', 0, '".$customSlug."', '".$userID."', '".$surveyID."', '".$oDateStart->format('Y-m-d H:i:s')."', ".$endDateActual.")";
+		//$this->displayQuery = $this->query; // DEBUG ONLY!!!
 		// Insert
 		$this->doInsertQuery();
+		unset($oDate);
 		
 		// Now answers
 		$this->answerIDs = array();

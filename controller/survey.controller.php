@@ -42,9 +42,6 @@ class SurveyController extends Controller
 					foreach ($this->survey->polls as $tPoll) {
 						$tPoll->answers = $mPoll->getAnswersByPollID($tPoll->pollID);
 						$tPoll->voterCount = $mPoll->getPollVoterCount($tPoll->pollID);
-						
-						
-						
 						// Get top answers
 						$tPoll->topAnswers = $mPoll->getTopAnswersByPollID($tPoll->pollID);
 						foreach ($tPoll->topAnswers as $index => $answer) {
@@ -93,10 +90,6 @@ class SurveyController extends Controller
 								$tPoll->condorcet = false;
 							}
 						}
-						
-						
-						
-						
 					}
 					unset($mPoll);
 					// Init voter
@@ -116,6 +109,18 @@ class SurveyController extends Controller
 						foreach ($this->survey->polls as $poll) {
 							shuffle($poll->answers);
 						}
+					}
+					// Set up start/end date/time display
+					if ($this->survey->startTime > $this->survey->created) {
+						$oStart = new DateTime($this->survey->startTime);
+						$this->startEndString = 'Starts: '.$oStart->format('Y-m-d H:i:s');
+						unset($oStart);
+					}
+					if ($this->survey->endTime > $this->survey->startTime) {
+						$oEnd = new DateTime($this->survey->endTime);
+						if (strlen($this->startEndString) > 0) $this->startEndString .= ', ';
+						$this->startEndString .= 'Ends: '.$oEnd->format('Y-m-d H:i:s');
+						unset($oEnd);
 					}
 				} else {
 					$this->error = "Survey does not exist";
@@ -250,10 +255,8 @@ class SurveyController extends Controller
 			} else $userID = 0;
 			// Cleanup type if needed
 			if (!in_array($_POST['fsVerifiedVotingType'], $this->verifiedVotingTypes)) $_POST['fsVerifiedVotingType'] = 'gkc';
-			$dt = new DateTime();
 			// Insert actual
-			$this->model->insertSurvey($newSurveyID, $this->surveyTitle, $dt->format('Y-m-d H:i:s'), $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug'], $_POST['fsVerifiedVoting'], $_POST['fsVerifiedVotingType'], $userID, $_POST['fsVerbage']);
-			unset($dt);
+			$this->model->insertSurvey($newSurveyID, $this->surveyTitle, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug'], $_POST['fsVerifiedVoting'], $_POST['fsVerifiedVotingType'], $userID, $_POST['fsVerbage'], $_POST['fsStartDate'], $_POST['fsStartTime'], $_POST['fsEndDate'], $_POST['fsEndTime']);
 			$return['html'] .= 'Survey saved! Loading results...';
 		} else {
 			$return['error'] = 'Must provide a title';
@@ -313,11 +316,15 @@ class SurveyController extends Controller
 				if (strlen($_POST['surveyID']) > 0) {
 					$surveyID = $_POST['surveyID'];
 				} else $surveyID = '';
-				$oDate = new DateTime();
+				$this->survey = $this->model->getSurveyByID($surveyID);
+				$oDateCreated = new DateTime($this->survey->created);
+				$oStartTime = new DateTime($this->survey->startTime);
+				$oEndTime = new DateTime($this->survey->endTime);
 				// Insert actual
-				$mPoll->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, 0, 1, $_SERVER['REMOTE_ADDR'], "", 0, "gkc", $userID, $surveyID);
-				unset($mPoll);
+				$mPoll->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, 0, 1, $_SERVER['REMOTE_ADDR'], "", 0, "gkc", $userID, $surveyID, $oDateCreated, $oStartTime->format('Y-m-d'), $oStartTime->format('H:i:s'), $oEndTime->format('Y-m-d'), $oEndTime->format('H:i:s'));
 				$return['html'] .= 'Poll saved! Loading results...';
+				//$return['html'] = $mPoll->displayQuery; // DEBUG ONLY!!!
+				unset($mPoll);
 			} else {
 				$return['error'] = 'Must provide at least two possible answers';
 			}

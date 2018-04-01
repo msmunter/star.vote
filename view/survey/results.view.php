@@ -9,14 +9,15 @@
 	<?php } ?>
 	</div>
 <?php } ?>
-
 <?php
-if ($this->survey) { 
+if ($this->survey) {
 	if ($this->user->userID > 0 && $this->user->userID == $this->survey->userID) {
 		// This user's survey ?>
 		<div class="bigContainer">
 			<div class="bigContainerTitle">Polls in survey: "<?php echo $this->survey->title; ?>" <a class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all" href="/survey/createpoll/<?php echo $this->survey->surveyID; ?>/">Add Poll</a></div>
 			<div class="bigContainerInner">
+				<div class="startEndString"><?php echo $this->startEndString; ?></div>
+				<div class="clear"></div>
 				<div id="voteInput">
 					<?php include_once('view/survey/voteinput.view.php'); ?>
 				</div>
@@ -39,12 +40,14 @@ if ($this->survey) {
 		<div class="bigContainer">
 			<div class="bigContainerTitle">Your vote for "<?php echo $this->survey->title; ?>"</div>
 			<div class="bigContainerInner">
+				<div class="startEndString"><?php echo $this->startEndString; ?></div>
+				<div class="clear"></div>
 				<div id="voteInput">
 					<?php include_once('view/survey/yourvote.view.php'); ?>
 				</div>
 			</div>
 		</div>
-	<?php } else { ?>
+		<?php } else { ?>
 		<div class="bigContainer">
 			<div class="bigContainerTitle">Survey "<?php echo $this->survey->title; ?>" (<?php echo count($this->survey->polls); ?>-Part)</div>
 			<div class="bigContainerInner">
@@ -52,6 +55,8 @@ if ($this->survey) {
 					<label for="voterKey">Voter Key:</label>
 					<input id="voterKey" />
 				<?php } ?>
+				<div class="startEndString"><?php echo $this->startEndString; ?></div>
+				<div class="clear"></div>
 				<div id="voteInput">
 					<?php include_once('view/survey/voteinput.view.php'); ?>
 				</div>
@@ -68,11 +73,7 @@ if ($this->survey) {
 		<div class="bigContainerTitle">Results for "<?php echo $this->survey->title; ?>"</div>
 		<div class="bigContainerInner">
 			<div id="pollResultsActual">
-				<?php 
-				/*foreach ($this->survey->polls as $currentPoll) {
-					include('view/survey/pollresultsactual.view.php');
-				}*/
-				?>
+				<!-- AJAX -->
 			</div>
 			<button id="showResultsButton" data-inline="inline" onclick="showResults()">Update Results</button>
 		</div>

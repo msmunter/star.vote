@@ -146,11 +146,17 @@ class SurveyModel extends Model
 		} else return false;
 	}
 	
-	public function insertSurvey($surveyID, $title, $created, $randomOrder, $private, $creatorIP, $customSlug, $verifiedVoting, $verifiedVotingType, $userID, $verbage)
+	public function insertSurvey($surveyID, $title, $randomOrder, $private, $creatorIP, $customSlug, $verifiedVoting, $verifiedVotingType, $userID, $verbage, $startDate, $startTime, $endDate, $endTime)
 	{
-		// Poll first
-		$this->query = "INSERT INTO `surveys` (`surveyID`, `title`, `created`, `private`, `verifiedVoting`, `verifiedVotingType`, `randomOrder`, `creatorIP`, `customSlug`, `userID`, `verbage`)
-						VALUES ('".$surveyID."', '".$title."', '".date('Y-m-d H:i:s')."', ".$private.", ".$verifiedVoting.", '".$verifiedVotingType."', ".$randomOrder.", '".$creatorIP."', '".$customSlug."', '".$userID."', '".$verbage."')";
+		$oDateCreated = new DateTime();
+		$oDateStart = new DateTime($startDate.' '.$startTime);
+		$oDateEnd = new DateTime($endDate.' '.$endTime);
+		if ($oDateStart < $oDateCreated) $oDateStart = $oDateCreated;
+		if ($oDateEnd <= $oDateStart) {
+			$endDateActual = null;
+		} else $endDateActual = $oDateEnd->format('Y-m-d H:i:s');
+		$this->query = "INSERT INTO `surveys` (`surveyID`, `title`, `created`, `private`, `verifiedVoting`, `verifiedVotingType`, `randomOrder`, `creatorIP`, `customSlug`, `userID`, `verbage`, `startTime`, `endTime`)
+						VALUES ('".$surveyID."', '".$title."', '".$oDateCreated->format('Y-m-d H:i:s')."', ".$private.", ".$verifiedVoting.", '".$verifiedVotingType."', ".$randomOrder.", '".$creatorIP."', '".$customSlug."', '".$userID."', '".$verbage."', '".$oDateStart->format('Y-m-d H:i:s')."', '".$endDateActual."')";
 		// Insert
 		$this->doInsertQuery();
 	}

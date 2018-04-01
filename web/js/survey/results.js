@@ -46,12 +46,12 @@ function enableInputs()
 
 function hideButtons()
 {
-	$('#voteButton, #showResultsButton').hide();
+	$('#voteButton, #showResultsButton, #prevNextPollButtons').hide();
 }
 
 function showButtons()
 {
-	$('#voteButton, #showResultsButton').show();
+	$('#voteButton, #showResultsButton, #prevNextPollButtons').show();
 }
 
 function disableButtons()
