@@ -196,6 +196,29 @@ class PollController extends Controller
 							$this->poll->condorcet = false;
 						}
 					}
+					// Set up start/end date/time display
+					if ($this->poll->startTime > $this->poll->created) {
+						$oStart = new DateTime($this->poll->startTime);
+						$this->startEndString = 'Starts: '.$oStart->format('Y-m-d H:i:s');
+						
+					}
+					if ($this->poll->endTime > $this->poll->startTime) {
+						$oEnd = new DateTime($this->poll->endTime);
+						if (strlen($this->startEndString) > 0) $this->startEndString .= ', ';
+						$this->startEndString .= 'Ends: '.$oEnd->format('Y-m-d H:i:s');
+						
+					}
+					$oNow = new DateTime();
+					if ($oNow >= $oStart && ($oNow < $oEnd || $this->poll->endTime == null)) {
+						$this->poll->inVotingWindow = true;
+					} else if ($oNow < $oStart) {
+						$this->poll->inVotingWindow = false;
+						$this->poll->votingWindowDirction = 'before';
+					} else {
+						$this->poll->inVotingWindow = false;
+						$this->poll->votingWindowDirction = 'after';
+					}
+					unset($oStart, $oEnd, $oNow);
 				}
 			}
 		} else {
