@@ -402,79 +402,93 @@ class SurveyController extends Controller
 		$voterKeyResult = $this->model->verifyVoterKey($_POST['voterKey'], $this->surveyID);
 		// Determine eligibility if necessary
 		if (($this->survey->verifiedVoting && $voterKeyResult->surveyID) || $this->survey->verifiedVoting == false) {
-			// Determine whether this key has voted
-			if (empty($voterKeyResult->voteTime)) {
-				parse_str($_POST['votes'], $dirtyVoteArray);
-				// Cleanup array
-				foreach ($dirtyVoteArray as $index => $vote) {
-					$indexBoom = explode('|', $index);
-					$answerID = $indexBoom[1];
-					unset($indexBoom);
-					$voteArray[$answerID] = $vote;
-				}
-				$voteArrayToDestroy = $voteArray;
-				// Verify no vote has been entered for this voter on this poll
-				foreach ($this->survey->polls as $zPoll) {
-					$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
-					if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
-				}
-				if (!empty($this->yourVotes)) {
-					$this->hasVoted = true;
-				} else $this->hasVoted = false;
-				if (!$this->hasVoted) {
-					// No vote, get the answers to make sure we have a score for each
-					$this->survey->allAnswers = $this->model->getAllAnswersBySurveyID($this->surveyID);
-					foreach ($this->survey->allAnswers as $answer) {
-						if (!array_key_exists($answer->answerID, $voteArray) || $voteArray[$answer->answerID] == '') {
-							$voteArray[$answer->answerID] = 0;
-						}
+			// Determine if within voting window
+			$oStart = new DateTime($this->survey->startTime);
+			if ($this->survey->endTime != null) $oEnd = new DateTime($this->survey->endTime);
+			$oNow = new DateTime();
+			if ($oNow >= $oStart && ($oNow < $oEnd || empty($oEnd))) {
+				// Determine whether this key has voted
+				if (empty($voterKeyResult->voteTime)) {
+					parse_str($_POST['votes'], $dirtyVoteArray);
+					// Cleanup array
+					foreach ($dirtyVoteArray as $index => $vote) {
+						$indexBoom = explode('|', $index);
+						$answerID = $indexBoom[1];
+						unset($indexBoom);
+						$voteArray[$answerID] = $vote;
 					}
-					$oDate = new DateTime();	
-					$voteTime = $oDate->format("Y-m-d H:i:s");
-					// Populate an array with 
-					// Submit the votes and update matrices
-					foreach ($voteArray as $answerID => $vote) {
-						$this->votes[] = $vote;
-						// Determine pollID
-						$pollID = $this->answerToPollArray[$answerID];
-						// Insert vote
-						$this->model->insertVote($pollID, $this->voter->voterID, $answerID, $vote, $voteTime);
-						// Update the matrix; maybe replace the windows with bricks?
-						foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
-							if ($answerID != $answerID2) {
-								if ($vote > $vote2) {
-									$this->model->updateVoteMatrix($pollID, $answerID, $answerID2);
-								} else if ($vote < $vote2) {
-									$this->model->updateVoteMatrix($pollID, $answerID2, $answerID);
-								} // and do nothing if they're equal
+					$voteArrayToDestroy = $voteArray;
+					// Verify no vote has been entered for this voter on this poll
+					foreach ($this->survey->polls as $zPoll) {
+						$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
+						if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
+					}
+					if (!empty($this->yourVotes)) {
+						$this->hasVoted = true;
+					} else $this->hasVoted = false;
+					if (!$this->hasVoted) {
+						// No vote, get the answers to make sure we have a score for each
+						$this->survey->allAnswers = $this->model->getAllAnswersBySurveyID($this->surveyID);
+						foreach ($this->survey->allAnswers as $answer) {
+							if (!array_key_exists($answer->answerID, $voteArray) || $voteArray[$answer->answerID] == '') {
+								$voteArray[$answer->answerID] = 0;
 							}
 						}
-						unset($voteArrayToDestroy[$answerID]);
+						$oDate = new DateTime();	
+						$voteTime = $oDate->format("Y-m-d H:i:s");
+						// Populate an array with 
+						// Submit the votes and update matrices
+						foreach ($voteArray as $answerID => $vote) {
+							$this->votes[] = $vote;
+							// Determine pollID
+							$pollID = $this->answerToPollArray[$answerID];
+							// Insert vote
+							$this->model->insertVote($pollID, $this->voter->voterID, $answerID, $vote, $voteTime);
+							// Update the matrix; maybe replace the windows with bricks?
+							foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
+								if ($answerID != $answerID2) {
+									if ($vote > $vote2) {
+										$this->model->updateVoteMatrix($pollID, $answerID, $answerID2);
+									} else if ($vote < $vote2) {
+										$this->model->updateVoteMatrix($pollID, $answerID2, $answerID);
+									} // and do nothing if they're equal
+								}
+							}
+							unset($voteArrayToDestroy[$answerID]);
+						}
+						$this->model->incrementSurveyVoteCount($this->surveyID);
+						// If a verified vote, write extra db info
+						if ($this->survey->verifiedVoting) {
+							$this->model->updateVoterKeyEntry($_POST['voterKey'], $this->surveyID, $this->voter->voterID, $voteTime);
+						}
+						unset($voteTime, $oDate);
+					} else {
+						$return['caution'] = 'Your vote had already been recorded for this poll';
 					}
-					$this->model->incrementSurveyVoteCount($this->surveyID);
-					// If a verified vote, write extra db info
-					if ($this->survey->verifiedVoting) {
-						$this->model->updateVoterKeyEntry($_POST['voterKey'], $this->surveyID, $this->voter->voterID, $voteTime);
+					// Load the survey fresh
+					$this->survey = $this->model->getSurveyByID($this->surveyID);
+					$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
+					$mPoll = new PollModel();
+					foreach ($this->survey->polls as $poll) {
+						$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
 					}
-					unset($voteTime, $oDate);
+					unset($mPoll);
+					foreach ($this->survey->polls as $zPoll) {
+						$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
+						if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
+					}
+					$return['html'] .= $this->ajaxInclude('view/survey/yourvote.view.php');
 				} else {
-					$return['caution'] = 'Your vote had already been recorded for this poll';
+					$return['caution'] = 'This key has already been used to record a vote on this poll';
 				}
-				// Load the survey fresh
-				$this->survey = $this->model->getSurveyByID($this->surveyID);
-				$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
-				$mPoll = new PollModel();
-				foreach ($this->survey->polls as $poll) {
-					$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
-				}
-				unset($mPoll);
-				foreach ($this->survey->polls as $zPoll) {
-					$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
-					if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
-				}
-				$return['html'] .= $this->ajaxInclude('view/survey/yourvote.view.php');
 			} else {
-				$return['caution'] = 'This key has already been used to record a vote on this poll';
+				// Too early or too late
+				if ($oNow >= $oEnd && !empty($oEnd)) {
+					// Oh, you outta time, baby!
+					$return['error'] .= 'Voting window has closed';
+				} else {
+					$return['error'] .= 'Voting window has not yet opened';
+				}
 			}
 		} else {
 			// Failed eligibility
