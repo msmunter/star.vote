@@ -114,14 +114,25 @@ class SurveyController extends Controller
 					if ($this->survey->startTime > $this->survey->created) {
 						$oStart = new DateTime($this->survey->startTime);
 						$this->startEndString = 'Starts: '.$oStart->format('Y-m-d H:i:s');
-						unset($oStart);
+						
 					}
 					if ($this->survey->endTime > $this->survey->startTime) {
 						$oEnd = new DateTime($this->survey->endTime);
 						if (strlen($this->startEndString) > 0) $this->startEndString .= ', ';
 						$this->startEndString .= 'Ends: '.$oEnd->format('Y-m-d H:i:s');
-						unset($oEnd);
+						
 					}
+					$oNow = new DateTime();
+					if ($oNow >= $oStart && ($oNow < $oEnd || $this->survey->endTime == null)) {
+						$this->survey->inVotingWindow = true;
+					} else if ($oNow < $oStart) {
+						$this->survey->inVotingWindow = false;
+						$this->survey->votingWindowDirction = 'before';
+					} else {
+						$this->survey->inVotingWindow = false;
+						$this->survey->votingWindowDirction = 'after';
+					}
+					unset($oStart, $oEnd, $oNow);
 				} else {
 					$this->error = "Survey does not exist";
 				}
