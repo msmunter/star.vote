@@ -1,7 +1,7 @@
 <?php foreach ($this->poll->answers as $answer) { ?>
 <form class="voteForm" id="voteForm|<?php echo $answer->answerID; ?>">
 		<legend class="voteLegend"><?php echo $answer->text; ?></legend>
-		<input type="radio" name="radioVote|<?php echo $answer->answerID; ?>" id="radioVote|<?php echo $answer->answerID; ?>|0" value="0" data-role="none" />
+		<input checked="checked" type="radio" name="radioVote|<?php echo $answer->answerID; ?>" id="radioVote|<?php echo $answer->answerID; ?>|0" value="0" data-role="none" />
 		<label class="voteFormLabel emptystar" for="radioVote|<?php echo $answer->answerID; ?>|0">0</label>
 		
 		<input type="radio" name="radioVote|<?php echo $answer->answerID; ?>" id="radioVote|<?php echo $answer->answerID; ?>|1" value="1" data-role="none" />
