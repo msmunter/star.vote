@@ -24,7 +24,7 @@
 <?php
 if ($this->poll) { 
 	if (empty($this->poll->surveyID)) {
-		if ($this->user->userID == $this->poll->userID) {
+		if ($this->user->userID == $this->poll->userID && $this->user->userID > 0) {
 			// This user's poll ?>
 			<div class="bigContainer">
 				<div class="bigContainerTitle">What voters see: "<?php echo $this->poll->question; ?>"</div>
