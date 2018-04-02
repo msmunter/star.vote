@@ -196,33 +196,60 @@ class PollController extends Controller
 							$this->poll->condorcet = false;
 						}
 					}
-					// Set up start/end date/time display
-					if ($this->poll->startTime > $this->poll->created) {
-						$oStart = new DateTime($this->poll->startTime);
-						$this->startEndString = 'Starts: '.$oStart->format('Y-m-d H:i:s');
-						
-					}
-					if ($this->poll->endTime > $this->poll->startTime) {
-						$oEnd = new DateTime($this->poll->endTime);
-						if (strlen($this->startEndString) > 0) $this->startEndString .= ', ';
-						$this->startEndString .= 'Ends: '.$oEnd->format('Y-m-d H:i:s');
-						
-					}
-					$oNow = new DateTime();
-					if ($oNow >= $oStart && ($oNow < $oEnd || $this->poll->endTime == null)) {
-						$this->poll->inVotingWindow = true;
-					} else if ($oNow < $oStart) {
-						$this->poll->inVotingWindow = false;
-						$this->poll->votingWindowDirction = 'before';
-					} else {
-						$this->poll->inVotingWindow = false;
-						$this->poll->votingWindowDirction = 'after';
-					}
-					unset($oStart, $oEnd, $oNow);
+					// Timey wimey stuff
+					$this->setupTimes();
 				}
 			}
 		} else {
 			$this->error = 'Must provide poll ID';
+		}
+	}
+	
+	private function setupTimes()
+	{
+		if (!empty($this->poll)) {
+			$oStart = new DateTime($this->poll->startTime);
+			if ($this->poll->endTime != 0) {
+				$oEnd = new DateTime($this->poll->endTime);
+			} else $oEnd = new DateTime($this->poll->startTime);
+			$oCreated = new DateTime($this->poll->created);
+			$oNow = new DateTime();
+			// Set up start/end date/time display
+			if ($oStart > $oCreated) {
+				if ($oStart <= $oNow) {
+					$this->startEndString = 'Started: '.$oStart->format('Y-m-d H:i:s');
+				} else $this->startEndString = 'Starts: '.$oStart->format('Y-m-d H:i:s');
+			}
+			if ($oEnd > $oStart) {
+				if (strlen($this->startEndString) > 0) $this->startEndString .= ', ';
+				if ($oEnd <= $oNow) {
+					$this->startEndString .= 'Ended: '.$oEnd->format('Y-m-d H:i:s');
+				} else $this->startEndString .= 'Ends: '.$oEnd->format('Y-m-d H:i:s');
+				
+			}
+			// Determine whether before, in, or after voting window
+			if ($oNow >= $oStart && ($oNow < $oEnd || $this->poll->endTime == null)) {
+				$this->poll->inVotingWindow = true;
+			} else if ($oNow < $oStart) {
+				$this->poll->inVotingWindow = false;
+				$this->poll->votingWindowDirection = 'before';
+			} else {
+				$this->poll->inVotingWindow = false;
+				$this->poll->votingWindowDirection = 'after';
+			}
+			// Determine whether results should be displayed yet or not
+			$this->poll->okDisplayResults = false;
+			if ($this->poll->verbage == 'el') {
+				// If it's theirs, has no end date, or if it's over
+				if ($this->user->userID == $this->poll->userID) {
+					$this->poll->okDisplayResults = true;
+				} else if ($this->poll->inVotingWindow == false && $this->poll->votingWindowDirection == 'after') {
+					$this->poll->okDisplayResults = true;
+				}
+			} else {
+				// Not a part of an election, show results whenever
+				$this->poll->okDisplayResults = true;
+			}
 		}
 	}
 	
