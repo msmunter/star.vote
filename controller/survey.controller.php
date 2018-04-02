@@ -154,7 +154,7 @@ class SurveyController extends Controller
 			$oNow = new DateTime();
 			// Set up start/end date/time display
 			if ($oStart > $oCreated) {
-				if ($oStart >= $oNow) {
+				if ($oStart <= $oNow) {
 					$this->startEndString = 'Started: '.$oStart->format('Y-m-d H:i:s');
 				} else $this->startEndString = 'Starts: '.$oStart->format('Y-m-d H:i:s');
 			}

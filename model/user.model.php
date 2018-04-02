@@ -76,6 +76,8 @@ class UserModel extends Model
 		$this->query = 'SELECT * FROM `polls`
 						WHERE `polls`.`userID` = '.$userID.'
 						AND `surveyID` LIKE "0"
+						OR `polls`.`userID` = '.$userID.'
+						AND `surveyID` LIKE ""
 						ORDER BY `created` DESC
 						LIMIT '.$index.','.$limit.';';
 		$this->doSelectQuery();
