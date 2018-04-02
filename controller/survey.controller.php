@@ -547,19 +547,25 @@ class SurveyController extends Controller
 		$mPoll = new PollModel();
 		// Is eligible to see the results?
 		if (($this->survey->verifiedVoting && $this->user->userID == $this->survey->userID && $this->user->userID > 0) || ($this->survey->verifiedVoting && $this->model->userHasVoted($this->voterID, $surveyID)) || $this->survey->verifiedVoting == false) {
-			$this->survey->polls = $this->model->getPollsBySurveyID($surveyID);
-			foreach ($this->survey->polls as $qPoll) {
-				$qPoll->rawRunoff = $mPoll->getRunoffResultsRawByPollID($qPoll->pollID);
-				$qPoll->voterCount = $mPoll->getPollVoterCount($qPoll->pollID);
-				$qPoll->answers = $mPoll->getAnswerByPollIDScoreOrder($qPoll->pollID);
-				foreach ($qPoll->answers as $index => $answer) {
-					$qPoll->runoffAnswerArray[$answer->answerID] = $answer;
+			// Okay to display based on time?
+			$this->setupTimes();
+			if ($this->survey->okDisplayResults == true) {
+				$this->survey->polls = $this->model->getPollsBySurveyID($surveyID);
+				foreach ($this->survey->polls as $qPoll) {
+					$qPoll->rawRunoff = $mPoll->getRunoffResultsRawByPollID($qPoll->pollID);
+					$qPoll->voterCount = $mPoll->getPollVoterCount($qPoll->pollID);
+					$qPoll->answers = $mPoll->getAnswerByPollIDScoreOrder($qPoll->pollID);
+					foreach ($qPoll->answers as $index => $answer) {
+						$qPoll->runoffAnswerArray[$answer->answerID] = $answer;
+					}
+					foreach ($qPoll->rawRunoff as $runoff) {
+						$qPoll->orderedRunoff[$runoff->gtID][$runoff->ltID] = $runoff;
+					}
 				}
-				foreach ($qPoll->rawRunoff as $runoff) {
-					$qPoll->orderedRunoff[$runoff->gtID][$runoff->ltID] = $runoff;
-				}
+				$return['html'] .= $this->ajaxInclude('view/survey/runoffmatrix.view.php');
+			} else {
+				$return['html'] = 'Results cannot be viewed yet';
 			}
-			$return['html'] .= $this->ajaxInclude('view/survey/runoffmatrix.view.php');
 		} else {
 			$return['html'] = 'Results cannot be viewed yet';
 		}
@@ -607,15 +613,20 @@ class SurveyController extends Controller
 		$oVoter->initVoter(false);
 		$mPoll = new PollModel();
 		if (($this->survey->verifiedVoting && $this->user->userID == $this->survey->userID && $this->user->userID > 0) || ($this->survey->verifiedVoting && $this->model->userHasVoted($this->voterID, $this->survey->surveyID)) || $this->survey->verifiedVoting == false) {
-			foreach ($this->survey->polls as $zPoll) {
-				if (!empty($zPoll)) {
-					$zPoll->answers = $mPoll->getAnswersByPollID($zPoll->pollID);
-					$zPoll->ballots = $mPoll->getBallotsByPollID($zPoll->pollID);
-					// Process ballots into a single, cohesive array
-					$zPoll->processedBallots = $this->processBallots($zPoll->ballots);
-				} else $return['error'] = 'Poll not found';
+			$this->setupTimes();
+			if ($this->survey->okDisplayResults == true) {
+				foreach ($this->survey->polls as $zPoll) {
+					if (!empty($zPoll)) {
+						$zPoll->answers = $mPoll->getAnswersByPollID($zPoll->pollID);
+						$zPoll->ballots = $mPoll->getBallotsByPollID($zPoll->pollID);
+						// Process ballots into a single, cohesive array
+						$zPoll->processedBallots = $this->processBallots($zPoll->ballots);
+					} else $return['error'] = 'Poll not found';
+				}
+				$return['html'] = $this->ajaxInclude('view/survey/cvrhtml.view.php');
+			} else {
+				$return['html'] = 'Results cannot be viewed yet';
 			}
-			$return['html'] = $this->ajaxInclude('view/survey/cvrhtml.view.php');
 		} else {
 			$return['html'] = 'Results cannot be viewed yet';
 		}
