@@ -75,6 +75,7 @@ class UserModel extends Model
 		if (empty($limit)) $limit = 50;
 		$this->query = 'SELECT * FROM `polls`
 						WHERE `polls`.`userID` = '.$userID.'
+						AND `surveyID` LIKE "0"
 						LIMIT '.$index.','.$limit.';';
 		$this->doSelectQuery();
 		if (!empty($this->results)) return $this->results;
