@@ -29,6 +29,8 @@ if ($this->poll) {
 			<div class="bigContainer">
 				<div class="bigContainerTitle">What voters see: "<?php echo $this->poll->question; ?>"</div>
 				<div class="bigContainerInner">
+					<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
+					<div class="clear"></div>
 					<div id="voteInput">
 						<?php include_once('view/poll/voteinput.view.php'); ?>
 					</div>
@@ -39,6 +41,8 @@ if ($this->poll) {
 			<div class="bigContainer">
 				<div class="bigContainerTitle">Your vote for "<?php echo $this->poll->question; ?>"</div>
 				<div class="bigContainerInner">
+					<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
+					<div class="clear"></div>
 					<div id="voteInput">
 						<?php include_once('view/poll/yourvote.view.php'); ?>
 					</div>
@@ -48,6 +52,8 @@ if ($this->poll) {
 			<div class="bigContainer">
 				<div class="bigContainerTitle">Vote on "<?php echo $this->poll->question; ?>"</div>
 				<div class="bigContainerInner">
+					<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
+					<div class="clear"></div>
 					<div id="voteInput">
 						<?php if ($this->poll->verifiedVoting) { ?>
 							<label for="voterKey">Voter Key:</label>
@@ -55,7 +61,7 @@ if ($this->poll) {
 						<?php } ?>
 						<?php include_once('view/poll/voteinput.view.php'); ?>
 					</div>
-					<button <?php if ($this->poll->verifiedVoting) echo 'disabled="disabled" '; ?>id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
+					<button <?php if ($this->poll->verifiedVoting || !$this->poll->inVotingWindow) echo 'disabled="disabled" '; ?>id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
 					<button <?php if ($this->poll->verifiedVoting) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
 				</div>
 			</div>

@@ -7,6 +7,7 @@ $(document).ready(function() {
 	$('#voterKey').focusout(function() {
 		checkVoterKey();
 	});
+	<?php if ($this->poll->votingWindowDirction == 'after') echo 'showResults();'; ?>
 });
 
 function updateStatus(msg)

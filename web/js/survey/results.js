@@ -9,6 +9,7 @@ $(document).ready(function() {
 	$('#voterKey').focusout(function() {
 		checkVoterKey();
 	});
+	<?php if ($this->survey->votingWindowDirction == 'after') echo 'showResults();'; ?>
 });
 
 function updateStatus(msg)
@@ -46,12 +47,12 @@ function enableInputs()
 
 function hideButtons()
 {
-	$('#voteButton, #showResultsButton').hide();
+	$('#voteButton, #showResultsButton, #prevNextPollButtons').hide();
 }
 
 function showButtons()
 {
-	$('#voteButton, #showResultsButton').show();
+	$('#voteButton, #showResultsButton, #prevNextPollButtons').show();
 }
 
 function disableButtons()
@@ -199,7 +200,7 @@ function showResults() {
 		c: 'survey', 
 		a: 'ajaxresults', 
 		ajax: '1',
-		pollID: $('#pollID').val()
+		surveyID: $('#surveyID').val()
 	}, function(data) {
 		var jData = JSON.parse(data);
 		if (jData.error) {

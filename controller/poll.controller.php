@@ -95,9 +95,11 @@ class PollController extends Controller
 				} else $userID = 0;
 				// Cleanup type if needed
 				if (!in_array($_POST['fsVerifiedVotingType'], $this->verifiedVotingTypes)) $_POST['fsVerifiedVotingType'] = 'gkc';
+				$oDateCreated = new DateTime();
 				// Insert actual
-				$this->model->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug'], $_POST['fsVerifiedVoting'], $_POST['fsVerifiedVotingType'], $userID);
+				$this->model->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug'], $_POST['fsVerifiedVoting'], $_POST['fsVerifiedVotingType'], $userID, null, $oDateCreated, $_POST['fsStartDate'], $_POST['fsStartTime'], $_POST['fsEndDate'], $_POST['fsEndTime']);
 				$return['html'] .= 'Poll saved! Loading results...';
+				//$return['html'] = $this->model->displayQuery; // DEBUG ONLY!!!
 			} else {
 				$return['error'] = 'Must provide at least two possible answers';
 			}
@@ -194,6 +196,29 @@ class PollController extends Controller
 							$this->poll->condorcet = false;
 						}
 					}
+					// Set up start/end date/time display
+					if ($this->poll->startTime > $this->poll->created) {
+						$oStart = new DateTime($this->poll->startTime);
+						$this->startEndString = 'Starts: '.$oStart->format('Y-m-d H:i:s');
+						
+					}
+					if ($this->poll->endTime > $this->poll->startTime) {
+						$oEnd = new DateTime($this->poll->endTime);
+						if (strlen($this->startEndString) > 0) $this->startEndString .= ', ';
+						$this->startEndString .= 'Ends: '.$oEnd->format('Y-m-d H:i:s');
+						
+					}
+					$oNow = new DateTime();
+					if ($oNow >= $oStart && ($oNow < $oEnd || $this->poll->endTime == null)) {
+						$this->poll->inVotingWindow = true;
+					} else if ($oNow < $oStart) {
+						$this->poll->inVotingWindow = false;
+						$this->poll->votingWindowDirction = 'before';
+					} else {
+						$this->poll->inVotingWindow = false;
+						$this->poll->votingWindowDirction = 'after';
+					}
+					unset($oStart, $oEnd, $oNow);
 				}
 			}
 		} else {
@@ -255,59 +280,73 @@ class PollController extends Controller
 		$voterKeyResult = $this->model->verifyVoterKey($_POST['voterKey'], $this->pollID);
 		// Determine eligibility if necessary
 		if (($this->poll->verifiedVoting && $voterKeyResult->pollID) || $this->poll->verifiedVoting == false) {
-			// Determine whether this key has voted
-			if (empty($voterKeyResult->voteTime)) {
-				parse_str($_POST['votes'], $dirtyVoteArray);
-				// Cleanup array
-				foreach ($dirtyVoteArray as $index => $vote) {
-					$indexBoom = explode('|', $index);
-					$answerID = $indexBoom[1];
-					unset($indexBoom);
-					$voteArray[$answerID] = $vote;
-				}
-				$voteArrayToDestroy = $voteArray;
-				// Verify no vote has been entered for this voter on this poll
-				$yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
-				if (empty($yourVote)) {
-					// No vote, get the answers to make sure we have a score for each
-					$this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
-					foreach ($this->poll->answers as $answer) {
-						if (!array_key_exists($answer->answerID, $voteArray)) {
-							$voteArray[$answer->answerID] = 0;
-						}
+			// Determine if within voting window
+			$oStart = new DateTime($this->survey->startTime);
+			if ($this->survey->endTime != null) $oEnd = new DateTime($this->survey->endTime);
+			$oNow = new DateTime();
+			if ($oNow >= $oStart && ($oNow < $oEnd || empty($oEnd))) {
+				// Determine whether this key has voted
+				if (empty($voterKeyResult->voteTime)) {
+					parse_str($_POST['votes'], $dirtyVoteArray);
+					// Cleanup array
+					foreach ($dirtyVoteArray as $index => $vote) {
+						$indexBoom = explode('|', $index);
+						$answerID = $indexBoom[1];
+						unset($indexBoom);
+						$voteArray[$answerID] = $vote;
 					}
-					foreach ($voteArray as $answerID => $vote) {
-						$this->votes[] = $vote;
-						// Insert vote
-						$voteTime = date("Y-m-d H:i:s");
-						$this->model->insertVote($this->pollID, $this->voterID, $answerID, $vote, $voteTime);
-						// Update the matrix. Maybe replace the windows with bricks?
-						foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
-							if ($answerID != $answerID2) {
-								if ($vote > $vote2) {
-									$this->model->updateVoteMatrix($this->pollID, $answerID, $answerID2);
-								} else if ($vote < $vote2) {
-									$this->model->updateVoteMatrix($this->pollID, $answerID2, $answerID);
-								} // and do nothing if they're equal
+					$voteArrayToDestroy = $voteArray;
+					// Verify no vote has been entered for this voter on this poll
+					$yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
+					if (empty($yourVote)) {
+						// No vote, get the answers to make sure we have a score for each
+						$this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
+						foreach ($this->poll->answers as $answer) {
+							if (!array_key_exists($answer->answerID, $voteArray)) {
+								$voteArray[$answer->answerID] = 0;
 							}
 						}
-						unset($voteArrayToDestroy[$answerID]);
+						foreach ($voteArray as $answerID => $vote) {
+							$this->votes[] = $vote;
+							// Insert vote
+							$voteTime = date("Y-m-d H:i:s");
+							$this->model->insertVote($this->pollID, $this->voterID, $answerID, $vote, $voteTime);
+							// Update the matrix. Maybe replace the windows with bricks?
+							foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
+								if ($answerID != $answerID2) {
+									if ($vote > $vote2) {
+										$this->model->updateVoteMatrix($this->pollID, $answerID, $answerID2);
+									} else if ($vote < $vote2) {
+										$this->model->updateVoteMatrix($this->pollID, $answerID2, $answerID);
+									} // and do nothing if they're equal
+								}
+							}
+							unset($voteArrayToDestroy[$answerID]);
+						}
+						$this->model->incrementPollVoteCount($this->pollID);
+						// If a verified vote, write extra db info
+						if ($this->poll->verifiedVoting) {
+							$this->model->updateVoterKeyEntry($_POST['voterKey'], $this->pollID, $this->voterID, $voteTime);
+						}
+					} else {
+						$return['caution'] = 'Your vote had already been recorded for this poll';
 					}
-					$this->model->incrementPollVoteCount($this->pollID);
-					// If a verified vote, write extra db info
-					if ($this->poll->verifiedVoting) {
-						$this->model->updateVoterKeyEntry($_POST['voterKey'], $this->pollID, $this->voterID, $voteTime);
-					}
+					unset($yourVote);
+					$this->poll = $this->model->getPollByID($this->pollID);
+					if (empty($this->poll->answers)) $this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
+					$this->yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
+					$return['html'] .= $this->ajaxInclude('view/poll/yourvote.view.php');
 				} else {
-					$return['caution'] = 'Your vote had already been recorded for this poll';
+					$return['caution'] = 'This key has already been used to record a vote on this poll';
 				}
-				unset($yourVote);
-				$this->poll = $this->model->getPollByID($this->pollID);
-				if (empty($this->poll->answers)) $this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
-				$this->yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
-				$return['html'] .= $this->ajaxInclude('view/poll/yourvote.view.php');
 			} else {
-				$return['caution'] = 'This key has already been used to record a vote on this poll';
+				// Too late or too early
+				if ($oNow >= $oEnd && !empty($oEnd)) {
+					// Oh, you outta time, baby!
+					$return['error'] .= 'Voting window has closed';
+				} else {
+					$return['error'] .= 'Voting window has not yet opened';
+				}
 			}
 		} else {
 			// Failed eligibility

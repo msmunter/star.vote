@@ -9,19 +9,20 @@
 	<?php } ?>
 	</div>
 <?php } ?>
-
 <?php
-if ($this->survey) { 
+if ($this->survey) {
 	if ($this->user->userID > 0 && $this->user->userID == $this->survey->userID) {
 		// This user's survey ?>
 		<div class="bigContainer">
-			<div class="bigContainerTitle">Polls in survey: "<?php echo $this->survey->title; ?>" <a class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all" href="/survey/addpoll/<?php echo $this->survey->surveyID; ?>/">Add Poll</a></div>
+			<div class="bigContainerTitle">Polls in survey: "<?php echo $this->survey->title; ?>" <a class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all" href="/survey/createpoll/<?php echo $this->survey->surveyID; ?>/">Add Poll</a></div>
 			<div class="bigContainerInner">
-				<div id="prevNextPollButtons">
-					<button id="prevPollButton" disabled="disabled" data-inline="inline" data-mini="mini" onclick="changePoll('d')">&larr;</button>Part <span id="pollIndex">1</span> of <?php echo count($this->survey->polls); ?><button id="nextPollButton" data-inline="inline" data-mini="mini" onclick="changePoll('u')">&rarr;</button>
-				</div>
+				<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
+				<div class="clear"></div>
 				<div id="voteInput">
 					<?php include_once('view/survey/voteinput.view.php'); ?>
+				</div>
+				<div id="prevNextPollButtons">
+					<button id="prevPollButton" disabled="disabled" data-inline="inline" data-mini="mini" onclick="changePoll('d')">&larr;</button>Part <span id="pollIndex">1</span> of <?php echo count($this->survey->polls); ?><button id="nextPollButton" data-inline="inline" data-mini="mini" onclick="changePoll('u')">&rarr;</button>
 				</div>
 				<button id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
 			</div>
@@ -39,12 +40,14 @@ if ($this->survey) {
 		<div class="bigContainer">
 			<div class="bigContainerTitle">Your vote for "<?php echo $this->survey->title; ?>"</div>
 			<div class="bigContainerInner">
+				<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
+				<div class="clear"></div>
 				<div id="voteInput">
 					<?php include_once('view/survey/yourvote.view.php'); ?>
 				</div>
 			</div>
 		</div>
-	<?php } else { ?>
+		<?php } else { ?>
 		<div class="bigContainer">
 			<div class="bigContainerTitle">Survey "<?php echo $this->survey->title; ?>" (<?php echo count($this->survey->polls); ?>-Part)</div>
 			<div class="bigContainerInner">
@@ -52,14 +55,18 @@ if ($this->survey) {
 					<label for="voterKey">Voter Key:</label>
 					<input id="voterKey" />
 				<?php } ?>
-				<div id="prevNextPollButtons">
-					<button id="prevPollButton" disabled="disabled" data-inline="inline" data-mini="mini" onclick="changePoll('d')">&larr;</button>Part <span id="pollIndex">1</span> of <?php echo count($this->survey->polls); ?><button id="nextPollButton" data-inline="inline" data-mini="mini" onclick="changePoll('u')">&rarr;</button>
-				</div>
+				<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
+				<div class="clear"></div>
 				<div id="voteInput">
 					<?php include_once('view/survey/voteinput.view.php'); ?>
 				</div>
-				<button <?php if ($this->survey->verifiedVoting) echo 'disabled="disabled" '; ?>id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
-				<button <?php if ($this->survey->verifiedVoting) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
+				<div id="prevNextPollButtons">
+					<button id="prevPollButton" disabled="disabled" data-inline="inline" data-mini="mini" onclick="changePoll('d')">&larr;</button>Part <span id="pollIndex">1</span> of <?php echo count($this->survey->polls); ?><button id="nextPollButton" data-inline="inline" data-mini="mini" onclick="changePoll('u')">&rarr;</button>
+				</div>
+				<div id="voteShowResultsButtons">
+					<button <?php if ($this->survey->verifiedVoting || !$this->survey->inVotingWindow) echo 'disabled="disabled" '; ?>id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
+					<button <?php if ($this->survey->verifiedVoting || ($this->survey->verbage == 'el' && $this->survey->votingWindowDirection != 'after')) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
+				</div>
 			</div>
 		</div>
 		<?php }
@@ -68,7 +75,7 @@ if ($this->survey) {
 		<div class="bigContainerTitle">Results for "<?php echo $this->survey->title; ?>"</div>
 		<div class="bigContainerInner">
 			<div id="pollResultsActual">
-				<?php include('view/poll/resultsactual.view.php');?>
+				<!-- AJAX -->
 			</div>
 			<button id="showResultsButton" data-inline="inline" onclick="showResults()">Update Results</button>
 		</div>
@@ -101,6 +108,3 @@ if ($this->survey) {
 <?php } else { ?>
 	Survey not found
 <?php } ?>
-
-<!--------------------------------------------------------------------------------------------------------------------------------------------------->
-

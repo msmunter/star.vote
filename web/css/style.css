@@ -242,7 +242,7 @@ div#pollButtonContainer {
 
 /* END Vote Selector*/
 
-div#customSlugInputContainer, div#verifiedVotingSelectContainer {
+div#customSlugInputContainer, div#verifiedVotingSelectContainer, div#startEndInputContainer {
 	display: none;
 }
 
@@ -254,12 +254,32 @@ input#fsCustomSlugInput.highlightInputRed, input#voterKey.highlightInputRed {
 	border: solid 1px red;
 }
 
-table#resultsTable th, table#yourVoteTable th, table#runoffResultsTable th {
+table#resultsTable th, table#yourVoteTable th, table.yourVoteTable th, table#runoffResultsTable th {
 	font-size: 12px;
 	text-align: left;
 }
 
-table#resultsTable td.number, table#yourVoteTable td.number, table#runoffResultsTable td.number {
+div#startEndInputContainer div.ui-input-text {
+	width: 150px;
+}
+
+div.startEndString {
+	float: left;
+	font-size: 11pt;
+	margin-bottom: 5px;
+	border: solid 1px #38c;
+	background-color: #e7e7e7;
+	border-radius: 7px;
+	padding: 5px;
+}
+
+table.yourVoteTable th.pollHeader {
+	text-align: center;
+	background-color: #e7e7e7;
+	border: solid 1px #e7e7e7;
+}
+
+table#resultsTable td.number, table#yourVoteTable td.number, table.yourVoteTable td.number, table#runoffResultsTable td.number {
 	font-family: monospace;
 	text-align: right;
 	font-size: 14pt;
@@ -280,15 +300,15 @@ span#yourVoterIDActual {
 	padding: 0px 5px 0px 5px;
 }
 
-table#yourVoteTable {
+table#yourVoteTable, table.yourVoteTable {
 	border-collapse: collapse;
 }
 
-table#yourVoteTable td {
+table#yourVoteTable td, table.yourVoteTable td {
 	border-top: solid 1px #cccccc;
 }
 
-table#yourVoteTable td.orderCell {
+table#yourVoteTable td.orderCell, table.yourVoteTable td.orderCell {
 	padding-right: 5px;
 }
 
@@ -343,6 +363,17 @@ div.surveyPollContainer form.voteForm {
 
 div.surveyPollTitle {
 	font-weight: bold;
+	margin-bottom: 5px;
+}
+
+div.surveyResultsPollTitle {
+	background-color: #38c;
+	color: white;
+	text-shadow: 1px 1px 2px #333333;
+	padding: 5px;
+	border-radius: 7px;
+	font-weight: bold;
+	margin-top: 5px;
 	margin-bottom: 5px;
 }
 
@@ -446,73 +477,74 @@ table#runoffResultsTable tr.noTopBorder {
 	border-top: none;
 }
 
-table#runoffMatrix {
+table#runoffMatrix, table.runoffMatrix {
 	table-layout: fixed;
 	max-width: 100%;
 	border-collapse: collapse;
 }
 
-table#runoffMatrix td, table#runoffMatrix th {
+table#runoffMatrix td, table#runoffMatrix th, table.runoffMatrix td, table.runoffMatrix th {
 	border: none;
 	font-size: 9pt;
 }
 
-table#runoffMatrix th {
+table#runoffMatrix th, table.runoffMatrix th {
 	width: 1px;
 }
 
-table#runoffMatrix td.borderCell {
+table#runoffMatrix td.borderCell, table.runoffMatrix td.borderCell {
 	border: solid 1px #cccccc;
 }
 
-table#runoffMatrix td.leftBorderCell {
+table#runoffMatrix td.leftBorderCell, table.runoffMatrix td.leftBorderCell {
 	border: solid 1px #cccccc;
 	border-right: none;
 }
 
-table#runoffMatrix td.centerBorderCell {
+table#runoffMatrix td.centerBorderCell, table.runoffMatrix td.centerBorderCell {
 	border-top: solid 1px #cccccc;
 	border-bottom: solid 1px #cccccc;
 }
 
-table#runoffMatrix td.rightBorderCell {
+table#runoffMatrix td.rightBorderCell, table.runoffMatrix td.rightBorderCell {
 	border: solid 1px #cccccc;
 	border-left: none;
 }
 
-table#runoffMatrix td.filled {
+table#runoffMatrix td.filled, table.runoffMatrix td.filled {
 	background-color: #cccccc;
 }
 
-table#runoffMatrix td.number {
+table#runoffMatrix td.number, table.runoffMatrix td.number {
 	font-family: monospace;
 	text-align: right;
 	width: 1px;
 	text-shadow: 1px 1px 1px #cccccc;
 }
 
-table#runoffMatrix td.padded {
+table#runoffMatrix td.padded, table.runoffMatrix td.padded {
 	padding: 3px;
 }
 
-table#runoffMatrix td.winCell {
+table#runoffMatrix td.winCell, table.runoffMatrix td.winCell {
 	background-color: #deeede;
 }
 
-table#runoffMatrix td.tieCell {
+table#runoffMatrix td.tieCell, table.runoffMatrix td.tieCell {
 	background-color: #ffffe0;
 }
 
-table#runoffMatrix td.loseCell {
+table#runoffMatrix td.loseCell, table.runoffMatrix td.loseCell {
 	background-color: #ffeeee;
 }
 
-div#ballotRecordContainer, div#runoffMatrixContainer {
+div#runoffMatrixContainer, div#ballotRecordContainer {
 	display: none;
+	overflow: scroll;
 }
 
-div#runoffMatrixContainer {
-	overflow: scroll;
+div#ballotRecordContainer {
+	font-size: 12px;
 }
 
 div#runoffResults, div#pollResultsContainer {
@@ -528,7 +560,7 @@ div#runoffResults {
 	margin-left: 10px;
 }
 
-div#runoffLegend {
+div.runoffLegend {
 	float: left;
 	font-size: 10pt;
 	border-bottom: solid 1px #e7e7e7;

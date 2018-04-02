@@ -75,6 +75,8 @@ class UserModel extends Model
 		if (empty($limit)) $limit = 50;
 		$this->query = 'SELECT * FROM `polls`
 						WHERE `polls`.`userID` = '.$userID.'
+						AND `surveyID` LIKE "0"
+						ORDER BY `created` DESC
 						LIMIT '.$index.','.$limit.';';
 		$this->doSelectQuery();
 		if (!empty($this->results)) return $this->results;
@@ -96,6 +98,7 @@ class UserModel extends Model
 		if (empty($limit)) $limit = 50;
 		$this->query = 'SELECT * FROM `surveys`
 						WHERE `userID` = '.$userID.'
+						ORDER BY `created` DESC
 						LIMIT '.$index.','.$limit.';';
 		$this->doSelectQuery();
 		if (!empty($this->results)) return $this->results;

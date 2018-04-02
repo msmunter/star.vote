@@ -146,11 +146,17 @@ class SurveyModel extends Model
 		} else return false;
 	}
 	
-	public function insertSurvey($surveyID, $title, $created, $randomOrder, $private, $creatorIP, $customSlug, $verifiedVoting, $verifiedVotingType, $userID, $verbage)
+	public function insertSurvey($surveyID, $title, $randomOrder, $private, $creatorIP, $customSlug, $verifiedVoting, $verifiedVotingType, $userID, $verbage, $startDate, $startTime, $endDate, $endTime)
 	{
-		// Poll first
-		$this->query = "INSERT INTO `surveys` (`surveyID`, `title`, `created`, `private`, `verifiedVoting`, `verifiedVotingType`, `randomOrder`, `creatorIP`, `customSlug`, `userID`, `verbage`)
-						VALUES ('".$surveyID."', '".$title."', '".date('Y-m-d H:i:s')."', ".$private.", ".$verifiedVoting.", '".$verifiedVotingType."', ".$randomOrder.", '".$creatorIP."', '".$customSlug."', '".$userID."', '".$verbage."')";
+		$oDateCreated = new DateTime();
+		$oDateStart = new DateTime($startDate.' '.$startTime);
+		$oDateEnd = new DateTime($endDate.' '.$endTime);
+		if ($oDateStart < $oDateCreated) $oDateStart = $oDateCreated;
+		if ($oDateEnd <= $oDateStart) {
+			$endDateActual = null;
+		} else $endDateActual = $oDateEnd->format('Y-m-d H:i:s');
+		$this->query = "INSERT INTO `surveys` (`surveyID`, `title`, `created`, `private`, `verifiedVoting`, `verifiedVotingType`, `randomOrder`, `creatorIP`, `customSlug`, `userID`, `verbage`, `startTime`, `endTime`)
+						VALUES ('".$surveyID."', '".$title."', '".$oDateCreated->format('Y-m-d H:i:s')."', ".$private.", ".$verifiedVoting.", '".$verifiedVotingType."', ".$randomOrder.", '".$creatorIP."', '".$customSlug."', '".$userID."', '".$verbage."', '".$oDateStart->format('Y-m-d H:i:s')."', '".$endDateActual."')";
 		// Insert
 		$this->doInsertQuery();
 	}
@@ -160,6 +166,86 @@ class SurveyModel extends Model
 		$this->query = "SELECT `$table`.`$column`
 						FROM `$table`
 						WHERE `$column` LIKE '".$newID."'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (!empty($this->results)) {
+			return true;
+		} else return false;
+	}
+	
+	public function insertVote($pollID, $voterID, $answerID, $vote, $voteTime)
+	{
+		// Add vote record
+		$this->query = "INSERT INTO `votes` (`voterID`, `pollID`, `answerID`, `vote`, `voteTime`)
+							VALUES ('".$voterID."', '".$pollID."', '".$answerID."', '".$vote."', '".$voteTime."')";
+		// Insert
+		$this->doInsertQuery();
+		
+		// Add to scores/votes
+		$this->query = "UPDATE `answers`
+						SET `points` = `points` + $vote,
+							`votes` = `votes` + 1
+						WHERE `answerID` = $answerID
+						LIMIT 1;";
+		// Insert
+		$this->doUpdateQuery();
+	}
+	
+	public function incrementSurveyVoteCount($surveyID)
+	{
+		// Increment vote counter in surveys table
+		$this->query = "UPDATE `surveys`
+						SET `votes` = `votes` + 1
+						WHERE `surveyID` LIKE '$surveyID'
+						LIMIT 1;";
+		// Insert
+		$this->doUpdateQuery();
+	}
+	
+	public function updateVoteMatrix($pollID, $gtID, $ltID)
+	{
+		// Update
+		$this->query = "UPDATE `runoff`
+					SET `votes` = `votes` + 1
+					WHERE `pollID` LIKE '$pollID'
+					AND `gtID` = $gtID
+					AND `ltID` = $ltID
+					LIMIT 1;";
+		// Insert
+		$this->doUpdateQuery();
+	}
+	
+	public function updateVoterKeyEntry($voterKey, $surveyID, $voterID, $voteTime)
+	{
+		// Update
+		$this->query = "UPDATE `surveyVoterKeys`
+					SET `voterID` = '$voterID', `voteTime` = '$voteTime'
+					WHERE `voterKey` LIKE '$voterKey'
+					AND `surveyID` LIKE '$surveyID'
+					LIMIT 1;";
+		// Insert
+		$this->doUpdateQuery();
+	}
+	
+	/*public function userHasVotedInSurvey($voterID, $surveyID)
+	{
+		$this->query = "SELECT `votes`.`pollID`
+						FROM `votes`
+						WHERE `voterID` LIKE '".$voterID."'
+						AND `pollID` LIKE '".$pollID."'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (!empty($this->results)) {
+			return true;
+		} else return false;
+	}*/
+	
+	public function userHasVotedInPoll($voterID, $pollID)
+	{
+		$this->query = "SELECT `votes`.`pollID`
+						FROM `votes`
+						WHERE `voterID` LIKE '".$voterID."'
+						AND `pollID` LIKE '".$pollID."'
 						LIMIT 0,1;";
 		$this->doSelectQuery();
 		if (!empty($this->results)) {

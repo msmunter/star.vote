@@ -34,29 +34,84 @@ class SurveyController extends Controller
 				$this->survey = $this->model->getSurveyByID($this->URLdata);
 				if ($this->survey) {
 					// Set title
-					$this->title = $this->survey->question;
+					$this->title = $this->survey->title;
 					// Get polls
 					$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
 					// Populate polls
 					$mPoll = new PollModel();
-					foreach ($this->survey->polls as $poll) {
-						$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
+					foreach ($this->survey->polls as $tPoll) {
+						$tPoll->answers = $mPoll->getAnswersByPollID($tPoll->pollID);
+						$tPoll->voterCount = $mPoll->getPollVoterCount($tPoll->pollID);
+						// Get top answers
+						$tPoll->topAnswers = $mPoll->getTopAnswersByPollID($tPoll->pollID);
+						foreach ($tPoll->topAnswers as $index => $answer) {
+							$tPoll->topAnswers[$index]->avgVote = $mPoll->getAvgVoteByAnswerID($answer->answerID);
+						}
+						$tPoll->runoffResults = $mPoll->getRunoffResultsByAnswerID($tPoll->pollID, $tPoll->topAnswers[0]->answerID, $tPoll->topAnswers[1]->answerID);
+						if ($tPoll->runoffResults['first']['answerID'] == $tPoll->topAnswers[0]->answerID) {
+							$tPoll->runoffResults['first']['question'] = $tPoll->topAnswers[0]->text;
+							$tPoll->runoffResults['second']['question'] = $tPoll->topAnswers[1]->text;
+						} else {
+							$tPoll->runoffResults['first']['question'] = $tPoll->topAnswers[1]->text;
+							$tPoll->runoffResults['second']['question'] = $tPoll->topAnswers[0]->text;
+						}
+						// Check for ties beyond this
+						if ($tPoll->runoffResults['tie']) {
+							$ignoreFirstTwo = 1;
+							$tPoll->runoffResults['tieEndsAt'] = 2;
+							foreach ($tPoll->topAnswers as $topAnswer) {
+								if ($ignoreFirstTwo > 2 && $tPoll->runoffResults['second']['votes'] == $topAnswer->votes) {
+									$tPoll->runoffResults['tieEndsAt']++;
+								}
+								$ignoreFirstTwo++;
+							}
+						}
+						// Runoff matrix
+						$tPoll->rawRunoff = $mPoll->getRunoffResultsRawByPollID($tPoll->pollID);
+						foreach ($tPoll->topAnswers as $index => $answer) {
+							$tPoll->runoffAnswerArray[$answer->answerID] = $answer;
+						}
+						foreach ($tPoll->rawRunoff as $runoff) {
+							$tPoll->orderedRunoff[$runoff->gtID][$runoff->ltID] = $runoff;
+						}
+						// Voter and point counts
+						$tPoll->totalVoterCount = $mPoll->getPollVoterCount($tPoll->pollID);
+						$tPoll->totalPointCount = $mPoll->getPollPointCount($tPoll->pollID);
+						if ($tPoll->runoffResults['tie']) {
+							$tPoll->noPreferenceCount = $tPoll->totalVoterCount - ($tPoll->runoffResults['first']['votes'] * 2);
+						} else {
+							$tPoll->noPreferenceCount = $tPoll->totalVoterCount - ($tPoll->runoffResults['first']['votes'] + $tPoll->runoffResults['second']['votes']);
+						}
+						// Condorcet
+						$tPoll->condorcet = true;
+						foreach ($tPoll->orderedRunoff[$tPoll->runoffResults['first']['answerID']] as $comIndex => $item) {
+							$comVotes = $tPoll->orderedRunoff[$comIndex][$tPoll->runoffResults['first']['answerID']]->votes;
+							if ($item->votes <= $comVotes) {
+								$tPoll->condorcet = false;
+							}
+						}
 					}
 					unset($mPoll);
 					// Init voter
-					/*$this->initVoter(null);
+					$this->voter = new VoterController();
+					$this->voter->model = new VoterModel();
+					$this->voter->initVoter(null);
 					// Determine whether user has voted
-					if ($this->model->userHasVoted($this->voterID, $this->URLdata)) {
+					foreach ($this->survey->polls as $zPoll) {
+						$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
+						if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
+					}
+					if (!empty($this->yourVotes)) {
 						$this->hasVoted = true;
-						// Get their vote
-						$this->yourVote = $this->model->getYourVote($this->voterID, $this->poll->pollID);
-					} else $this->hasVoted = false;*/
+					} else $this->hasVoted = false;
 					// Randomize answers if necessary
 					if ($this->survey->randomOrder && $this->hasVoted == false) {
 						foreach ($this->survey->polls as $poll) {
 							shuffle($poll->answers);
 						}
 					}
+					// Timey wimey stuff
+					$this->setupTimes();
 				} else {
 					$this->error = "Survey does not exist";
 				}
@@ -64,6 +119,71 @@ class SurveyController extends Controller
 		} else {
 			$this->error = 'Must provide survey ID';
 		}
+	}
+	
+	private function setupTimes()
+	{
+		if (!empty($this->survey)) {
+			$oStart = new DateTime($this->survey->startTime);
+			if ($this->survey->endTime != 0) {
+				$oEnd = new DateTime($this->survey->endTime);
+			} else $oEnd = new DateTime($this->survey->startTime);
+			$oCreated = new DateTime($this->survey->created);
+			$oNow = new DateTime();
+			// Set up start/end date/time display
+			if ($oStart > $oCreated) {
+				if ($oStart >= $oNow) {
+					$this->startEndString = 'Started: '.$oStart->format('Y-m-d H:i:s');
+				} else $this->startEndString = 'Starts: '.$oStart->format('Y-m-d H:i:s');
+			}
+			if ($oEnd > $oStart) {
+				if (strlen($this->startEndString) > 0) $this->startEndString .= ', ';
+				if ($oEnd <= $oNow) {
+					$this->startEndString .= 'Ended: '.$oEnd->format('Y-m-d H:i:s');
+				} else $this->startEndString .= 'Ends: '.$oEnd->format('Y-m-d H:i:s');
+				
+			}
+			// Determine whether before, in, or after voting window
+			if ($oNow >= $oStart && ($oNow < $oEnd || $this->survey->endTime == null)) {
+				$this->survey->inVotingWindow = true;
+			} else if ($oNow < $oStart) {
+				$this->survey->inVotingWindow = false;
+				$this->survey->votingWindowDirection = 'before';
+			} else {
+				$this->survey->inVotingWindow = false;
+				$this->survey->votingWindowDirection = 'after';
+			}
+			// Determine whether results should be displayed yet or not
+			$this->survey->okDisplayResults = false;
+			if ($this->survey->verbage == 'el') {
+				// If it's theirs, has no end date, or if it's over
+				if ($this->user->userID == $this->survey->userID) {
+					$this->survey->okDisplayResults = true;
+				} else if ($this->survey->inVotingWindow == false && $this->survey->votingWindowDirection == 'after') {
+					$this->survey->okDisplayResults = true;
+				}
+			} else {
+				// Not a part of an election, show results whenever
+				$this->survey->okDisplayResults = true;
+			}
+		}
+	}
+	
+	public function ajaxresults()
+	{
+		$this->URLdata = $_POST['surveyID'];
+		$this->results();
+		$return['results'] = 'Results cannot be viewed yet';
+		$return['runoffmatrix'] = '';
+		// Is eligible to see the results?
+		if (($this->survey->verifiedVoting && $this->user->userID == $this->survey->userID && $this->survey->userID > 0) || ($this->survey->verifiedVoting && $this->hasVoted) || $this->survey->verifiedVoting == false) {
+			// Okay to display based on time?
+			if ($this->survey->okDisplayResults == true) {
+				$return['results'] = $this->ajaxInclude('view/survey/pollresultsactual.view.php');
+				$return['runoffmatrix'] = $this->ajaxInclude('view/survey/runoffmatrix.view.php');
+			}
+		}
+		echo json_encode($return);
 	}
 	
 	public function voterkeys()
@@ -127,8 +247,9 @@ class SurveyController extends Controller
 			}
 		} else {
 			// Passes regex
-			$pollBySlug = $this->model->getPollByCustomSlug($_POST['slug']);
-			$pollByID = $this->model->getPollByID($_POST['slug']);
+			$mPoll = new PollModel();
+			$pollBySlug = $mPoll->getPollByCustomSlug($_POST['slug']);
+			$pollByID = $mPoll->getPollByID($_POST['slug']);
 			$surveyBySlug = $this->model->getSurveyByCustomSlug($_POST['slug']);
 			$surveyByID = $this->model->getSurveyByID($_POST['slug']);
 			if (!empty($pollBySlug)) {
@@ -174,13 +295,81 @@ class SurveyController extends Controller
 			} else $userID = 0;
 			// Cleanup type if needed
 			if (!in_array($_POST['fsVerifiedVotingType'], $this->verifiedVotingTypes)) $_POST['fsVerifiedVotingType'] = 'gkc';
-			$dt = new DateTime();
 			// Insert actual
-			$this->model->insertSurvey($newSurveyID, $this->surveyTitle, $dt->format('Y-m-d H:i:s'), $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug'], $_POST['fsVerifiedVoting'], $_POST['fsVerifiedVotingType'], $userID, $_POST['fsVerbage']);
-			unset($dt);
+			$this->model->insertSurvey($newSurveyID, $this->surveyTitle, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug'], $_POST['fsVerifiedVoting'], $_POST['fsVerifiedVotingType'], $userID, $_POST['fsVerbage'], $_POST['fsStartDate'], $_POST['fsStartTime'], $_POST['fsEndDate'], $_POST['fsEndTime']);
 			$return['html'] .= 'Survey saved! Loading results...';
 		} else {
 			$return['error'] = 'Must provide a title';
+		}
+		echo json_encode($return);
+	}
+	
+	public function createpoll()
+	{
+		// Display form for poll creation
+		$this->surveyID = $this->URLdata;
+		$this->survey = $this->model->getSurveyByID($this->surveyID);
+		$this->title = 'Create Poll For Survey "'.$this->survey->title.'"';
+	}
+	
+	public function ajaxinsertpoll()
+	{
+		// Actually saves the poll
+		if ($_POST['pollQuestion'] != "") {
+			$this->pollQuestion = $_POST['pollQuestion'];
+			// Parse form string
+			parse_str($_POST['pollAnswers'], $this->pollAnswerSet);
+			// Rearrange into a more useful array
+			foreach ($this->pollAnswerSet as $pollInputName => $pollAnswer) {
+				$inBoom = explode('answer', $pollInputName);
+				if (trim($pollAnswer) != "") $this->pollAnswers[$inBoom[1]] = $pollAnswer;
+			}
+			unset($this->pollAnswerSet);
+			// See that we have some answers and they aren't blank
+			$answerCount = 0;
+			foreach ($this->pollAnswers as $index => $answer) {
+				if ($answer == '') {
+					// Last question exception
+					if (array_key_exists($index+1, $this->pollAnswers)) {
+						// Next item exists, this one can't be blank
+						$return['error'] = 'Answers cannot be blank';
+						break;
+					}
+				} else {
+					$answerCount++;
+				}
+			}
+			if ($answerCount >= 2 && !$return['error']) {
+				// ALL SET, let's save this poll
+				// Generate ID
+				$oUtility = new UtilityController();
+				$pollIDIsTaken = true;
+				$mPoll = new PollModel();
+				while ($pollIDIsTaken) {
+					$newPollID = $oUtility->generateRandomString($type = 'distinctlower', $length = 8);
+					$pollIDIsTaken = $mPoll->isPollIDTaken($newPollID);
+				}
+				$return['pollID'] = $newPollID;
+				if ($this->user->userID > 0) {
+					$userID = $this->user->userID;
+				} else $userID = 0;
+				if (strlen($_POST['surveyID']) > 0) {
+					$surveyID = $_POST['surveyID'];
+				} else $surveyID = '';
+				$this->survey = $this->model->getSurveyByID($surveyID);
+				$oDateCreated = new DateTime($this->survey->created);
+				$oStartTime = new DateTime($this->survey->startTime);
+				$oEndTime = new DateTime($this->survey->endTime);
+				// Insert actual
+				$mPoll->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, 0, 1, $_SERVER['REMOTE_ADDR'], "", 0, "gkc", $userID, $surveyID, $oDateCreated, $oStartTime->format('Y-m-d'), $oStartTime->format('H:i:s'), $oEndTime->format('Y-m-d'), $oEndTime->format('H:i:s'));
+				$return['html'] .= 'Poll saved! Loading results...';
+				//$return['html'] = $mPoll->displayQuery; // DEBUG ONLY!!!
+				unset($mPoll);
+			} else {
+				$return['error'] = 'Must provide at least two possible answers';
+			}
+		} else {
+			$return['error'] = 'Must provide a question';
 		}
 		echo json_encode($return);
 	}
@@ -234,80 +423,112 @@ class SurveyController extends Controller
 	public function ajaxvote()
 	{
 		// Initialize voter (will provide $this->voterID)
-		$oVoter = new VoterController();
-		$oVoter->model = new VoterModel();
-		$oVoter->initVoter($_POST['voterID']);
+		$this->voter = new VoterController();
+		$this->voter->model = new VoterModel();
+		$this->voter->initVoter($_POST['voterID']);
 		$this->surveyID = $_POST['surveyID'];
 		$this->survey = $this->model->getSurveyByID($this->surveyID);
+		$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
+		$mPoll = new PollModel();
+		foreach ($this->survey->polls as $poll) {
+			$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
+		}
+		unset($mPoll);
+		foreach ($this->survey->polls as $xPoll) {
+			foreach ($xPoll->answers as $xAnswer) {
+				$this->answerToPollArray[$xAnswer->answerID] = $xPoll->pollID;
+			}
+		}
 		$voterKeyResult = $this->model->verifyVoterKey($_POST['voterKey'], $this->surveyID);
 		// Determine eligibility if necessary
 		if (($this->survey->verifiedVoting && $voterKeyResult->surveyID) || $this->survey->verifiedVoting == false) {
-			// Determine whether this key has voted
-			if (empty($voterKeyResult->voteTime)) {
-				parse_str($_POST['votes'], $dirtyVoteArray);
-				// Cleanup array
-				foreach ($dirtyVoteArray as $index => $vote) {
-					$indexBoom = explode('|', $index);
-					$answerID = $indexBoom[1];
-					unset($indexBoom);
-					$voteArray[$answerID] = $vote;
-				}
-				$voteArrayToDestroy = $voteArray;
-				// Verify no vote has been entered for this voter on this poll
-				foreach ($this->survey->polls as $poll) {
-					$existingVote = $oVoter->model->getYourVote($this->voterID, $poll->pollID);
-					if ($existingVote->answerID != '') $yourVotes[$poll->pollID] = $existingVote;
-				}
-				if (empty($yourVotes)) {
-					// No vote, get the answers to make sure we have a score for each
-					$this->survey->allAnswers = $this->model->getAllAnswersBySurveyID($this->surveyID);
-					foreach ($this->survey->allAnswers as $answer) {
-						if (!array_key_exists($answer->answerID, $voteArray)) {
-							$voteArray[$answer->answerID] = 0;
-						}
+			// Determine if within voting window
+			$oStart = new DateTime($this->survey->startTime);
+			if ($this->survey->endTime != null) $oEnd = new DateTime($this->survey->endTime);
+			$oNow = new DateTime();
+			if ($oNow >= $oStart && ($oNow < $oEnd || empty($oEnd))) {
+				// Determine whether this key has voted
+				if (empty($voterKeyResult->voteTime)) {
+					parse_str($_POST['votes'], $dirtyVoteArray);
+					// Cleanup array
+					foreach ($dirtyVoteArray as $index => $vote) {
+						$indexBoom = explode('|', $index);
+						$answerID = $indexBoom[1];
+						unset($indexBoom);
+						$voteArray[$answerID] = $vote;
 					}
-					$this->votesTogether = $voteArray; // DEBUG ONLY!!!
-					$oDate = new DateTime();	
-					$voteTime = $oDate->format("Y-m-d H:i:s");
-					/*foreach ($voteArray as $answerID => $vote) {
-						$this->votes[] = $vote;
-						// Insert vote
-						$this->model->insertVote($this->pollID, $this->voterID, $answerID, $vote, $voteTime);
-						// Update the matrix. Maybe replace the windows with bricks?
-						foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
-							if ($answerID != $answerID2) {
-								if ($vote > $vote2) {
-									$this->model->updateVoteMatrix($this->pollID, $answerID, $answerID2);
-								} else if ($vote < $vote2) {
-									$this->model->updateVoteMatrix($this->pollID, $answerID2, $answerID);
-								} // and do nothing if they're equal
+					$voteArrayToDestroy = $voteArray;
+					// Verify no vote has been entered for this voter on this poll
+					foreach ($this->survey->polls as $zPoll) {
+						$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
+						if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
+					}
+					if (!empty($this->yourVotes)) {
+						$this->hasVoted = true;
+					} else $this->hasVoted = false;
+					if (!$this->hasVoted) {
+						// No vote, get the answers to make sure we have a score for each
+						$this->survey->allAnswers = $this->model->getAllAnswersBySurveyID($this->surveyID);
+						foreach ($this->survey->allAnswers as $answer) {
+							if (!array_key_exists($answer->answerID, $voteArray) || $voteArray[$answer->answerID] == '') {
+								$voteArray[$answer->answerID] = 0;
 							}
 						}
-						unset($voteArrayToDestroy[$answerID]);
+						$oDate = new DateTime();	
+						$voteTime = $oDate->format("Y-m-d H:i:s");
+						// Populate an array with 
+						// Submit the votes and update matrices
+						foreach ($voteArray as $answerID => $vote) {
+							$this->votes[] = $vote;
+							// Determine pollID
+							$pollID = $this->answerToPollArray[$answerID];
+							// Insert vote
+							$this->model->insertVote($pollID, $this->voter->voterID, $answerID, $vote, $voteTime);
+							// Update the matrix; maybe replace the windows with bricks?
+							foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
+								if ($answerID != $answerID2) {
+									if ($vote > $vote2) {
+										$this->model->updateVoteMatrix($pollID, $answerID, $answerID2);
+									} else if ($vote < $vote2) {
+										$this->model->updateVoteMatrix($pollID, $answerID2, $answerID);
+									} // and do nothing if they're equal
+								}
+							}
+							unset($voteArrayToDestroy[$answerID]);
+						}
+						$this->model->incrementSurveyVoteCount($this->surveyID);
+						// If a verified vote, write extra db info
+						if ($this->survey->verifiedVoting) {
+							$this->model->updateVoterKeyEntry($_POST['voterKey'], $this->surveyID, $this->voter->voterID, $voteTime);
+						}
+						unset($voteTime, $oDate);
+					} else {
+						$return['caution'] = 'Your vote had already been recorded for this poll';
 					}
-					$this->model->incrementSurveyVoteCount($this->surveyID);
-					// If a verified vote, write extra db info
-					if ($this->survey->verifiedVoting) {
-						$this->model->updateVoterKeyEntry($_POST['voterKey'], $this->surveyID, $this->voterID, $voteTime);
-					}*/
-					unset($voteTime, $oDate);
+					// Load the survey fresh
+					$this->survey = $this->model->getSurveyByID($this->surveyID);
+					$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
+					$mPoll = new PollModel();
+					foreach ($this->survey->polls as $poll) {
+						$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
+					}
+					unset($mPoll);
+					foreach ($this->survey->polls as $zPoll) {
+						$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
+						if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
+					}
+					$return['html'] .= $this->ajaxInclude('view/survey/yourvote.view.php');
 				} else {
-					$return['caution'] = 'Your vote had already been recorded for this poll';
+					$return['caution'] = 'This key has already been used to record a vote on this poll';
 				}
-				unset($yourVotes);
-				$this->survey = $this->model->getSurveyByID($this->surveyID);
-				$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
-				$mPoll = new PollModel();
-				foreach ($this->survey->polls as $poll) {
-					$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
-				}
-				unset($mPoll);
-				foreach ($this->survey->polls as $poll) {
-					$this->yourVotes[$poll->pollID] = $oVoter->model->getYourVote($this->voterID, $poll->pollID);
-				}
-				$return['html'] .= $this->ajaxInclude('view/survey/yourvote.view.php');
 			} else {
-				$return['caution'] = 'This key has already been used to record a vote on this poll';
+				// Too early or too late
+				if ($oNow >= $oEnd && !empty($oEnd)) {
+					// Oh, you outta time, baby!
+					$return['error'] .= 'Voting window has closed';
+				} else {
+					$return['error'] .= 'Voting window has not yet opened';
+				}
 			}
 		} else {
 			// Failed eligibility
@@ -316,28 +537,40 @@ class SurveyController extends Controller
 		echo json_encode($return);
 	}
 	
-	/*public function ajaxrunoffmatrix()
+	public function ajaxrunoffmatrix()
 	{
-		$pollID = $_POST['pollID'];
-		$this->poll = $this->model->getPollByID($pollID);
-		$this->initVoter(false);
+		$surveyID = $_POST['surveyID'];
+		$this->survey = $this->model->getSurveyByID($surveyID);
+		$oVoter = new VoterController();
+		$oVoter->model = new VoterModel();
+		$oVoter->initVoter(false);
+		$mPoll = new PollModel();
 		// Is eligible to see the results?
-		if (($this->poll->verifiedVoting && $this->user->userID == $this->poll->userID) || ($this->poll->verifiedVoting && $this->model->userHasVoted($this->voterID, $pollID)) || $this->poll->verifiedVoting == false) {
-			$this->poll->rawRunoff = $this->model->getRunoffResultsRawByPollID($pollID);
-			$this->poll->voterCount = $this->model->getPollVoterCount($pollID);
-			$this->poll->answers = $this->model->getAnswerByPollIDScoreOrder($pollID);
-			foreach ($this->poll->answers as $index => $answer) {
-				$this->poll->runoffAnswerArray[$answer->answerID] = $answer;
+		if (($this->survey->verifiedVoting && $this->user->userID == $this->survey->userID && $this->user->userID > 0) || ($this->survey->verifiedVoting && $this->model->userHasVoted($this->voterID, $surveyID)) || $this->survey->verifiedVoting == false) {
+			// Okay to display based on time?
+			$this->setupTimes();
+			if ($this->survey->okDisplayResults == true) {
+				$this->survey->polls = $this->model->getPollsBySurveyID($surveyID);
+				foreach ($this->survey->polls as $qPoll) {
+					$qPoll->rawRunoff = $mPoll->getRunoffResultsRawByPollID($qPoll->pollID);
+					$qPoll->voterCount = $mPoll->getPollVoterCount($qPoll->pollID);
+					$qPoll->answers = $mPoll->getAnswerByPollIDScoreOrder($qPoll->pollID);
+					foreach ($qPoll->answers as $index => $answer) {
+						$qPoll->runoffAnswerArray[$answer->answerID] = $answer;
+					}
+					foreach ($qPoll->rawRunoff as $runoff) {
+						$qPoll->orderedRunoff[$runoff->gtID][$runoff->ltID] = $runoff;
+					}
+				}
+				$return['html'] .= $this->ajaxInclude('view/survey/runoffmatrix.view.php');
+			} else {
+				$return['html'] = 'Results cannot be viewed yet';
 			}
-			foreach ($this->poll->rawRunoff as $runoff) {
-				$this->poll->orderedRunoff[$runoff->gtID][$runoff->ltID] = $runoff;
-			}
-			$return['html'] = $this->ajaxInclude('view/poll/runoffmatrix.view.php');
 		} else {
 			$return['html'] = 'Results cannot be viewed yet';
 		}
 		echo json_encode($return);
-	}*/
+	}
 	
 	/*public function csv()
 	{
@@ -368,26 +601,37 @@ class SurveyController extends Controller
 		} else $this->error = 'Poll not found';
 	}
 	
-	/*public function ajaxcvr()
+	public function ajaxcvr()
 	{
 		$this->ajax = 1;
 		$this->doHeader = 0;
 		$this->doFooter = 0;
-		$this->poll = $this->model->getPollByID($_POST['pollID']);
-		$this->initVoter(false);
-		if (($this->poll->verifiedVoting && $this->user->userID == $this->poll->userID) || ($this->poll->verifiedVoting && $this->model->userHasVoted($this->voterID, $this->poll->pollID)) || $this->poll->verifiedVoting == false) {
-			if (!empty($this->poll)) {
-				$this->poll->answers = $this->model->getAnswersByPollID($_POST['pollID']);
-				$this->poll->ballots = $this->model->getBallotsByPollID($_POST['pollID']);
-				// Process ballots into a single, cohesive array
-				$this->poll->processedBallots = $this->processBallots($this->poll->ballots);
-			} else $return['error'] = 'Poll not found';
-			$return['html'] = $this->ajaxInclude('view/poll/cvrhtml.view.php');
+		$this->survey = $this->model->getSurveyByID($_POST['surveyID']);
+		$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
+		$oVoter = new VoterController();
+		$oVoter->model = new VoterModel();
+		$oVoter->initVoter(false);
+		$mPoll = new PollModel();
+		if (($this->survey->verifiedVoting && $this->user->userID == $this->survey->userID && $this->user->userID > 0) || ($this->survey->verifiedVoting && $this->model->userHasVoted($this->voterID, $this->survey->surveyID)) || $this->survey->verifiedVoting == false) {
+			$this->setupTimes();
+			if ($this->survey->okDisplayResults == true) {
+				foreach ($this->survey->polls as $zPoll) {
+					if (!empty($zPoll)) {
+						$zPoll->answers = $mPoll->getAnswersByPollID($zPoll->pollID);
+						$zPoll->ballots = $mPoll->getBallotsByPollID($zPoll->pollID);
+						// Process ballots into a single, cohesive array
+						$zPoll->processedBallots = $this->processBallots($zPoll->ballots);
+					} else $return['error'] = 'Poll not found';
+				}
+				$return['html'] = $this->ajaxInclude('view/survey/cvrhtml.view.php');
+			} else {
+				$return['html'] = 'Results cannot be viewed yet';
+			}
 		} else {
 			$return['html'] = 'Results cannot be viewed yet';
 		}
 		echo json_encode($return);
-	}*/
+	}
 	
 	private function processBallots($ballots)
 	{
