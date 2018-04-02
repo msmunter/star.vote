@@ -34,7 +34,7 @@ class SurveyController extends Controller
 				$this->survey = $this->model->getSurveyByID($this->URLdata);
 				if ($this->survey) {
 					// Set title
-					$this->title = $this->survey->question;
+					$this->title = $this->survey->title;
 					// Get polls
 					$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
 					// Populate polls
@@ -110,19 +110,25 @@ class SurveyController extends Controller
 							shuffle($poll->answers);
 						}
 					}
-					// Set up start/end date/time display
-					if ($this->survey->startTime > $this->survey->created) {
-						$oStart = new DateTime($this->survey->startTime);
-						$this->startEndString = 'Starts: '.$oStart->format('Y-m-d H:i:s');
-						
-					}
-					if ($this->survey->endTime > $this->survey->startTime) {
+					$oStart = new DateTime($this->survey->startTime);
+					if ($this->survey->endTime != 0) {
 						$oEnd = new DateTime($this->survey->endTime);
+					} else $oEnd = new DateTime($this->survey->startTime);
+					$oCreated = new DateTime($this->survey->created);
+					$oNow = new DateTime();
+					// Set up start/end date/time display
+					if ($oStart > $oCreated) {
+						if ($oStart >= $oNow) {
+							$this->startEndString = 'Started: '.$oStart->format('Y-m-d H:i:s');
+						} else $this->startEndString = 'Starts: '.$oStart->format('Y-m-d H:i:s');
+					}
+					if ($oEnd > $oStart) {
 						if (strlen($this->startEndString) > 0) $this->startEndString .= ', ';
-						$this->startEndString .= 'Ends: '.$oEnd->format('Y-m-d H:i:s');
+						if ($oEnd <= $oNow) {
+							$this->startEndString .= 'Ended: '.$oEnd->format('Y-m-d H:i:s');
+						} else $this->startEndString .= 'Ends: '.$oEnd->format('Y-m-d H:i:s');
 						
 					}
-					$oNow = new DateTime();
 					if ($oNow >= $oStart && ($oNow < $oEnd || $this->survey->endTime == null)) {
 						$this->survey->inVotingWindow = true;
 					} else if ($oNow < $oStart) {
@@ -132,7 +138,6 @@ class SurveyController extends Controller
 						$this->survey->inVotingWindow = false;
 						$this->survey->votingWindowDirction = 'after';
 					}
-					unset($oStart, $oEnd, $oNow);
 				} else {
 					$this->error = "Survey does not exist";
 				}
