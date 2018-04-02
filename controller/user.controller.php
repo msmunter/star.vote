@@ -117,10 +117,13 @@ class UserController extends Controller
 		} else if ($_POST['pass1'] != $_POST['pass2']) {
 			$return['error'] = 'Passwords to not match';
 		} else {
-			// Good so far, attempt to update
-			$pass = password_hash($_POST['pass1'], PASSWORD_DEFAULT);
-			$this->model->insertPassAdmin($this->user->userID, $pass);
-			$return['html'] = 'Password changed';
+			$userID = $this->model->verifyPassword($this->user->info->email, $_POST['currentPass']);
+			if ($userID) {
+				// Good so far, attempt to update
+				$pass = password_hash($_POST['pass1'], PASSWORD_DEFAULT);
+				$this->model->insertPassAdmin($this->user->userID, $pass);
+				$return['html'] = 'Password changed';
+			} else $return['error'] = 'Incorrect password';
 		}
 		echo json_encode($return);
 	}

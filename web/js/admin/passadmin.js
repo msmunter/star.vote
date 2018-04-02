@@ -43,15 +43,15 @@ function clearStatus()
 	});
 }
 
-function changePass() {
+function changePassAdmin() {
 	// Disable inputs, buttons
 	disableButtons();
 	disableInputs();
 	$.post("/", { 
-		c: 'user', 
-		a: 'ajaxchangepass', 
+		c: 'admin', 
+		a: 'ajaxchangepassadmin', 
 		ajax: '1',
-		currentPass: $('#currentPass').val(),
+		userToUpdateID: $('#userToUpdateID').val(),
 		pass1: $('#pass1').val(),
 		pass2: $('#pass2').val()
 	}, function(data) {
@@ -63,7 +63,8 @@ function changePass() {
 				$('#pass1').focus();
 			});
 		} else {
-			window.location = '/user/';
+			updateStatus(jData.html);
+			window.location = '/admin/userdetails/'+$('#userToUpdateID').val()+'/';
 		}
 	});
 }

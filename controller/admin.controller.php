@@ -9,9 +9,10 @@ class AdminController extends Controller
 	public $adminLevel = array(
 		'index' => 1,
 		'passadmin' => 1,
-		'insertpassadmin' => 1,
+		'ajaxchangepassadmin' => 1,
 		'admincreateuser' => 1,
-		'ajaxadmincreateuser' => 1
+		'ajaxadmincreateuser' => 1,
+		'userdetails' => 1
 	);
 	
 	// ------------------------------- Methods --------------------------------
@@ -26,17 +27,35 @@ class AdminController extends Controller
 	{
 		$this->title = 'Change User Password';
 		$this->userToUpdateID = $_GET['d'];
+		if ($this->userToUpdateID > 0) {
+			$mUser = new UserModel();
+			$this->userDetails = $mUser->getUserInfoByID($this->userToUpdateID);
+			unset($mUser);
+		}
 	}
 	
-	public function insertpassadmin()
+	public function userdetails()
 	{
-		if ($_POST['userToUpdateID'] && $_POST['pass1'] == $_POST['pass2']) {
-			$pass = password_hash($_POST['pass1'], PASSWORD_DEFAULT);
-			$this->model->insertPassAdmin($_POST['userToUpdateID'], $pass);
-			header('Location: /user/');
-		} else {
-			$this->errors[] = 'Error: passwords do not match';
+		$this->userID = $this->URLdata;
+		if ($this->userID > 0) {
+			$mUser = new UserModel();
+			$this->userDetails = $mUser->getUserInfoByID($this->userID);
+			unset($mUser);
 		}
+	}
+	
+	public function ajaxchangepassadmin()
+	{
+		if ($_POST['userToUpdateID'] > 0) {
+			if ($_POST['pass1'] == $_POST['pass2']) {
+				$pass = password_hash($_POST['pass1'], PASSWORD_DEFAULT);
+				$this->model->insertPassAdmin($_POST['userToUpdateID'], $pass);
+				$return['html'] = 'Success';
+			} else {
+				$return['error'] = 'Passwords do not match';
+			}
+		} else $return['error'] = 'Invalid user ID';
+		echo json_encode($return);
 	}
 	
 	public function admincreateuser()
