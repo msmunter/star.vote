@@ -1,3 +1,5 @@
+<div id="statusMsg"></div>
+<div class="clear"></div>
 <div class="bigContainer">
 	<div class="bigContainerTitle">Login</div>
 	<div class="bigContainerInner">

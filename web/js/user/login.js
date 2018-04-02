@@ -59,10 +59,9 @@ function login()
 		var jData = JSON.parse(data);
 		if (jData.error) {
 			updateStatus("ERROR: "+jData.error);
-			enableInputs(function() {
-				enableButtons(function() {
-					$('#email').focus();
-				});
+			enableInputs();
+			enableButtons(function() {
+				$('#email').focus();
 			});
 		} else if (jData.landingPage) {
 			updateStatus(jData.html);
@@ -70,7 +69,7 @@ function login()
 		} else if (jData.userID) {
 			// Success, update status and go to user's page
 			updateStatus(jData.html);
-			window.location = '/userpolls/'+jData.userID+'/';
+			window.location = '/user/';
 		} else {
 			window.location = '/';
 		}

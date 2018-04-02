@@ -137,7 +137,7 @@ class UserModel extends Model
 	public function verifyPassword($email, $pass)
 	{
 		$this->query = "SELECT `users`.* FROM `users`
-						WHERE `users`.`email` LIKE \"$email\"
+						WHERE `users`.`email` LIKE \"".$this->escapeString($email)."\"
 						LIMIT 0,1";
 		$this->doSelectQuery();
 		// Verify, return userID or false
