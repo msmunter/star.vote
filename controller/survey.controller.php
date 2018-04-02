@@ -110,34 +110,8 @@ class SurveyController extends Controller
 							shuffle($poll->answers);
 						}
 					}
-					$oStart = new DateTime($this->survey->startTime);
-					if ($this->survey->endTime != 0) {
-						$oEnd = new DateTime($this->survey->endTime);
-					} else $oEnd = new DateTime($this->survey->startTime);
-					$oCreated = new DateTime($this->survey->created);
-					$oNow = new DateTime();
-					// Set up start/end date/time display
-					if ($oStart > $oCreated) {
-						if ($oStart >= $oNow) {
-							$this->startEndString = 'Started: '.$oStart->format('Y-m-d H:i:s');
-						} else $this->startEndString = 'Starts: '.$oStart->format('Y-m-d H:i:s');
-					}
-					if ($oEnd > $oStart) {
-						if (strlen($this->startEndString) > 0) $this->startEndString .= ', ';
-						if ($oEnd <= $oNow) {
-							$this->startEndString .= 'Ended: '.$oEnd->format('Y-m-d H:i:s');
-						} else $this->startEndString .= 'Ends: '.$oEnd->format('Y-m-d H:i:s');
-						
-					}
-					if ($oNow >= $oStart && ($oNow < $oEnd || $this->survey->endTime == null)) {
-						$this->survey->inVotingWindow = true;
-					} else if ($oNow < $oStart) {
-						$this->survey->inVotingWindow = false;
-						$this->survey->votingWindowDirction = 'before';
-					} else {
-						$this->survey->inVotingWindow = false;
-						$this->survey->votingWindowDirction = 'after';
-					}
+					// Timey wimey stuff
+					$this->setupTimes();
 				} else {
 					$this->error = "Survey does not exist";
 				}
@@ -147,17 +121,67 @@ class SurveyController extends Controller
 		}
 	}
 	
+	private function setupTimes()
+	{
+		if (!empty($this->survey)) {
+			$oStart = new DateTime($this->survey->startTime);
+			if ($this->survey->endTime != 0) {
+				$oEnd = new DateTime($this->survey->endTime);
+			} else $oEnd = new DateTime($this->survey->startTime);
+			$oCreated = new DateTime($this->survey->created);
+			$oNow = new DateTime();
+			// Set up start/end date/time display
+			if ($oStart > $oCreated) {
+				if ($oStart >= $oNow) {
+					$this->startEndString = 'Started: '.$oStart->format('Y-m-d H:i:s');
+				} else $this->startEndString = 'Starts: '.$oStart->format('Y-m-d H:i:s');
+			}
+			if ($oEnd > $oStart) {
+				if (strlen($this->startEndString) > 0) $this->startEndString .= ', ';
+				if ($oEnd <= $oNow) {
+					$this->startEndString .= 'Ended: '.$oEnd->format('Y-m-d H:i:s');
+				} else $this->startEndString .= 'Ends: '.$oEnd->format('Y-m-d H:i:s');
+				
+			}
+			// Determine whether before, in, or after voting window
+			if ($oNow >= $oStart && ($oNow < $oEnd || $this->survey->endTime == null)) {
+				$this->survey->inVotingWindow = true;
+			} else if ($oNow < $oStart) {
+				$this->survey->inVotingWindow = false;
+				$this->survey->votingWindowDirection = 'before';
+			} else {
+				$this->survey->inVotingWindow = false;
+				$this->survey->votingWindowDirection = 'after';
+			}
+			// Determine whether results should be displayed yet or not
+			$this->survey->okDisplayResults = false;
+			if ($this->survey->verbage == 'el') {
+				// If it's theirs, has no end date, or if it's over
+				if ($this->user->userID == $this->survey->userID) {
+					$this->survey->okDisplayResults = true;
+				} else if ($this->survey->inVotingWindow == false && $this->survey->votingWindowDirection == 'after') {
+					$this->survey->okDisplayResults = true;
+				}
+			} else {
+				// Not a part of an election, show results whenever
+				$this->survey->okDisplayResults = true;
+			}
+		}
+	}
+	
 	public function ajaxresults()
 	{
 		$this->URLdata = $_POST['surveyID'];
 		$this->results();
+		$return['results'] = 'Results cannot be viewed yet';
+		$return['runoffmatrix'] = '';
 		// Is eligible to see the results?
 		if (($this->survey->verifiedVoting && $this->user->userID == $this->survey->userID && $this->survey->userID > 0) || ($this->survey->verifiedVoting && $this->hasVoted) || $this->survey->verifiedVoting == false) {
-			$return['results'] = $this->ajaxInclude('view/survey/pollresultsactual.view.php');
-			//$return['runoffmatrix'] = $this->ajaxInclude('view/survey/runoffmatrix.view.php');
-		} else {
-			$return['results'] = 'Results cannot be viewed yet';
-			$return['runoffmatrix'] = '';
+			// Okay to display based on time?
+			if ($this->survey->okDisplayResults == true) {
+				$return['results'] = $this->ajaxInclude('view/survey/pollresultsactual.view.php');
+				$return['runoffmatrix'] = $this->ajaxInclude('view/survey/runoffmatrix.view.php');
+			}
 		}
 		echo json_encode($return);
 	}
