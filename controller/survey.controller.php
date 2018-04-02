@@ -35,89 +35,111 @@ class SurveyController extends Controller
 				if ($this->survey) {
 					// Set title
 					$this->title = $this->survey->title;
-					// Get polls
-					$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
-					// Populate polls
-					$mPoll = new PollModel();
-					foreach ($this->survey->polls as $tPoll) {
-						$tPoll->answers = $mPoll->getAnswersByPollID($tPoll->pollID);
-						$tPoll->voterCount = $mPoll->getPollVoterCount($tPoll->pollID);
-						// Get top answers
-						$tPoll->topAnswers = $mPoll->getTopAnswersByPollID($tPoll->pollID);
-						foreach ($tPoll->topAnswers as $index => $answer) {
-							$tPoll->topAnswers[$index]->avgVote = $mPoll->getAvgVoteByAnswerID($answer->answerID);
+					// Set up
+					if (!empty($this->survey)) {
+						// Get polls
+						$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
+						// Populate polls
+						foreach ($this->survey->polls as $tPoll) {
+							$this->processPoll($tPoll);
 						}
-						$tPoll->runoffResults = $mPoll->getRunoffResultsByAnswerID($tPoll->pollID, $tPoll->topAnswers[0]->answerID, $tPoll->topAnswers[1]->answerID);
-						if ($tPoll->runoffResults['first']['answerID'] == $tPoll->topAnswers[0]->answerID) {
-							$tPoll->runoffResults['first']['question'] = $tPoll->topAnswers[0]->text;
-							$tPoll->runoffResults['second']['question'] = $tPoll->topAnswers[1]->text;
-						} else {
-							$tPoll->runoffResults['first']['question'] = $tPoll->topAnswers[1]->text;
-							$tPoll->runoffResults['second']['question'] = $tPoll->topAnswers[0]->text;
+						// Init voter
+						$this->voter = new VoterController();
+						$this->voter->model = new VoterModel();
+						$this->voter->initVoter(null);
+						// Determine whether user has voted
+						foreach ($this->survey->polls as $zPoll) {
+							$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
+							if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
 						}
-						// Check for ties beyond this
-						if ($tPoll->runoffResults['tie']) {
-							$ignoreFirstTwo = 1;
-							$tPoll->runoffResults['tieEndsAt'] = 2;
-							foreach ($tPoll->topAnswers as $topAnswer) {
-								if ($ignoreFirstTwo > 2 && $tPoll->runoffResults['second']['votes'] == $topAnswer->votes) {
-									$tPoll->runoffResults['tieEndsAt']++;
+						if (!empty($this->yourVotes)) {
+							$this->hasVoted = true;
+						} else $this->hasVoted = false;
+						// Randomize answers if necessary
+						if ($this->survey->randomOrder && $this->hasVoted == false) {
+							foreach ($this->survey->polls as $poll) {
+								shuffle($poll->answers);
+							}
+						}
+						// Timey wimey stuff
+						$this->setupTimes();
+						// Reprocess for multiple places winners
+						/*if ($this->numWinners > 1) {
+							for ($i = 2; $i <= $this->numWinners; $i++) {
+								$this->survey->altPlacePolls[$i] = $this->survey->polls;
+								foreach ($this->survey->altPlacePolls[$i] as $tPoll) {
+									array_shift($tPoll->topAnswers);
+									foreach ($tPoll->runoffResults as $rr) {
+										
+									}
 								}
-								$ignoreFirstTwo++;
 							}
-						}
-						// Runoff matrix
-						$tPoll->rawRunoff = $mPoll->getRunoffResultsRawByPollID($tPoll->pollID);
-						foreach ($tPoll->topAnswers as $index => $answer) {
-							$tPoll->runoffAnswerArray[$answer->answerID] = $answer;
-						}
-						foreach ($tPoll->rawRunoff as $runoff) {
-							$tPoll->orderedRunoff[$runoff->gtID][$runoff->ltID] = $runoff;
-						}
-						// Voter and point counts
-						$tPoll->totalVoterCount = $mPoll->getPollVoterCount($tPoll->pollID);
-						$tPoll->totalPointCount = $mPoll->getPollPointCount($tPoll->pollID);
-						if ($tPoll->runoffResults['tie']) {
-							$tPoll->noPreferenceCount = $tPoll->totalVoterCount - ($tPoll->runoffResults['first']['votes'] * 2);
-						} else {
-							$tPoll->noPreferenceCount = $tPoll->totalVoterCount - ($tPoll->runoffResults['first']['votes'] + $tPoll->runoffResults['second']['votes']);
-						}
-						// Condorcet
-						$tPoll->condorcet = true;
-						foreach ($tPoll->orderedRunoff[$tPoll->runoffResults['first']['answerID']] as $comIndex => $item) {
-							$comVotes = $tPoll->orderedRunoff[$comIndex][$tPoll->runoffResults['first']['answerID']]->votes;
-							if ($item->votes <= $comVotes) {
-								$tPoll->condorcet = false;
-							}
-						}
+						}*/
+					} else {
+						$this->error = "Survey does not exist";
 					}
-					unset($mPoll);
-					// Init voter
-					$this->voter = new VoterController();
-					$this->voter->model = new VoterModel();
-					$this->voter->initVoter(null);
-					// Determine whether user has voted
-					foreach ($this->survey->polls as $zPoll) {
-						$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
-						if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
-					}
-					if (!empty($this->yourVotes)) {
-						$this->hasVoted = true;
-					} else $this->hasVoted = false;
-					// Randomize answers if necessary
-					if ($this->survey->randomOrder && $this->hasVoted == false) {
-						foreach ($this->survey->polls as $poll) {
-							shuffle($poll->answers);
-						}
-					}
-					// Timey wimey stuff
-					$this->setupTimes();
-				} else {
-					$this->error = "Survey does not exist";
 				}
 			}
 		} else {
 			$this->error = 'Must provide survey ID';
+		}
+	}
+	
+	private function processPoll($tPoll)
+	{
+		if (!empty($tPoll)) {
+			$mPoll = new PollModel();
+			$tPoll->answers = $mPoll->getAnswersByPollID($tPoll->pollID);
+			$tPoll->voterCount = $mPoll->getPollVoterCount($tPoll->pollID);
+			// Get top answers
+			$tPoll->topAnswers = $mPoll->getTopAnswersByPollID($tPoll->pollID);
+			foreach ($tPoll->topAnswers as $index => $answer) {
+				$tPoll->topAnswers[$index]->avgVote = $mPoll->getAvgVoteByAnswerID($answer->answerID);
+			}
+			$tPoll->runoffResults = $mPoll->getRunoffResultsByAnswerID($tPoll->pollID, $tPoll->topAnswers[0]->answerID, $tPoll->topAnswers[1]->answerID);
+			if ($tPoll->runoffResults['first']['answerID'] == $tPoll->topAnswers[0]->answerID) {
+				$tPoll->runoffResults['first']['question'] = $tPoll->topAnswers[0]->text;
+				$tPoll->runoffResults['second']['question'] = $tPoll->topAnswers[1]->text;
+			} else {
+				$tPoll->runoffResults['first']['question'] = $tPoll->topAnswers[1]->text;
+				$tPoll->runoffResults['second']['question'] = $tPoll->topAnswers[0]->text;
+			}
+			// Check for ties beyond this
+			if ($tPoll->runoffResults['tie']) {
+				$ignoreFirstTwo = 1;
+				$tPoll->runoffResults['tieEndsAt'] = 2;
+				foreach ($tPoll->topAnswers as $topAnswer) {
+					if ($ignoreFirstTwo > 2 && $tPoll->runoffResults['second']['votes'] == $topAnswer->votes) {
+						$tPoll->runoffResults['tieEndsAt']++;
+					}
+					$ignoreFirstTwo++;
+				}
+			}
+			// Runoff matrix
+			$tPoll->rawRunoff = $mPoll->getRunoffResultsRawByPollID($tPoll->pollID);
+			foreach ($tPoll->topAnswers as $index => $answer) {
+				$tPoll->runoffAnswerArray[$answer->answerID] = $answer;
+			}
+			foreach ($tPoll->rawRunoff as $runoff) {
+				$tPoll->orderedRunoff[$runoff->gtID][$runoff->ltID] = $runoff;
+			}
+			// Voter and point counts
+			$tPoll->totalVoterCount = $mPoll->getPollVoterCount($tPoll->pollID);
+			$tPoll->totalPointCount = $mPoll->getPollPointCount($tPoll->pollID);
+			if ($tPoll->runoffResults['tie']) {
+				$tPoll->noPreferenceCount = $tPoll->totalVoterCount - ($tPoll->runoffResults['first']['votes'] * 2);
+			} else {
+				$tPoll->noPreferenceCount = $tPoll->totalVoterCount - ($tPoll->runoffResults['first']['votes'] + $tPoll->runoffResults['second']['votes']);
+			}
+			// Condorcet
+			$tPoll->condorcet = true;
+			foreach ($tPoll->orderedRunoff[$tPoll->runoffResults['first']['answerID']] as $comIndex => $item) {
+				$comVotes = $tPoll->orderedRunoff[$comIndex][$tPoll->runoffResults['first']['answerID']]->votes;
+				if ($item->votes <= $comVotes) {
+					$tPoll->condorcet = false;
+				}
+			}
+			unset($mPoll);
 		}
 	}
 	

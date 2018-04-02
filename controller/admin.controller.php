@@ -7,7 +7,11 @@ class AdminController extends Controller
 	public $admin;
 	// Admin Levels
 	public $adminLevel = array(
-		'index' => 1
+		'index' => 1,
+		'passadmin' => 1,
+		'insertpassadmin' => 1,
+		'admincreateuser' => 1,
+		'ajaxadmincreateuser' => 1
 	);
 	
 	// ------------------------------- Methods --------------------------------
@@ -57,14 +61,5 @@ class AdminController extends Controller
 		} else $return['error'] = "Error: passwords do not match.";
 		echo json_encode($return);
 	}
-	
-	/* Private Methods */
-	
-	/*private function loadModel()
-	{
-		include_once('model/model.php');
-		include_once('model/user.model.php');
-		$this->model = new userModel;
-	}*/
 }
 ?>

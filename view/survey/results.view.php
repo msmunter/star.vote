@@ -1,3 +1,4 @@
+<?php //$this->debug($this->survey); // DEBUG ONLY!!! ?>
 <input type="hidden" id="surveyID" value="<?php echo $this->survey->surveyID; ?>" />
 <div id="statusMsg" class="hidden"></div>
 <div class="clear"></div>

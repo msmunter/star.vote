@@ -1,40 +1,28 @@
-<div class="bgbox">
-	<h4>User Signup</h4>
-	<form id="addUserForm" method="post" action="/user/insertuser/" data-ajax="false">
-		<input type="hidden" name="ajax" value="1" />
-		
+<div class="bigContainer">
+	<div class="bigContainerTitle">New User Signup</div>
+	<div class="bigContainerInner">	
 		<div data-role="fieldcontain">
 			<label for="email">First Name:</label>
-			<div class="timePicker">
-				<input name="firstName" id="firstName" value="" />
-			</div>
+			<input name="firstName" id="firstName" value="" />
 		</div>
 		
 		<div data-role="fieldcontain">
 			<label for="email">Last Name:</label>
-			<div class="timePicker">
-				<input name="lastName" id="lastName" value="" />
-			</div>
+			<input name="lastName" id="lastName" value="" />
 		</div>
 		
 		<div data-role="fieldcontain">
-			<label for="email">* Email:</label>
-			<div class="timePicker">
-				<input name="email" id="email" value="" />
-			</div>
+			<label for="email">Email:</label>
+			<input name="email" id="email" value="" />
 		</div>
 		
 		<div data-role="fieldcontain">
-			<label for="pass1">* Password:</label>
-			<div class="timePicker">
-				<input type="password" name="pass1" id="pass1" value="" />
-			</div>
+			<label for="pass1">Password:</label>
+			<input type="password" name="pass1" id="pass1" value="" />
 		</div>
 		<div data-role="fieldcontain">
-			<label for="pass2">* Verify Password:</label>
-			<div class="timePicker">
-				<input type="password" name="pass2" id="pass2" value="" />
-			</div>
+			<label for="pass2">Verify Password:</label>
+			<input type="password" name="pass2" id="pass2" value="" />
 		</div>
 		<!--<div class="ui-field-contain">
 			<label for="adminLevel">Admin Level:</label>
@@ -45,7 +33,6 @@
 				<option value="1">Root Admin</option>
 			</select>
 		</div>-->
-		<p>* Required Fields</p>
 		<button type="button" data-inline="true" onclick="submitAddUserForm()">Add User</button>
-	</form>
+	</div>
 </div>

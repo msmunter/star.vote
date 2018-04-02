@@ -10,8 +10,7 @@ class UserController extends Controller
 	public $adminLevel = array(
 		'insertuser' => 1,
 		'passadmin' => 1,
-		'insertpassadmin' => 1,
-		'details' => 1
+		'insertpassadmin' => 1
 	);
 	
 	// ------------------------------- Methods --------------------------------
@@ -43,18 +42,6 @@ class UserController extends Controller
 				if ($this->surveyCount > 20) $limit = 20;
 				$this->surveys = $this->model->getSurveysByUserID($this->user->userID, 0, $limit);
 			}
-		}
-	}
-	
-	// View single user
-	public function details() {
-		// Get by ID
-		if (is_numeric($_GET['d'])) {
-			$this->detailUserID = $_GET['d'];
-			$this->detailUser = $this->model->getUserInfoByID($this->detailUserID);
-		}
-		if ($this->detailUserID) {
-			$this->title = 'User Details';
 		}
 	}
 	
