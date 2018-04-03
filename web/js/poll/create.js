@@ -35,6 +35,18 @@ $(document).ready(function() {
 	$('#fsCustomSlugInput').focusout(function() {
 		checkCustomSlug();
 	});
+	$('#fsNumWinners').focusout(function() {
+		var maxWinners = $('#pollAnswers input').length - 1;
+		if ($('#fsNumWinners').val() < 1) {
+			$('#fsNumWinners').val(1);
+			updateStatus('Number of winners set to current minimum');
+		} else if ($('#fsNumWinners').val() > maxWinners) {
+			$('#fsNumWinners').val(maxWinners);
+			updateStatus('Number of winners set to current maximum');
+		} else {
+			clearStatus();
+		}
+	});
 });
 
 function updateStatus(msg)
@@ -134,7 +146,8 @@ function createPollActual()
 		fsStartDate: $('#fsStartDate').val(),
 		fsStartTime: $('#fsStartTime').val(),
 		fsEndDate: $('#fsEndDate').val(),
-		fsEndTime: $('#fsEndTime').val()
+		fsEndTime: $('#fsEndTime').val(),
+		fsNumWinners: $('#fsNumWinners').val()
 	}, function(data) {
 		// Disable inputs
 		disableInputs();

@@ -53,18 +53,19 @@ class SurveyController extends Controller
 						// Timey wimey stuff
 						$this->setupTimes();
 						// Reprocess for multiple places winners
-						//$this->numWinners = 2; // DEBUG ONLY!!!
-						if ($this->numWinners > 1) {
-							for ($i = 2; $i <= $this->numWinners; $i++) {
-								$this->survey->altPlacePolls[$i]->polls = $this->survey->polls;
-								foreach ($this->survey->altPlacePolls[$i]->polls as $tPoll) {
-									$this->survey->altPlacePolls[$i]->winnerTopAnswer = array_shift($tPoll->topAnswers);
-									/*foreach ($tPoll->runoffResults as $rr) {
-										
-									}*/
+						/*foreach ($this->survey->polls as $poll) {
+							if ($poll->numWinners > 1) {
+								for ($i = 2; $i <= $poll->numWinners; $i++) {
+									if ($i > 2) {
+										$this->altPlacePolls[$i] = clone $this->altPlacePolls[$i-1];
+										$this->reducePollByWinner($this->altPlacePolls[$i], $this->altPlacePolls[$i-1]->runoffResults['first']['answerID']);
+									} else {
+										$this->altPlacePolls[2] = clone $this->altPollClone;
+										$this->reducePollByWinner($this->altPlacePolls[$i], $poll->runoffResults['first']['answerID']);
+									}
 								}
 							}
-						}
+						}*/
 					} else {
 						$this->error = "Survey does not exist";
 					}

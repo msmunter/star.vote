@@ -263,6 +263,10 @@ div#startEndInputContainer div.ui-input-text {
 	width: 150px;
 }
 
+div#numWinnersInputContainer div.ui-input-text {
+	width: 70px;
+}
+
 div.startEndString {
 	float: left;
 	font-size: 11pt;
@@ -366,7 +370,7 @@ div.surveyPollTitle {
 	margin-bottom: 5px;
 }
 
-div.surveyResultsPollTitle, div.recentOrPopularBar {
+div.surveyResultsPollTitle, div.recentOrPopularBar, div.placeHeader {
 	background-color: #38c;
 	color: white;
 	text-shadow: 1px 1px 2px #333333;
