@@ -48,7 +48,7 @@ class SurveyModel extends Model
 	public function getMostPopularSurveys($index, $limit)
 	{
 		$this->query = "SELECT *
-						FROM `polls`
+						FROM `surveys`
 						WHERE `private` = 0
 						ORDER BY `votes` DESC, `created` DESC
 						LIMIT $index,$limit;";
@@ -61,9 +61,9 @@ class SurveyModel extends Model
 		// Be sure you don't grab ones that are marked private
 		if (!$limit || $limit < 1) $limit = 10;
 		$this->query = "SELECT *
-						FROM `polls`
+						FROM `surveys`
 						WHERE `private` = 0
-						ORDER BY `polls`.`created` DESC
+						ORDER BY `created` DESC
 						LIMIT $index,$limit;";
 		$this->doSelectQuery();
 		return $this->results;

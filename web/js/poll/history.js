@@ -5,35 +5,44 @@ $(document).ready(function() {
 	});
 });
 
-function loadMorePolls(pollType, index) {
-	if (pollType == "r") {
-		var itemLength = $('#recentPollContainer .pollLink').length;
-	} else {
-		var itemLength = $('#popularPollContainer .pollLink').length;
-	}
+function loadMorePolls(index) {
+	var itemLength = $('#pollContainer .pollLink').length;
 	$.post("/", { 
 		c: 'poll', 
 		a: 'ajaxloadmorepolls', 
 		ajax: '1',
-		pollType: pollType,
 		index: itemLength
 	}, function(data) {
 		var jData = JSON.parse(data);
 		if (jData.error) {
 			$('#statusMsg').html("ERROR: "+jData.error);
 		} else {
-			if (pollType == 'r') {
-				$('#recentPollContainer').append(jData.html).enhanceWithin();
-			} else {
-				$('#popularPollContainer').append(jData.html).enhanceWithin();
-			}
+			$('#pollContainer').append(jData.html).enhanceWithin();
+			adjustColumns();
+		}
+	});
+}
+
+function loadMoreSurveys(index) {
+	var itemLength = $('#surveyContainer .surveyLink').length;
+	$.post("/", { 
+		c: 'survey', 
+		a: 'ajaxloadmoresurveys', 
+		ajax: '1',
+		index: itemLength
+	}, function(data) {
+		var jData = JSON.parse(data);
+		if (jData.error) {
+			$('#statusMsg').html("ERROR: "+jData.error);
+		} else {
+			$('#surveyContainer').append(jData.html).enhanceWithin();
 			adjustColumns();
 		}
 	});
 }
 
 function adjustColumns() {
-	if ($(window).width() > 420) {
+	if ($(window).width() > 800) {
 		$('.columnOne').addClass('ui-block-a');
 		$('.columnTwo').addClass('ui-block-b');
 	} else {

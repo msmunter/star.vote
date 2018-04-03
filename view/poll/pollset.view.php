@@ -1,35 +1,37 @@
-<?php //$this->debug($this->pollSet); // DEBUG ONLY!!! ?>
 <?php
-if (count($this->pollSet) > 0) {
+if (count($this->mostPopularPolls) > 0) {
 	echo '<div class="ui-grid-a">';
-	$pollCount = count($this->pollSet);
-	$pollHalfCount = round($pollCount / 2);
+	
 	echo '<div class="columnOne ui-block-a"><div class="ui-bar">';
-	for ($i = 0; $i < $pollHalfCount; $i++) {
+	echo '<div class="recentOrPopularBar">Popular</div>';
+	foreach ($this->mostPopularPolls as $poll) {
 		echo '<a class="pollLink" href="/';
-		if ($this->pollSet[$i]->customSlug != '') {
-			echo $this->pollSet[$i]->customSlug;
-		} else echo $this->pollSet[$i]->pollID;
+		if ($poll->customSlug != '') {
+			echo $poll->customSlug;
+		} else echo $poll->pollID;
 		echo '/">';
-			echo '<div class="pollInfoVotes">Votes<br />'.$this->pollSet[$i]->votes.'</div>';
-			echo $this->pollSet[$i]->question;
-			echo '<div class="pollInfo">Started '.$this->pollSet[$i]->created.'</div>';
+			echo '<div class="pollInfoVotes">Votes<br />'.$poll->votes.'</div>';
+			echo $poll->question;
+			echo '<div class="pollInfo">Started '.$poll->created.'</div>';
 		echo '</a>';
 	}
 	echo '</div></div>';
+	
 	echo '<div class="columnTwo ui-block-b"><div class="ui-bar">';
-	for ($i = $pollHalfCount; $i < $pollCount; $i++) {
+	echo '<div class="recentOrPopularBar">Recent</div>';
+	foreach ($this->mostRecentPolls as $poll) {
 		echo '<a class="pollLink" href="/';
-		if ($this->pollSet[$i]->customSlug != '') {
-			echo $this->pollSet[$i]->customSlug;
-		} else echo $this->pollSet[$i]->pollID;
+		if ($poll->customSlug != '') {
+			echo $poll->customSlug;
+		} else echo $poll->pollID;
 		echo '/">';
-			echo '<div class="pollInfoVotes">Votes<br />'.$this->pollSet[$i]->votes.'</div>';
-			echo $this->pollSet[$i]->question;
-			echo '<div class="pollInfo">Started '.$this->pollSet[$i]->created.'</div>';
+			echo '<div class="pollInfoVotes">Votes<br />'.$poll->votes.'</div>';
+			echo $poll->question;
+			echo '<div class="pollInfo">Started '.$poll->created.'</div>';
 		echo '</a>';
 	}
 	echo '</div></div>';
+	
 	echo '</div><!-- /grid-a -->';
 } else {
 	echo 'No polls found';
