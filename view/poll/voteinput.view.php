@@ -1,4 +1,10 @@
-<?php foreach ($this->poll->answers as $answer) { ?>
+<?php 
+if ($this->poll->randomAnswerOrder > 0) {
+	$answerSet = $this->poll->randomAnswers;
+} else {
+	$answerSet = $this->poll->answers;
+}
+foreach ($answerSet as $answer) { ?>
 <form class="voteForm" id="voteForm|<?php echo $answer->answerID; ?>">
 		<legend class="voteLegend"><?php echo $answer->text; ?></legend>
 		<input checked="checked" type="radio" name="radioVote|<?php echo $answer->answerID; ?>" id="radioVote|<?php echo $answer->answerID; ?>|0" value="0" data-role="none" />

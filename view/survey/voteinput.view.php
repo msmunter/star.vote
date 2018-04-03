@@ -1,7 +1,13 @@
 <?php foreach ($this->survey->polls as $pollIndex => $poll) { ?>
 	<div id="surveyPollContainer|<?php echo $pollIndex; ?>" class="surveyPollContainer<?php if ($pollIndex > 0) echo ' hidden'; ?>">
 	<div class="surveyPollTitle"><?php echo ($pollIndex + 1).'. '.$poll->question; ?></div>
-	<?php foreach ($poll->answers as $answer) { ?>
+	<?php 
+	if ($this->survey->randomOrder > 0) {
+		$answerSet = $poll->randomAnswers;
+	} else {
+		$answerSet = $poll->answers;
+	}
+	foreach ($answerSet as $answer) { ?>
 		<form class="voteForm">
 			<legend class="voteLegend"><?php echo $answer->text; ?></legend>
 			<input checked="checked" type="radio" name="radioVote|<?php echo $answer->answerID; ?>" id="radioVote|<?php echo $answer->answerID; ?>|0" value="0" data-role="none" />

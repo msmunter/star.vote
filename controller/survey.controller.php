@@ -50,26 +50,28 @@ class SurveyController extends Controller
 						if (!empty($this->yourVotes)) {
 							$this->hasVoted = true;
 						} else $this->hasVoted = false;
-						// Randomize answers if necessary
-						if ($this->survey->randomOrder && $this->hasVoted == false) {
+						// Random answers
+						if ($this->survey->randomOrder) {
 							foreach ($this->survey->polls as $poll) {
-								shuffle($poll->answers);
+								$poll->randomAnswers = $poll->answers;
+								shuffle($poll->randomAnswers);
 							}
 						}
 						// Timey wimey stuff
 						$this->setupTimes();
 						// Reprocess for multiple places winners
-						/*if ($this->numWinners > 1) {
+						//$this->numWinners = 2; // DEBUG ONLY!!!
+						if ($this->numWinners > 1) {
 							for ($i = 2; $i <= $this->numWinners; $i++) {
-								$this->survey->altPlacePolls[$i] = $this->survey->polls;
-								foreach ($this->survey->altPlacePolls[$i] as $tPoll) {
-									array_shift($tPoll->topAnswers);
-									foreach ($tPoll->runoffResults as $rr) {
+								$this->survey->altPlacePolls[$i]->polls = $this->survey->polls;
+								foreach ($this->survey->altPlacePolls[$i]->polls as $tPoll) {
+									$this->survey->altPlacePolls[$i]->winnerTopAnswer = array_shift($tPoll->topAnswers);
+									/*foreach ($tPoll->runoffResults as $rr) {
 										
-									}
+									}*/
 								}
 							}
-						}*/
+						}
 					} else {
 						$this->error = "Survey does not exist";
 					}
@@ -84,7 +86,7 @@ class SurveyController extends Controller
 	{
 		if (!empty($tPoll)) {
 			$mPoll = new PollModel();
-			$tPoll->answers = $mPoll->getAnswersByPollID($tPoll->pollID);
+			$tPoll->answers = $mPoll->getAnswersByPollIDScoreOrder($tPoll->pollID);
 			$tPoll->voterCount = $mPoll->getPollVoterCount($tPoll->pollID);
 			// Get top answers
 			$tPoll->topAnswers = $mPoll->getTopAnswersByPollID($tPoll->pollID);
@@ -584,7 +586,7 @@ class SurveyController extends Controller
 				foreach ($this->survey->polls as $qPoll) {
 					$qPoll->rawRunoff = $mPoll->getRunoffResultsRawByPollID($qPoll->pollID);
 					$qPoll->voterCount = $mPoll->getPollVoterCount($qPoll->pollID);
-					$qPoll->answers = $mPoll->getAnswerByPollIDScoreOrder($qPoll->pollID);
+					$qPoll->answers = $mPoll->getAnswersByPollIDScoreOrder($qPoll->pollID);
 					foreach ($qPoll->answers as $index => $answer) {
 						$qPoll->runoffAnswerArray[$answer->answerID] = $answer;
 					}

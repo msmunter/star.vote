@@ -31,12 +31,12 @@ class PollModel extends Model
 		return $this->results;
 	}
 	
-	public function getAnswerByPollIDScoreOrder($pollID)
+	public function getAnswersByPollIDScoreOrder($pollID)
 	{
 		$this->query = "SELECT `answerID`, `text`, `votes`, `points`
 						FROM `answers`
 						WHERE `answers`.`pollID` LIKE '$pollID'
-						ORDER BY `points` DESC;";
+						ORDER BY `points` DESC, `votes` DESC;";
 		$this->doSelectQuery();
 		return $this->results;
 	}
