@@ -126,7 +126,7 @@ div#pollTitle {
 	font-size: 14pt;
 }
 
-a.pollLink:link, a.pollLink:hover, a.pollLink:visited {
+a.pollLink:link, a.pollLink:hover, a.pollLink:visited, a.surveyLink:link, a.surveyLink:hover, a.surveyLink:visited {
 	display: block;
 	float: left;
 	height: 50px;
@@ -366,7 +366,7 @@ div.surveyPollTitle {
 	margin-bottom: 5px;
 }
 
-div.surveyResultsPollTitle {
+div.surveyResultsPollTitle, div.recentOrPopularBar {
 	background-color: #38c;
 	color: white;
 	text-shadow: 1px 1px 2px #333333;
@@ -375,6 +375,12 @@ div.surveyResultsPollTitle {
 	font-weight: bold;
 	margin-top: 5px;
 	margin-bottom: 5px;
+}
+
+div.recentOrPopularBar {
+	margin: none;
+	margin-left: 1px;
+	width: 100%;
 }
 
 td.barGraphTd {

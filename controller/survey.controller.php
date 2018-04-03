@@ -253,6 +253,19 @@ class SurveyController extends Controller
 		return $keys;
 	}
 	
+	public function ajaxloadmoresurveys()
+	{
+		if (empty($_POST['index'])) {
+			$index = 0;
+		} else {
+			$index = $_POST['index'];
+		}
+		$this->mostPopularSurveys = $this->model->getMostPopularSurveys($index, 10);
+		$this->mostRecentSurveys = $this->model->getMostRecentSurveys($index, 10);
+		$return['html'] = $this->ajaxInclude('view/survey/surveyset.view.php');
+		echo json_encode($return);
+	}
+	
 	public function ajaxcheckcustomsurveyslug()
 	{
 		$regexResult = preg_match('/^[a-z0-9]{4,16}$/', $_POST['slug']);

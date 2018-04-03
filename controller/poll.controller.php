@@ -47,6 +47,11 @@ class PollController extends Controller
 		$this->processPollSet($this->mostRecentPolls);
 		$this->mostPopularPolls = $this->model->getMostPopularPolls(0, 10);
 		$this->processPollSet($this->mostPopularPolls);
+		// Survey History
+		$oSurvey = new SurveyController();
+		$mSurvey = new SurveyModel();
+		$this->mostPopularSurveys = $mSurvey->getMostPopularSurveys(0, 10);
+		$this->mostRecentSurveys = $mSurvey->getMostRecentSurveys(0, 10);
 	}
 	
 	public function ajaxinsertpoll()
@@ -427,12 +432,10 @@ class PollController extends Controller
 		} else {
 			$index = $_POST['index'];
 		}
-		if ($_POST['pollType'] == 'r') {
-			$this->pollSet = $this->model->getMostRecentPolls($index, 10);
-		} else {
-			$this->pollSet = $this->model->getMostPopularPolls($index, 10);
-		}
-		$this->processPollSet($this->pollSet);
+		$this->mostPopularPolls = $this->model->getMostPopularPolls($index, 10);
+		$this->mostRecentPolls = $this->model->getMostRecentPolls($index, 10);
+		$this->processPollSet($this->mostPopularPolls);
+		$this->processPollSet($this->mostRecentPolls);
 		$return['html'] = $this->ajaxInclude('view/poll/pollset.view.php');
 		echo json_encode($return);
 	}

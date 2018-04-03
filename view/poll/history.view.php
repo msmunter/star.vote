@@ -1,36 +1,28 @@
 <div id="errorMsg"></div>
-<?php //$this->debug($this->pollSet); // DEBUG ONLY!!! ?>
-
 <div class="bigContainer">
-	<div class="bigContainerTitle">Popular Polls</div>
+	<div class="bigContainerTitle">Polls</div>
 	<div class="bigContainerInner">
-		<div id="popularPollContainer">
-			<?php
-			$this->pollSet = $this->mostPopularPolls;
-			if (!empty($this->pollSet)) {
-				include('view/poll/pollset.view.php');
-			}
-			?>
+		<div id="pollContainer">
+			<?php include('view/poll/pollset.view.php'); ?>
 		</div>
-		<div class="center">
-			<button data-inline="true" onclick="loadMorePolls('p')">Load More</button>
-		</div>
+		<?php if (!empty($this->mostPopularPolls)) { ?>
+			<div class="center">
+				<button data-inline="true" onclick="loadMorePolls()">Load More</button>
+			</div>
+		<?php } ?>
 	</div>
 </div>
 
 <div class="bigContainer">
-	<div class="bigContainerTitle">Recent Polls</div>
+	<div class="bigContainerTitle">Surveys</div>
 	<div class="bigContainerInner">
-		<div id="recentPollContainer">
-			<?php
-			$this->pollSet = $this->mostRecentPolls;
-			if (!empty($this->pollSet)) {
-				include('view/poll/pollset.view.php');
-			}
-			?>
+		<div id="surveyContainer">
+			<?php include('view/survey/surveyset.view.php'); ?>
 		</div>
-		<div class="center">
-			<button data-inline="true" onclick="loadMorePolls('r')">Load More</button>
-		</div>
+		<?php if (!empty($this->mostPopularSurveys)) { ?>
+			<div class="center">
+				<button data-inline="true" onclick="loadMoreSurveys()">Load More</button>
+			</div>
+		<?php } ?>
 	</div>
 </div>

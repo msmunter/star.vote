@@ -6,7 +6,7 @@
 		<div class="bigContainerInner">
 			<?php
 			if (!empty($this->surveys)) { 
-				include('view/survey/surveyset.view.php');
+				include('view/survey/usersurveys.view.php');
 			} else { ?>
 				No surveys/elections created yet
 			<?php } ?>
@@ -18,7 +18,7 @@
 			<?php
 			$this->pollSet = $this->polls;
 			if (!empty($this->pollSet)) {
-				include('view/poll/pollset.view.php');
+				include('view/poll/userpolls.view.php');
 			}else echo 'No polls created yet';
 			?>
 		</div>
