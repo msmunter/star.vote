@@ -12,11 +12,6 @@ class SurveyController extends Controller
 		
 	}*/
 	
-	public function index()
-	{
-		$this->title = 'Your Surveys';
-	}
-	
 	public function create()
 	{
 		$this->title = 'Create Survey';
