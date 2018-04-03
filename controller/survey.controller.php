@@ -50,13 +50,6 @@ class SurveyController extends Controller
 						if (!empty($this->yourVotes)) {
 							$this->hasVoted = true;
 						} else $this->hasVoted = false;
-						// Random answers
-						if ($this->survey->randomOrder) {
-							foreach ($this->survey->polls as $poll) {
-								$poll->randomAnswers = $poll->answers;
-								shuffle($poll->randomAnswers);
-							}
-						}
 						// Timey wimey stuff
 						$this->setupTimes();
 						// Reprocess for multiple places winners

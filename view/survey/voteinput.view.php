@@ -2,11 +2,8 @@
 	<div id="surveyPollContainer|<?php echo $pollIndex; ?>" class="surveyPollContainer<?php if ($pollIndex > 0) echo ' hidden'; ?>">
 	<div class="surveyPollTitle"><?php echo ($pollIndex + 1).'. '.$poll->question; ?></div>
 	<?php 
-	if ($this->survey->randomOrder > 0) {
-		$answerSet = $poll->randomAnswers;
-	} else {
-		$answerSet = $poll->answers;
-	}
+	$answerSet = $poll->answers;
+	if ($this->survey->randomOrder > 0) shuffle($answerSet);
 	foreach ($answerSet as $answer) { ?>
 		<form class="voteForm">
 			<legend class="voteLegend"><?php echo $answer->text; ?></legend>

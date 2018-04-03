@@ -151,12 +151,7 @@ class PollController extends Controller
 				} else {
 					$this->poll->answers = $this->model->getAnswersByPollIDScoreOrder($this->URLdata);
 					$this->poll->voterCount = $this->model->getPollVoterCount($this->URLdata);
-					// If we're supposed to randomize answers let's do that now
-					if ($this->poll->randomAnswerOrder) {
-						$this->poll->randomAnswers = $this->poll->answers;
-						shuffle($this->poll->randomAnswers);
-					}
-					// HEY YOU! Figure out how to do a multi-way tie here, taps into resultsactual.view.php
+					// Get top answers, sort out tie
 					$this->poll->topAnswers = $this->model->getTopAnswersByPollID($this->URLdata);
 					foreach ($this->poll->topAnswers as $index => $answer) {
 						$this->poll->topAnswers[$index]->avgVote = $this->model->getAvgVoteByAnswerID($answer->answerID);

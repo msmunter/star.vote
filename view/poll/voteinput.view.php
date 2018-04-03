@@ -1,9 +1,6 @@
 <?php 
-if ($this->poll->randomAnswerOrder > 0) {
-	$answerSet = $this->poll->randomAnswers;
-} else {
-	$answerSet = $this->poll->answers;
-}
+$answerSet = $this->poll->answers;
+if ($this->poll->randomAnswerOrder > 0) shuffle($answerSet);
 foreach ($answerSet as $answer) { ?>
 <form class="voteForm" id="voteForm|<?php echo $answer->answerID; ?>">
 		<legend class="voteLegend"><?php echo $answer->text; ?></legend>
