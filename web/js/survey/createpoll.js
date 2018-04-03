@@ -102,7 +102,8 @@ function createPollActual()
 		ajax: '1',
 		pollQuestion: $('#pollQuestion').val(),
 		pollAnswers: $('#pollAnswers').serialize(),
-		surveyID: $('#surveyID').val()
+		surveyID: $('#surveyID').val(),
+		numAnswers: $('#numAnswers').val()
 	}, function(data) {
 		// Disable inputs
 		disableInputs();
