@@ -679,6 +679,23 @@ class PollController extends Controller
 		return $return;
 	}
 	
+	public function ajaxresetvoter()
+	{
+		setcookie("voterID", "", time() - 3600);
+		setcookie("voterID", "", time() - 3600, "/");
+		if (strlen($_POST['pollID']) > 0) {
+			$mPoll = new PollModel();
+			$poll = $mPoll->getPollByID($_POST['pollID']); 
+			$pathString = '/'.$_POST['pollID'];
+			setcookie("voterID", "", time() - 3600, $pathString);
+			$pathString = '/'.$poll->customSlug;
+			setcookie("voterID", "", time() - 3600, $pathString);
+		}
+		unset($_SESSION['voterID']);
+		$return['html'] = 'Success';
+		echo json_encode($return);
+	}
+	
 	private function initVoter($voterID)
 	{
 		$cookieExpires = strtotime('+5 years');

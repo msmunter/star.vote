@@ -757,6 +757,23 @@ class SurveyController extends Controller
 		return $return;
 	}
 	
+	public function ajaxresetvoter()
+	{
+		setcookie("voterID", "", time() - 3600);
+		setcookie("voterID", "", time() - 3600, "/");
+		if (strlen($_POST['surveyID']) > 0) {
+			$mSurvey = new SurveyModel();
+			$survey = $mSurvey->getSurveyByID($_POST['surveyID']);
+			$pathString = '/'.$_POST['surveyID'];
+			setcookie("voterID", "", time() - 3600, $pathString);
+			$pathString = '/'.$survey->customSlug;
+			setcookie("voterID", "", time() - 3600, $pathString);
+		}
+		unset($_SESSION['voterID']);
+		$return['html'] = 'Success';
+		echo json_encode($return);
+	}
+	
 	private function generateUniqueID($length, $table, $column)
 	{
 		if ($length < 1) $length = 8;
