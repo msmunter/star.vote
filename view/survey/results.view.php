@@ -1,5 +1,3 @@
-<?php //$this->debug($this->survey); // DEBUG ONLY!!! ?><hr />
-<?php //$this->debug($this->survey->altPlacePolls[2]); // DEBUG ONLY!!! ?>
 <input type="hidden" id="surveyID" value="<?php echo $this->survey->surveyID; ?>" />
 <div id="statusMsg" class="hidden"></div>
 <div class="clear"></div>
@@ -47,6 +45,7 @@ if ($this->survey) {
 				<div id="voteInput">
 					<?php include_once('view/survey/yourvote.view.php'); ?>
 				</div>
+				<?php if ($this->survey->kioskMode) {?><button id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button><?php } ?>
 			</div>
 		</div>
 		<?php } else { ?>
@@ -68,6 +67,7 @@ if ($this->survey) {
 				<div id="voteShowResultsButtons">
 					<button <?php if ($this->survey->verifiedVoting || !$this->survey->inVotingWindow) echo 'disabled="disabled" '; ?>id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
 					<button <?php if ($this->survey->verifiedVoting || ($this->survey->verbage == 'el' && $this->survey->votingWindowDirection != 'after')) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
+					<?php if ($this->survey->kioskMode) {?><button class="hidden" id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button><?php } ?>
 				</div>
 			</div>
 		</div>

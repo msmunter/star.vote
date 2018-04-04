@@ -46,6 +46,7 @@ if ($this->poll) {
 					<div id="voteInput">
 						<?php include_once('view/poll/yourvote.view.php'); ?>
 					</div>
+					<?php if ($this->poll->kioskMode) {?><button id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button><?php } ?>
 				</div>
 			</div>
 		<?php } else { ?>
@@ -63,6 +64,7 @@ if ($this->poll) {
 					</div>
 					<button <?php if ($this->poll->verifiedVoting || !$this->poll->inVotingWindow) echo 'disabled="disabled" '; ?>id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
 					<button <?php if ($this->poll->verifiedVoting) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
+					<?php if ($this->poll->kioskMode) {?><button class="hidden" id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button><?php } ?>
 				</div>
 			</div>
 		<?php } ?>

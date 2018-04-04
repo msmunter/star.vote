@@ -175,6 +175,8 @@ function voteActual()
 			// View results
 			clearStatus();
 			showResults();
+			// Show reset voter button
+			if ($('#resetVoterButton').length > 0) $('#resetVoterButton').show();
 		}
 	});
 }
@@ -248,6 +250,22 @@ function showCvrHtml() {
 		} else {
 			// Show results
 			$('#ballotRecordContainer').html(jData.html).fadeIn(100);
+		}
+	});
+}
+
+function resetVoter() {
+	$.post("/", { 
+		c: 'survey', 
+		a: 'ajaxresetvoter', 
+		ajax: '1',
+		surveyID: $('#surveyID').val()
+	}, function(data) {
+		var jData = JSON.parse(data);
+		if (jData.error) {
+			$('#statusMsg').html("ERROR: "+jData.error);
+		} else {
+			location.reload();
 		}
 	});
 }

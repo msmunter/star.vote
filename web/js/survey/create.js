@@ -124,7 +124,7 @@ function createSurveyActual()
 		} else if (jData.surveyID) {
 			// Success, update status and go see poll
 			updateStatus(jData.html);
-			window.location = '/'+jData.pollID+'/';
+			window.location = '/'+jData.surveyID+'/';
 		} else {
 			alert('ERROR: seems to have saved but no ID was returned');
 			window.location = '/user/';

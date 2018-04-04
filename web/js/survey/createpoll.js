@@ -11,6 +11,18 @@ $(document).ready(function() {
 			createPoll();
 		}
 	});
+	$('#fsNumWinners').focusout(function() {
+		var maxWinners = $('#pollAnswers input').length - 1;
+		if ($('#fsNumWinners').val() < 1) {
+			$('#fsNumWinners').val(1);
+			updateStatus('Number of winners set to current minimum');
+		} else if ($('#fsNumWinners').val() > maxWinners) {
+			$('#fsNumWinners').val(maxWinners);
+			updateStatus('Number of winners set to current maximum');
+		} else {
+			clearStatus();
+		}
+	});
 });
 
 function updateStatus(msg)
@@ -72,37 +84,15 @@ function addAnswer()
 
 function createPoll()
 {
-	// Disable buttons
 	disableButtons();
-	//alert($('#pollQuestion').val()+' :: '+$('#pollAnswers').serialize()); // DEBUG ONLY!!!
-	if ($('#fsCustomSlugSwitch').val() == 1) {
-		if (slugResult == true) {
-			// Slug already validated
-			createPollActual();
-		} else {
-			// Need to validate slug
-			checkCustomSlug(function(){
-				if (slugResult == true) {
-					createPollActual();
-				} else {
-					enableButtons();
-				}
-			});
-		}
-	} else {
-		createPollActual();
-	}
-}
-
-function createPollActual()
-{
 	$.post("/", { 
 		c: 'survey', 
 		a: 'ajaxinsertpoll', 
 		ajax: '1',
 		pollQuestion: $('#pollQuestion').val(),
 		pollAnswers: $('#pollAnswers').serialize(),
-		surveyID: $('#surveyID').val()
+		surveyID: $('#surveyID').val(),
+		numWinners: $('#numWinners').val()
 	}, function(data) {
 		// Disable inputs
 		disableInputs();
@@ -115,10 +105,10 @@ function createPollActual()
 		} else if ($('#surveySlug').val() != '') {
 			updateStatus(jData.html);
 			window.location = '/'+$('#surveySlug').val()+'/';
-		} else if (jData.surveyID) {
+		} else if (surveyID) {
 			// Success, update status and go see poll
 			updateStatus(jData.html);
-			window.location = '/'+jData.surveyID+'/';
+			window.location = '/'+surveyID+'/';
 		} else {
 			alert('ERROR: Poll seems to have saved but no ID was returned');
 			window.location = '/user/';

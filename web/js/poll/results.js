@@ -126,6 +126,8 @@ function voteActual()
 			// View results
 			clearStatus();
 			showResults();
+			// Show reset voter button
+			if ($('#resetVoterButton').length > 0) $('#resetVoterButton').show();
 		}
 	});
 }
@@ -218,4 +220,20 @@ function selectStar(id, vote) {
 			$("label[for='radioVote|"+id+"|"+i+"']").html(i);
 		}
 	}
+}
+
+function resetVoter() {
+	$.post("/", { 
+		c: 'poll', 
+		a: 'ajaxresetvoter', 
+		ajax: '1',
+		pollID: $('#pollID').val()
+	}, function(data) {
+		var jData = JSON.parse(data);
+		if (jData.error) {
+			$('#statusMsg').html("ERROR: "+jData.error);
+		} else {
+			location.reload();
+		}
+	});
 }

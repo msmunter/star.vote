@@ -12,6 +12,10 @@
 		}
 	?>
 </form>
+<div class="ui-field-contain" id="numWinnersInputContainer">
+	<label for="fsNumWinners"># Winners:</label>
+	<input type="number" id="fsNumWinners" name="fsNumWinners" value="1" min="1" max="99" data-inline="true"></input><br />
+</div>
 <div class="ui-field-contain">
 	<label for="fsPrivate">Make Private:</label>
 	<select name="fsPrivate" id="fsPrivate" data-role="flipswitch">
@@ -35,7 +39,7 @@
 </div>
 <div class="ui-field-contain" id="customSlugInputContainer">
 	<label for="fsCustomSlugInput">URL Slug (a-z, 0-9, 4-16 chars):</label>
-	<input type="text" data-clear-btn="true" class="pollAnswer" id="fsCustomSlugInput" name="fsCustomSlugInput" placeholder="abcd1234"></input><br />
+	<input type="text" data-clear-btn="true" id="fsCustomSlugInput" name="fsCustomSlugInput" placeholder="abcd1234"></input><br />
 </div>
 <?php if ($this->user->userID > 0) { ?>
 <div class="ui-field-contain">

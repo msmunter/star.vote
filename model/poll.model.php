@@ -149,7 +149,7 @@ class PollModel extends Model
 		} else return false;
 	}
 	
-	public function insertPoll($pollID, $question, $answers, $randomOrder, $private, $creatorIP, $customSlug, $verifiedVoting, $verifiedVotingType, $userID, $surveyID, $oDateCreated, $startDate, $startTime, $endDate, $endTime)
+	public function insertPoll($pollID, $question, $answers, $randomOrder, $private, $creatorIP, $customSlug, $verifiedVoting, $verifiedVotingType, $userID, $surveyID, $oDateCreated, $startDate, $startTime, $endDate, $endTime, $numWinners)
 	{
 		if ($verifiedVoting == '') $verifiedVoting = 0;
 		$oDateStart = new DateTime($startDate.' '.$startTime);
@@ -159,8 +159,8 @@ class PollModel extends Model
 			$endDateActual = 'NULL';
 		} else $endDateActual = "'".$oDateEnd->format('Y-m-d H:i:s')."'";
 		// Poll first
-		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `verifiedVoting`, `verifiedVotingType`, `allowComments`, `randomAnswerOrder`, `creatorIP`, `votes`, `customSlug`, `userID`, `surveyID`, `startTime`, `endTime`)
-						VALUES ('".$pollID."', '".$question."', '".$oDateCreated->format('Y-m-d H:i:s')."', ".$private.", ".$verifiedVoting.", '".$verifiedVotingType."', 0, ".$randomOrder.", '".$creatorIP."', 0, '".$customSlug."', '".$userID."', '".$surveyID."', '".$oDateStart->format('Y-m-d H:i:s')."', ".$endDateActual.")";
+		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `verifiedVoting`, `verifiedVotingType`, `allowComments`, `randomAnswerOrder`, `creatorIP`, `votes`, `customSlug`, `userID`, `surveyID`, `startTime`, `endTime`, `numWinners`)
+						VALUES ('".$pollID."', '".$question."', '".$oDateCreated->format('Y-m-d H:i:s')."', ".$private.", ".$verifiedVoting.", '".$verifiedVotingType."', 0, ".$randomOrder.", '".$creatorIP."', 0, '".$customSlug."', '".$userID."', '".$surveyID."', '".$oDateStart->format('Y-m-d H:i:s')."', ".$endDateActual.", ".$numWinners.")";
 		//$this->displayQuery = $this->query; // DEBUG ONLY!!!
 		// Insert
 		$this->doInsertQuery();
