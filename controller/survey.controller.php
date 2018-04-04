@@ -34,10 +34,6 @@ class SurveyController extends Controller
 					if (!empty($this->survey)) {
 						// Get polls
 						$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
-						// Populate polls
-						foreach ($this->survey->polls as $tPoll) {
-							$this->processPoll($tPoll);
-						}
 						// Init voter
 						$this->voter = new VoterController();
 						$this->voter->model = new VoterModel();
@@ -52,20 +48,29 @@ class SurveyController extends Controller
 						} else $this->hasVoted = false;
 						// Timey wimey stuff
 						$this->setupTimes();
+						// Get answers and voter counts, then populate and copy
+						$mPoll = new PollModel();
+						foreach ($this->survey->polls as $tPoll) {
+							$tPoll->answers = $mPoll->getAnswersByPollIDScoreOrder($tPoll->pollID);
+							$tPoll->voterCount = $mPoll->getPollVoterCount($tPoll->pollID);
+							$this->processPoll($tPoll);
+							// Make a copy for alternate places
+							$this->survey->altPollClone[$tPoll->pollID] = clone $tPoll;
+						}
 						// Reprocess for multiple places winners
-						/*foreach ($this->survey->polls as $poll) {
+						foreach ($this->survey->polls as $poll) {
 							if ($poll->numWinners > 1) {
 								for ($i = 2; $i <= $poll->numWinners; $i++) {
 									if ($i > 2) {
-										$this->altPlacePolls[$i] = clone $this->altPlacePolls[$i-1];
-										$this->reducePollByWinner($this->altPlacePolls[$i], $this->altPlacePolls[$i-1]->runoffResults['first']['answerID']);
+										$this->survey->altPlacePolls[$poll->pollID][$i] = clone $this->survey->altPlacePolls[$poll->pollID][$i-1];
+										$this->reducePollByWinner($this->survey->altPlacePolls[$poll->pollID][$i], $this->survey->altPlacePolls[$poll->pollID][$i-1]->runoffResults['first']['answerID']);
 									} else {
-										$this->altPlacePolls[2] = clone $this->altPollClone;
-										$this->reducePollByWinner($this->altPlacePolls[$i], $poll->runoffResults['first']['answerID']);
+										$this->survey->altPlacePolls[$poll->pollID][$i] = clone $this->survey->altPollClone[$poll->pollID];
+										$this->reducePollByWinner($this->survey->altPlacePolls[$poll->pollID][$i], $poll->runoffResults['first']['answerID']);
 									}
 								}
 							}
-						}*/
+						}
 					} else {
 						$this->error = "Survey does not exist";
 					}
@@ -76,62 +81,127 @@ class SurveyController extends Controller
 		}
 	}
 	
+	private function reducePollByWinner($poll, $winnerID)
+	{
+		// Reduce answer by winner
+		foreach ($poll->answers as $index => $answer) {
+			if ($answer->answerID == $winnerID) {
+				unset($poll->answers[$index]);
+				break;
+			}
+		}
+		unset($index, $answer);
+		// Reorder answers
+		$poll->answers = array_values($poll->answers);
+		// Reduce top answers by winner
+		foreach ($poll->topAnswers as $index => $answer) {
+			if ($answer->answerID == $winnerID) {
+				$poll->previousTopAnswer = $poll->topAnswers[$index];
+				unset($poll->topAnswers[$index]);
+				break;
+			}
+		}
+		// Reorder topAnswers
+		$poll->topAnswers = array_values($poll->topAnswers);
+		// Get results with new answer stack
+		$mPoll = new PollModel();
+		$poll->runoffResults = $mPoll->getRunoffResultsByAnswerID($poll->pollID, $poll->topAnswers[0]->answerID, $poll->topAnswers[1]->answerID);
+		if ($poll->runoffResults['first']['answerID'] == $poll->topAnswers[0]->answerID) {
+			$poll->runoffResults['first']['question'] = $poll->topAnswers[0]->text;
+			$poll->runoffResults['second']['question'] = $poll->topAnswers[1]->text;
+		} else {
+			$poll->runoffResults['first']['question'] = $poll->topAnswers[1]->text;
+			$poll->runoffResults['second']['question'] = $poll->topAnswers[0]->text;
+		}
+		// Check for ties beyond this
+		if ($poll->runoffResults['tie']) {
+			$ignoreFirstTwo = 1;
+			$poll->runoffResults['tieEndsAt'] = 2;
+			foreach ($poll->topAnswers as $topAnswer) {
+				if ($ignoreFirstTwo > 2 && $poll->runoffResults['second']['votes'] == $topAnswer->votes) {
+					$poll->runoffResults['tieEndsAt']++;
+				}
+				$ignoreFirstTwo++;
+			}
+		}
+		// Runoff matrix
+		$this->processRunoffMatrix($poll);
+		// Voter and point counts
+		$poll->totalVoterCount = $this->survey->altPollClone[$poll->pollID]->totalVoterCount;
+		$poll->totalPointCount = $this->survey->altPollClone[$poll->pollID]->totalPointCount - $poll->previousTopAnswer->points;
+		if ($poll->runoffResults['tie']) {
+			$poll->noPreferenceCount = $poll->totalVoterCount - ($poll->runoffResults['first']['votes'] * 2);
+		} else {
+			$poll->noPreferenceCount = $poll->totalVoterCount - ($poll->runoffResults['first']['votes'] + $poll->runoffResults['second']['votes']);
+		}
+		// Condorcet
+		$poll->condorcet = true;
+		foreach ($poll->orderedRunoff[$poll->runoffResults['first']['answerID']] as $comIndex => $item) {
+			$comVotes = $poll->orderedRunoff[$comIndex][$poll->runoffResults['first']['answerID']]->votes;
+			if ($item->votes <= $comVotes) {
+				$poll->condorcet = false;
+			}
+		}
+	}
+	
+	private function processRunoffMatrix($poll)
+	{
+		if (empty($poll->model)) $poll->model = new PollModel();
+		$poll->rawRunoff = $poll->model->getRunoffResultsRawByPollID($poll->pollID);
+		foreach ($poll->topAnswers as $index => $answer) {
+			$poll->runoffAnswerArray[$answer->answerID] = $answer;
+		}
+		foreach ($poll->rawRunoff as $runoff) {
+			$poll->orderedRunoff[$runoff->gtID][$runoff->ltID] = $runoff;
+		}
+	}
+	
 	private function processPoll($tPoll)
 	{
-		if (!empty($tPoll)) {
-			$mPoll = new PollModel();
-			$tPoll->answers = $mPoll->getAnswersByPollIDScoreOrder($tPoll->pollID);
-			$tPoll->voterCount = $mPoll->getPollVoterCount($tPoll->pollID);
-			// Get top answers
-			$tPoll->topAnswers = $mPoll->getTopAnswersByPollID($tPoll->pollID);
-			foreach ($tPoll->topAnswers as $index => $answer) {
-				$tPoll->topAnswers[$index]->avgVote = $mPoll->getAvgVoteByAnswerID($answer->answerID);
-			}
-			$tPoll->runoffResults = $mPoll->getRunoffResultsByAnswerID($tPoll->pollID, $tPoll->topAnswers[0]->answerID, $tPoll->topAnswers[1]->answerID);
-			if ($tPoll->runoffResults['first']['answerID'] == $tPoll->topAnswers[0]->answerID) {
-				$tPoll->runoffResults['first']['question'] = $tPoll->topAnswers[0]->text;
-				$tPoll->runoffResults['second']['question'] = $tPoll->topAnswers[1]->text;
-			} else {
-				$tPoll->runoffResults['first']['question'] = $tPoll->topAnswers[1]->text;
-				$tPoll->runoffResults['second']['question'] = $tPoll->topAnswers[0]->text;
-			}
-			// Check for ties beyond this
-			if ($tPoll->runoffResults['tie']) {
-				$ignoreFirstTwo = 1;
-				$tPoll->runoffResults['tieEndsAt'] = 2;
-				foreach ($tPoll->topAnswers as $topAnswer) {
-					if ($ignoreFirstTwo > 2 && $tPoll->runoffResults['second']['votes'] == $topAnswer->votes) {
-						$tPoll->runoffResults['tieEndsAt']++;
-					}
-					$ignoreFirstTwo++;
-				}
-			}
-			// Runoff matrix
-			$tPoll->rawRunoff = $mPoll->getRunoffResultsRawByPollID($tPoll->pollID);
-			foreach ($tPoll->topAnswers as $index => $answer) {
-				$tPoll->runoffAnswerArray[$answer->answerID] = $answer;
-			}
-			foreach ($tPoll->rawRunoff as $runoff) {
-				$tPoll->orderedRunoff[$runoff->gtID][$runoff->ltID] = $runoff;
-			}
-			// Voter and point counts
-			$tPoll->totalVoterCount = $mPoll->getPollVoterCount($tPoll->pollID);
-			$tPoll->totalPointCount = $mPoll->getPollPointCount($tPoll->pollID);
-			if ($tPoll->runoffResults['tie']) {
-				$tPoll->noPreferenceCount = $tPoll->totalVoterCount - ($tPoll->runoffResults['first']['votes'] * 2);
-			} else {
-				$tPoll->noPreferenceCount = $tPoll->totalVoterCount - ($tPoll->runoffResults['first']['votes'] + $tPoll->runoffResults['second']['votes']);
-			}
-			// Condorcet
-			$tPoll->condorcet = true;
-			foreach ($tPoll->orderedRunoff[$tPoll->runoffResults['first']['answerID']] as $comIndex => $item) {
-				$comVotes = $tPoll->orderedRunoff[$comIndex][$tPoll->runoffResults['first']['answerID']]->votes;
-				if ($item->votes <= $comVotes) {
-					$tPoll->condorcet = false;
-				}
-			}
-			unset($mPoll);
+		$mPoll = new PollModel();
+		// Get top answers
+		$tPoll->topAnswers = $mPoll->getTopAnswersByPollID($tPoll->pollID);
+		foreach ($tPoll->topAnswers as $index => $answer) {
+			$tPoll->topAnswers[$index]->avgVote = $mPoll->getAvgVoteByAnswerID($answer->answerID);
 		}
+		$tPoll->runoffResults = $mPoll->getRunoffResultsByAnswerID($tPoll->pollID, $tPoll->topAnswers[0]->answerID, $tPoll->topAnswers[1]->answerID);
+		if ($tPoll->runoffResults['first']['answerID'] == $tPoll->topAnswers[0]->answerID) {
+			$tPoll->runoffResults['first']['question'] = $tPoll->topAnswers[0]->text;
+			$tPoll->runoffResults['second']['question'] = $tPoll->topAnswers[1]->text;
+		} else {
+			$tPoll->runoffResults['first']['question'] = $tPoll->topAnswers[1]->text;
+			$tPoll->runoffResults['second']['question'] = $tPoll->topAnswers[0]->text;
+		}
+		// Check for ties beyond this
+		if ($tPoll->runoffResults['tie']) {
+			$ignoreFirstTwo = 1;
+			$tPoll->runoffResults['tieEndsAt'] = 2;
+			foreach ($tPoll->topAnswers as $topAnswer) {
+				if ($ignoreFirstTwo > 2 && $tPoll->runoffResults['second']['votes'] == $topAnswer->votes) {
+					$tPoll->runoffResults['tieEndsAt']++;
+				}
+				$ignoreFirstTwo++;
+			}
+		}
+		// Runoff matrix
+		$this->processRunoffMatrix($tPoll);
+		// Voter and point counts
+		$tPoll->totalVoterCount = $mPoll->getPollVoterCount($tPoll->pollID);
+		$tPoll->totalPointCount = $mPoll->getPollPointCount($tPoll->pollID);
+		if ($tPoll->runoffResults['tie']) {
+			$tPoll->noPreferenceCount = $tPoll->totalVoterCount - ($tPoll->runoffResults['first']['votes'] * 2);
+		} else {
+			$tPoll->noPreferenceCount = $tPoll->totalVoterCount - ($tPoll->runoffResults['first']['votes'] + $tPoll->runoffResults['second']['votes']);
+		}
+		// Condorcet
+		$tPoll->condorcet = true;
+		foreach ($tPoll->orderedRunoff[$tPoll->runoffResults['first']['answerID']] as $comIndex => $item) {
+			$comVotes = $tPoll->orderedRunoff[$comIndex][$tPoll->runoffResults['first']['answerID']]->votes;
+			if ($item->votes <= $comVotes) {
+				$tPoll->condorcet = false;
+			}
+		}
+		unset($mPoll);
 	}
 	
 	private function setupTimes()
@@ -174,6 +244,8 @@ class SurveyController extends Controller
 					$this->survey->okDisplayResults = true;
 				} else if ($this->survey->inVotingWindow == false && $this->survey->votingWindowDirection == 'after') {
 					$this->survey->okDisplayResults = true;
+				} else if ($this->survey->endTime == null) {
+					$this->survey->okDisplayResults = true;
 				}
 			} else {
 				// Not a part of an election, show results whenever
@@ -192,6 +264,10 @@ class SurveyController extends Controller
 		if (($this->survey->verifiedVoting && $this->user->userID == $this->survey->userID && $this->survey->userID > 0) || ($this->survey->verifiedVoting && $this->hasVoted) || $this->survey->verifiedVoting == false) {
 			// Okay to display based on time?
 			if ($this->survey->okDisplayResults == true) {
+				foreach ($this->survey->polls as $poll) {
+					$this->survey->placedPolls[$poll->pollID][1] = $poll;
+					if (!empty($this->survey->altPlacePolls[$poll->pollID])) $this->survey->placedPolls[$poll->pollID] = $this->survey->placedPolls[$poll->pollID] + $this->survey->altPlacePolls[$poll->pollID];
+				}
 				$return['results'] = $this->ajaxInclude('view/survey/pollresultsactual.view.php');
 				$return['runoffmatrix'] = $this->ajaxInclude('view/survey/runoffmatrix.view.php');
 			}
@@ -365,6 +441,12 @@ class SurveyController extends Controller
 					$answerCount++;
 				}
 			}
+			// Process # of winners
+			if ($_POST['numWinners'] < 1) {
+				$_POST['numWinners'] = 1;
+			} else if ($_POST['numWinners'] >= $answerCount) {
+				$_POST['numWinners'] = $answerCount - 1;
+			}
 			if ($answerCount >= 2 && !$return['error']) {
 				// ALL SET, let's save this poll
 				// Generate ID
@@ -387,7 +469,7 @@ class SurveyController extends Controller
 				$oStartTime = new DateTime($this->survey->startTime);
 				$oEndTime = new DateTime($this->survey->endTime);
 				// Insert actual
-				$mPoll->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, 0, 1, $_SERVER['REMOTE_ADDR'], "", 0, "gkc", $userID, $surveyID, $oDateCreated, $oStartTime->format('Y-m-d'), $oStartTime->format('H:i:s'), $oEndTime->format('Y-m-d'), $oEndTime->format('H:i:s'));
+				$mPoll->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, 0, 1, $_SERVER['REMOTE_ADDR'], "", 0, "gkc", $userID, $surveyID, $oDateCreated, $oStartTime->format('Y-m-d'), $oStartTime->format('H:i:s'), $oEndTime->format('Y-m-d'), $oEndTime->format('H:i:s'), $_POST['numWinners']);
 				$return['html'] .= 'Poll saved! Loading results...';
 				//$return['html'] = $mPoll->displayQuery; // DEBUG ONLY!!!
 				unset($mPoll);

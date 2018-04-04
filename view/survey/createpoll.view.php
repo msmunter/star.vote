@@ -19,6 +19,10 @@
 						}
 					?>
 				</form>
+				<div class="ui-field-contain" id="numWinnersInputContainer">
+					<label for="numWinners"># Winners:</label>
+					<input type="number" id="numWinners" name="numWinners" value="1" min="1" max="99" data-inline="true"></input><br />
+				</div>
 				<div id="pollButtonContainer">
 					<button id="createPollButton" data-inline="inline" onclick="createPoll()">Create Poll</button>
 				</div>

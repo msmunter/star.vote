@@ -155,14 +155,14 @@ class PollController extends Controller
 				if (empty($this->poll)) {
 					$this->error = "ERROR: Poll not found";
 				} else {
+					// Timey wimey stuff
+					$this->setupTimes();
 					$this->poll->answers = $this->model->getAnswersByPollIDScoreOrder($this->URLdata);
 					$this->poll->voterCount = $this->model->getPollVoterCount($this->URLdata);
 					// Get top answers, sort out tie
 					$this->processPoll($this->poll);
 					// Make a copy for alternate places
 					$this->altPollClone = clone $this->poll;
-					// Timey wimey stuff
-					$this->setupTimes();
 					// Reprocess for multiple places winners
 					if ($this->poll->numWinners > 1) {
 						for ($i = 2; $i <= $this->poll->numWinners; $i++) {
@@ -481,12 +481,19 @@ class PollController extends Controller
 	{
 		$this->URLdata = $_POST['pollID'];
 		$this->results();
+		$return['results'] = 'Results cannot be viewed yet';
+		$return['runoffmatrix'] = '';
 		// Is eligible to see the results?
 		if (($this->poll->verifiedVoting && $this->user->userID == $this->poll->userID) || ($this->poll->verifiedVoting && $this->hasVoted) || $this->poll->verifiedVoting == false) {
-			$this->placedPolls[1] = $this->poll;
-			if (!empty($this->altPlacePolls)) $this->placedPolls = $this->placedPolls + $this->altPlacePolls;
-			$return['results'] = $this->ajaxInclude('view/poll/resultsactual.view.php');
-			$return['runoffmatrix'] = $this->ajaxInclude('view/poll/runoffmatrix.view.php');
+			// Okay to display based on time?
+			if ($this->poll->okDisplayResults == true) {
+				$this->placedPolls[1] = $this->poll;
+				if (!empty($this->altPlacePolls)) $this->placedPolls = $this->placedPolls + $this->altPlacePolls;
+				$return['results'] = $this->ajaxInclude('view/poll/resultsactual.view.php');
+				$return['runoffmatrix'] = $this->ajaxInclude('view/poll/runoffmatrix.view.php');
+			} else {
+				
+			}
 		} else {
 			$return['results'] = 'Results cannot be viewed yet';
 			$return['runoffmatrix'] = '';
