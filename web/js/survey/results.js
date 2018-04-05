@@ -9,7 +9,7 @@ $(document).ready(function() {
 	$('#voterKey').focusout(function() {
 		checkVoterKey();
 	});
-	<?php if ($this->survey->votingWindowDirction == 'after') echo 'showResults();'; ?>
+	<?php if ($this->survey->votingWindowDirection == 'after') echo 'showResults();'; ?>
 });
 
 function updateStatus(msg)
