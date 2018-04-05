@@ -1,3 +1,4 @@
+<?php if ($poll->numWinners > 1) echo '<div id="numWinnersContainer">Taking '.$poll->numWinners.' winners</div>'; ?>
 <?php 
 $answerSet = $this->poll->answers;
 if ($this->poll->randomAnswerOrder > 0) shuffle($answerSet);

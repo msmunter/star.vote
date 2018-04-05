@@ -267,6 +267,10 @@ div#numWinnersInputContainer div.ui-input-text {
 	width: 70px;
 }
 
+div#numWinnersContainer {
+	text-align: center;
+}
+
 div.startEndString {
 	float: left;
 	font-size: 11pt;
