@@ -92,6 +92,8 @@ function changePoll(direction)
 			updatePollButtons();
 		}
 	}
+	location.hash = 'doesNotExist';
+	location.hash = '#voteInput';
 }
 
 function updatePollButtons()
