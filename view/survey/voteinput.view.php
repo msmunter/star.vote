@@ -1,6 +1,7 @@
 <?php foreach ($this->survey->polls as $pollIndex => $poll) { ?>
 	<div id="surveyPollContainer|<?php echo $pollIndex; ?>" class="surveyPollContainer<?php if ($pollIndex > 0) echo ' hidden'; ?>">
 	<div class="surveyPollTitle"><?php echo ($pollIndex + 1).'. '.$poll->question; ?></div>
+	<?php if ($poll->numWinners > 1) echo '<div id="numWinnersContainer">Taking '.$poll->numWinners.' winners</div>'; ?>
 	<?php 
 	$answerSet = $poll->answers;
 	if ($this->survey->randomOrder > 0) shuffle($answerSet);
