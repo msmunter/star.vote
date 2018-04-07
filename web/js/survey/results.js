@@ -60,7 +60,8 @@ function showButtons()
 
 function disableButtons()
 {
-	$('#voteButton, #showResultsButton').prop("disabled", true);
+	$('#voteButton').prop("disabled", true);
+	$('#showResultsButton').prop("disabled", true);
 }
 
 function enableButtons()
@@ -150,7 +151,8 @@ function checkVoterKey(callbackFunction)
 
 function vote()
 {
-	disableButtons(function() {
+	resultsButtonHtml = $('#voteShowResultsButtons').html();
+	$('#voteShowResultsButtons').html('Processing...').promise().done(function(){
 		// Need to validate key
 		checkVoterKey(function(){
 			if (voterKeyResult == true) {
@@ -176,12 +178,14 @@ function voteActual()
 		var jData = JSON.parse(data);
 		if (jData.error) {
 			updateStatus("ERROR: "+jData.error);
+			$('#voteShowResultsButtons').html(resultsButtonHtml);
 			enableButtons();
 		} else {
 			// Replace voting mechanism with personal results
 			$('#voteInput').html(jData.html);
-			// Hide vote, results buttons
+			// Hide buttons
 			hideButtons();
+			$('#voteShowResultsButtons').html('');
 			// View results
 			clearStatus();
 			showResults();

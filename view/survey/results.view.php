@@ -67,8 +67,8 @@ if ($this->survey) {
 				<div id="voteShowResultsButtons">
 					<button disabled="disabled" id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
 					<button <?php if ($this->survey->verifiedVoting || ($this->survey->verbage == 'el' && $this->survey->votingWindowDirection != 'after')) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
-					<?php if ($this->survey->kioskMode) {?><button class="hidden" id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button><?php } ?>
 				</div>
+				<?php if ($this->survey->kioskMode) {?><button class="hidden" id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button><?php } ?>
 			</div>
 		</div>
 		<?php }
