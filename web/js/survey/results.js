@@ -1,6 +1,7 @@
 var voterKeyResult = false;
 var pollIndex = 0;
 var pollCount = <?php echo count($this->survey->polls); ?>;
+var pollsLeftToView = [<?php for ($i = 1; $i <= (count($this->survey->polls)-1); $i++) {if ($i > 1) echo ', '; echo $i;} ?>];
 
 $(document).ready(function() {
 	$('#shareURLInput').focus(function(){
@@ -9,7 +10,9 @@ $(document).ready(function() {
 	$('#voterKey').focusout(function() {
 		checkVoterKey();
 	});
-	<?php if ($this->survey->votingWindowDirction == 'after') echo 'showResults();'; ?>
+	<?php if ($this->survey->votingWindowDirection == 'after') echo 'showResults();'; ?>
+	// Enable voting button if only one poll in this survey
+	if (pollsLeftToView.length == 0) $('#voteButton').prop("disabled", false);
 });
 
 function updateStatus(msg)
@@ -57,12 +60,13 @@ function showButtons()
 
 function disableButtons()
 {
-	$('#voteButton, #showResultsButton').prop("disabled", true);
+	$('#voteButton').prop("disabled", true);
+	$('#showResultsButton').prop("disabled", true);
 }
 
 function enableButtons()
 {
-	$('#voteButton, #showResultsButton').prop("disabled", false);
+	$('#voteButton, #showResultsButton, #prevNextPollButtons').prop("disabled", false);
 }
 
 function changePoll(direction)
@@ -78,6 +82,7 @@ function changePoll(direction)
 			});
 			pollIndex = pollIndex + 1;
 			$('#pollIndex').html(pollIndex+1);
+			pollsLeftToView = pollsLeftToView.filter(item => item !== pollIndex)
 			updatePollButtons();
 		}
 	} else {
@@ -89,9 +94,13 @@ function changePoll(direction)
 			});
 			pollIndex = pollIndex - 1;
 			$('#pollIndex').html(pollIndex+1);
+			pollsLeftToView = pollsLeftToView.filter(item => item !== pollIndex)
 			updatePollButtons();
 		}
 	}
+	//console.debug(pollsLeftToView); // DEBUG ONLY!!!
+	// Enable voting button when ready
+	if (pollsLeftToView.length == 0) $('#voteButton').prop("disabled", false);
 	location.hash = 'doesNotExist';
 	location.hash = '#voteInput';
 }
@@ -142,14 +151,16 @@ function checkVoterKey(callbackFunction)
 
 function vote()
 {
-	disableButtons();
-	// Need to validate key
-	checkVoterKey(function(){
-		if (voterKeyResult == true) {
-			voteActual();
-		} else {
-			enableButtons();
-		}
+	resultsButtonHtml = $('#voteShowResultsButtons').html();
+	$('#voteShowResultsButtons').html('Processing...').promise().done(function(){
+		// Need to validate key
+		checkVoterKey(function(){
+			if (voterKeyResult == true) {
+				voteActual();
+			} else {
+				enableButtons();
+			}
+		});
 	});
 }
 
@@ -167,13 +178,14 @@ function voteActual()
 		var jData = JSON.parse(data);
 		if (jData.error) {
 			updateStatus("ERROR: "+jData.error);
+			$('#voteShowResultsButtons').html(resultsButtonHtml);
 			enableButtons();
 		} else {
 			// Replace voting mechanism with personal results
 			$('#voteInput').html(jData.html);
-			// Hide vote, results buttons
-			disableButtons();
+			// Hide buttons
 			hideButtons();
+			$('#voteShowResultsButtons').html('');
 			// View results
 			clearStatus();
 			showResults();

@@ -14,7 +14,7 @@ if ($this->survey) {
 	if ($this->user->userID > 0 && $this->user->userID == $this->survey->userID) {
 		// This user's survey ?>
 		<div class="bigContainer">
-			<div class="bigContainerTitle">Polls in survey: "<?php echo $this->survey->title; ?>" <a class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all" href="/survey/createpoll/<?php echo $this->survey->surveyID; ?>/">Add Poll</a></div>
+			<div class="bigContainerTitle">Polls in survey: "<?php echo $this->survey->title; ?>" <?php if ($this->survey->votes < 1) { ?><a class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all" href="/survey/createpoll/<?php echo $this->survey->surveyID; ?>/">Add Poll</a><?php } ?></div>
 			<div class="bigContainerInner">
 				<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
 				<div class="clear"></div>
@@ -65,10 +65,10 @@ if ($this->survey) {
 					<button id="prevPollButton" disabled="disabled" data-inline="inline" data-mini="mini" onclick="changePoll('d')">&larr;</button>Part <span id="pollIndex">1</span> of <?php echo count($this->survey->polls); ?><button id="nextPollButton" data-inline="inline" data-mini="mini" onclick="changePoll('u')">&rarr;</button>
 				</div>
 				<div id="voteShowResultsButtons">
-					<button <?php if ($this->survey->verifiedVoting || !$this->survey->inVotingWindow) echo 'disabled="disabled" '; ?>id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
+					<button disabled="disabled" id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
 					<button <?php if ($this->survey->verifiedVoting || ($this->survey->verbage == 'el' && $this->survey->votingWindowDirection != 'after')) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
-					<?php if ($this->survey->kioskMode) {?><button class="hidden" id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button><?php } ?>
 				</div>
+				<?php if ($this->survey->kioskMode) {?><button class="hidden" id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button><?php } ?>
 			</div>
 		</div>
 		<?php }
@@ -82,31 +82,34 @@ if ($this->survey) {
 			<button id="showResultsButton" data-inline="inline" onclick="showResults()">Update Results</button>
 		</div>
 	</div>
-	<div class="bigContainer">
-		<div class="bigContainerTitle">Share</div>
-		<div class="bigContainerInner">
-			<input type="text" id="shareURLInput" name="shareURLInput" data-mini="true" data-inline="true" value="https://<?php echo $_SERVER['SERVER_NAME']; ?>/<?php if ($this->survey->customSlug != "") {echo $this->survey->customSlug;} else echo $this->survey->surveyID; ?>/" />
-		</div>
-	</div>
 	
-	<div class="bigContainer">
-		<div class="bigContainerTitle">Runoff Matrix</div>
-		<div class="bigContainerInner">
-			<div id="runoffMatrixContainer">
-				<!-- AJAX -->
+	<?php if ($this->survey->kioskMode == false || $this->user->userID != 0 && $this->user->userID == $this->survey->userID) { ?>
+		<div class="bigContainer">
+			<div class="bigContainerTitle">Share</div>
+			<div class="bigContainerInner">
+				<input type="text" id="shareURLInput" name="shareURLInput" data-mini="true" data-inline="true" value="https://<?php echo $_SERVER['SERVER_NAME']; ?>/<?php if ($this->survey->customSlug != "") {echo $this->survey->customSlug;} else echo $this->survey->surveyID; ?>/" />
 			</div>
-			<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="runoffMatrixShowButton" onclick="showRunoffMatrix()">Show</button>
 		</div>
-	</div>
-	<div class="bigContainer">
-		<div class="bigContainerTitle">Ballot Record</div>
-		<div class="bigContainerInner">
-			<div id="ballotRecordContainer">
-				<!-- AJAX -->
+		
+		<div class="bigContainer">
+			<div class="bigContainerTitle">Runoff Matrix</div>
+			<div class="bigContainerInner">
+				<div id="runoffMatrixContainer">
+					<!-- AJAX -->
+				</div>
+				<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="runoffMatrixShowButton" onclick="showRunoffMatrix()">Show</button>
 			</div>
-			<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="ballotRecordShowButton" onclick="showCvrHtml()">Show</button>
 		</div>
-	</div>
+		<div class="bigContainer">
+			<div class="bigContainerTitle">Ballot Record</div>
+			<div class="bigContainerInner">
+				<div id="ballotRecordContainer">
+					<!-- AJAX -->
+				</div>
+				<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="ballotRecordShowButton" onclick="showCvrHtml()">Show</button>
+			</div>
+		</div>
+	<?php } ?>
 <?php } else { ?>
 	Survey not found
 <?php } ?>
