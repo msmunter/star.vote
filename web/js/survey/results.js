@@ -221,7 +221,7 @@ function popMsg(html, print)
 	wWidth = 800;
 	wHeight = 600;
 	myWindow=window.open('','','width='+wWidth+',height='+wHeight);
-	myWindow.document.write("<div>"+html+"</div>");
+	myWindow.document.write("<div id=\"voteInput\" style=\"font-family: monospace;\">"+html+"</div>");
 	myWindow.document.close();
 	myWindow.focus();
 	if (print) myWindow.print();

@@ -41,7 +41,10 @@ class SurveyController extends Controller
 						// Determine whether user has voted
 						foreach ($this->survey->polls as $zPoll) {
 							$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
-							if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
+							if (count($existingVote) > 0 && $existingVote[0]->answerID != '') {
+								$this->yourVotes[$zPoll->pollID] = $existingVote;
+								if (empty($this->yourVoteTime)) $this->yourVoteTime = $existingVote[0]->voteTime;
+							}
 						}
 						if (!empty($this->yourVotes)) {
 							$this->hasVoted = true;
@@ -623,7 +626,10 @@ class SurveyController extends Controller
 					unset($mPoll);
 					foreach ($this->survey->polls as $zPoll) {
 						$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
-						if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
+						if (count($existingVote) > 0 && $existingVote[0]->answerID != '') {
+							$this->yourVotes[$zPoll->pollID] = $existingVote;
+							if (empty($this->yourVoteTime)) $this->yourVoteTime = $existingVote[0]->voteTime;
+						}
 					}
 					$return['html'] .= $this->ajaxInclude('view/survey/yourvote.view.php');
 				} else {

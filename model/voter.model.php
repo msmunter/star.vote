@@ -35,7 +35,7 @@ class VoterModel extends Model
 	
 	public function getYourVote($voterID, $pollID)
 	{
-		$this->query = "SELECT `votes`.`answerID`, `votes`.`vote`, `answers`.`text`
+		$this->query = "SELECT `votes`.`answerID`, `votes`.`vote`, `answers`.`text`, `votes`.`voteTime`
 						FROM `votes`, `answers`
 						WHERE `votes`.`pollID` LIKE '$pollID'
 						AND `votes`.`voterID` LIKE '$voterID'
