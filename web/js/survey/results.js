@@ -220,11 +220,17 @@ function popMsg(html, print)
 	} else wHeight = 600;*/
 	wWidth = 800;
 	wHeight = 600;
-	myWindow=window.open('','','width='+wWidth+',height='+wHeight);
-	myWindow.document.write("<div id=\"voteInput\" style=\"font-family: monospace;\">"+html+"</div>");
-	myWindow.document.close();
-	myWindow.focus();
-	if (print) myWindow.print();
+	$.post("/", { 
+		c: 'survey', 
+		a: 'printtextheader', 
+		ajax: '1'
+	}, function(printText) {
+		receiptWindow=window.open('','','width='+wWidth+',height='+wHeight);
+		if (print) receiptWindow.document.write(printText);
+		receiptWindow.document.write("<div id=\"voteInput\" style=\"font-family: monospace;\">"+html+"</div>");
+		receiptWindow.document.close();
+		receiptWindow.focus();
+	});
 }
 
 function getCookie(cname) {
