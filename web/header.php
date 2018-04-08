@@ -35,10 +35,7 @@
 		<!-- jQuery CSS -->
 		<!--<link rel="stylesheet" href="/web/css/starvote.min.css" />-->
 		<!-- jQuery Mobile CSS -->
-		<!--<link rel="stylesheet" href="/web/css/jquery.mobile.icons.min.css" />-->
 		<link rel="stylesheet" href="/web/css/jquery.mobile-1.4.5.min.css" />
-		<!-- jQuery UI CSS -->
-		<!--<link rel="stylesheet" href="/web/css/jquery-ui-1.12.1.css" />-->
 		<!-- Local CSS -->
 		<link rel="stylesheet" href="/web/css/style.css" />
 		<!-- jQuery -->
@@ -50,8 +47,6 @@
 		</script>
 		<!-- jQuery Mobile -->
 		<script src="/web/js/jquery.mobile-1.4.5.min.js"></script>
-		<!-- jQuery UI -->
-		<!--<script src="/web/js/jquery.ui-1.12.1.min.js"></script>-->
 		<?php if ($_SERVER['SERVER_NAME'] == 'star.vote') { ?>
 		<!-- Global site tag (gtag.js) - Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113220345-1"></script>

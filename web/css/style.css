@@ -242,6 +242,14 @@ div#pollButtonContainer {
 
 /* END Vote Selector*/
 
+div#voteInput {
+	float: left;
+}
+
+div#yourVoteTime {
+	font-size: 12px;
+}
+
 div#customSlugInputContainer, div#verifiedVotingSelectContainer, div#startEndInputContainer {
 	display: none;
 }

@@ -41,7 +41,10 @@ class SurveyController extends Controller
 						// Determine whether user has voted
 						foreach ($this->survey->polls as $zPoll) {
 							$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
-							if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
+							if (count($existingVote) > 0 && $existingVote[0]->answerID != '') {
+								$this->yourVotes[$zPoll->pollID] = $existingVote;
+								if (empty($this->yourVoteTime)) $this->yourVoteTime = $existingVote[0]->voteTime;
+							}
 						}
 						if (!empty($this->yourVotes)) {
 							$this->hasVoted = true;
@@ -623,7 +626,10 @@ class SurveyController extends Controller
 					unset($mPoll);
 					foreach ($this->survey->polls as $zPoll) {
 						$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
-						if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
+						if (count($existingVote) > 0 && $existingVote[0]->answerID != '') {
+							$this->yourVotes[$zPoll->pollID] = $existingVote;
+							if (empty($this->yourVoteTime)) $this->yourVoteTime = $existingVote[0]->voteTime;
+						}
 					}
 					$return['html'] .= $this->ajaxInclude('view/survey/yourvote.view.php');
 				} else {
@@ -773,6 +779,18 @@ class SurveyController extends Controller
 		$return['html'] = 'Success';
 		echo json_encode($return);
 	}
+	
+	/*public function printvote()
+	{
+		$this->ajax = 1;
+		$this->doHeader = 0;
+		$this->doFooter = 0;
+		$this->doPrintHeader = 1;
+		$this->doPrintFooter = 1;
+		//$this->customCSS = "print_1qx1q_label";
+		$this->title = "Print Vote Record";
+		echo 'Will be printing the vote record here.';
+	}*/
 	
 	private function generateUniqueID($length, $table, $column)
 	{
