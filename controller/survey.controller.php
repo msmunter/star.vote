@@ -774,6 +774,18 @@ class SurveyController extends Controller
 		echo json_encode($return);
 	}
 	
+	/*public function printvote()
+	{
+		$this->ajax = 1;
+		$this->doHeader = 0;
+		$this->doFooter = 0;
+		$this->doPrintHeader = 1;
+		$this->doPrintFooter = 1;
+		//$this->customCSS = "print_1qx1q_label";
+		$this->title = "Print Vote Record";
+		echo 'Will be printing the vote record here.';
+	}*/
+	
 	private function generateUniqueID($length, $table, $column)
 	{
 		if ($length < 1) $length = 8;

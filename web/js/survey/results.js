@@ -2,17 +2,28 @@ var voterKeyResult = false;
 var pollIndex = 0;
 var pollCount = <?php echo count($this->survey->polls); ?>;
 var pollsLeftToView = [<?php for ($i = 1; $i <= (count($this->survey->polls)-1); $i++) {if ($i > 1) echo ', '; echo $i;} ?>];
+var ballotText = '';
 
 $(document).ready(function() {
 	$('#shareURLInput').focus(function(){
 		$('#shareURLInput').select();
 	});
+	
 	$('#voterKey').focusout(function() {
 		checkVoterKey();
 	});
+	
 	<?php if ($this->survey->votingWindowDirection == 'after') echo 'showResults();'; ?>
+	
 	// Enable voting button if only one poll in this survey
 	if (pollsLeftToView.length == 0) $('#voteButton').prop("disabled", false);
+	
+	$('#reprintVoteButton').click(function(){
+		/*if (ballotText.length > 0) {
+			popMsg(ballotText, 0)
+		} else */
+		popMsg($('#voteInput').html(), 1);
+	});
 });
 
 function updateStatus(msg)
@@ -152,7 +163,7 @@ function checkVoterKey(callbackFunction)
 function vote()
 {
 	resultsButtonHtml = $('#voteShowResultsButtons').html();
-	$('#voteShowResultsButtons').html('Processing...').promise().done(function(){
+	$('#voteShowResultsButtons').html('Recording Vote...').promise().done(function(){
 		// Need to validate key
 		checkVoterKey(function(){
 			if (voterKeyResult == true) {
@@ -173,7 +184,7 @@ function voteActual()
 		voterID: getCookie('voterID'),
 		surveyID: $('#surveyID').val(),
 		votes: $('.voteForm').serialize(),
-		voterKey: $('#voterKey').val()
+		voterKey: $('#voterKey').val(),
 	}, function(data) {
 		var jData = JSON.parse(data);
 		if (jData.error) {
@@ -181,6 +192,7 @@ function voteActual()
 			$('#voteShowResultsButtons').html(resultsButtonHtml);
 			enableButtons();
 		} else {
+			ballotText = jData.html;
 			// Replace voting mechanism with personal results
 			$('#voteInput').html(jData.html);
 			// Hide buttons
@@ -191,8 +203,28 @@ function voteActual()
 			showResults();
 			// Show reset voter button
 			if ($('#resetVoterButton').length > 0) $('#resetVoterButton').show();
+			if ($('#reprintVoteButton').length > 0) $('#reprintVoteButton').show();
+			// Print results
+			popMsg(ballotText, 1);
 		}
 	});
+}
+
+function popMsg(html, print)
+{
+	/*if ($('#voteInput').width() > 0) {
+		wWidth = $('#voteInput').width();
+	} else wWidth = 300;
+	if ($('#voteInput').height() > 0) {
+		wHeight = $('#voteInput').height();
+	} else wHeight = 600;*/
+	wWidth = 800;
+	wHeight = 600;
+	myWindow=window.open('','','width='+wWidth+',height='+wHeight);
+	myWindow.document.write("<div>"+html+"</div>");
+	myWindow.document.close();
+	myWindow.focus();
+	if (print) myWindow.print();
 }
 
 function getCookie(cname) {
