@@ -780,6 +780,12 @@ class SurveyController extends Controller
 		echo json_encode($return);
 	}
 	
+	public function printtextheader()
+	{
+		$this->ajax = 1;
+		echo '<script type="text/javascript">setTimeout(function () { window.print(); }, 500);window.onfocus = function () { setTimeout(function () { window.close(); }, 500); }</script>';
+	}
+	
 	/*public function printvote()
 	{
 		$this->ajax = 1;
