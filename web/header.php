@@ -69,13 +69,22 @@
 					</a>
 					<a id="headerTitle" href="https://<?php echo $_SERVER['SERVER_NAME']; ?>/">
 						<?php if ($_SERVER['SERVER_NAME'] == 'star.vote') { ?>
-							Beta
+							.vote
 						<?php } else { ?>
-							[ Dev ]
+							&raquo; Dev &laquo;
 						<?php } ?>
 					</a>
 				</div>
-				<div id="breadCrumbs" data-role="controlgroup" data-type="horizontal" class="ui-mini ui-btn-right">
+				<?php if ($this->kioskMode && empty($this->user->userID)) {
+					?><div id="breadCrumbsTitle"><?php
+					if ($this->survey->surveyID) { 
+						echo $this->survey->title;
+					} else if ($this->poll->pollID) {
+						echo $this->poll->question;
+					}
+					?></div><?php
+				} else { ?>
+					<div id="breadCrumbs" data-role="controlgroup" data-type="horizontal" class="ui-mini ui-btn-right">
 					<!--<a href="/poll/create/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-plus">New</a>-->
 					<?php if ($this->user->info->admin_level == 1) { ?>
 						<a href="/user/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-user"><?php echo $this->user->info->initials; ?></a>
@@ -90,7 +99,8 @@
 						<a href="http://equal.vote/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-info">Learn</a>
 						<a href="/user/login/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-user">Login</a>
 					<?php } ?>
-				</div>
+					</div>
+				<?php } ?>
 			</div>
 			<!-- /Header -->
 			<div role="main" class="ui-content" id="main">

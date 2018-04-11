@@ -25,3 +25,4 @@ foreach ($answerSet as $answer) { ?>
 	</form>
 	<div class="clear"></div>
 <?php } ?>
+<div class="clear"></div>

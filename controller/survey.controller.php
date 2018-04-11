@@ -28,6 +28,8 @@ class SurveyController extends Controller
 			} else {
 				$this->survey = $this->model->getSurveyByID($this->URLdata);
 				if ($this->survey) {
+					// Make parent controller aware of kiosk desires
+					if ($this->survey->kioskMode) $this->kioskMode = true;
 					// Set title
 					$this->title = $this->survey->title;
 					// Set up

@@ -81,15 +81,17 @@ if ($this->survey) {
 		</div>
 		<?php }
 	} ?>
-	<div id="pollResults" class="bigContainer<?php if (!$this->hasVoted) echo ' hidden'; ?>">
-		<div class="bigContainerTitle">Results for "<?php echo $this->survey->title; ?>"</div>
-		<div class="bigContainerInner">
-			<div id="pollResultsActual">
-				<!-- AJAX -->
+	<?php if ($this->survey->verbage == 'el' && $this->survey->kioskMode == false || $this->survey->verbage != 'el' || ($this->user->userID > 0 && $this->survey->userID == $this->user->userID) || ($this->survey->verbage == 'el' && $this->survey->votingWindowDirection == 'after')) { ?>
+		<div id="pollResults" class="bigContainer<?php if (!$this->hasVoted) echo ' hidden'; ?>">
+			<div class="bigContainerTitle">Results for "<?php echo $this->survey->title; ?>"</div>
+			<div class="bigContainerInner">
+				<div id="pollResultsActual">
+					<!-- AJAX -->
+				</div>
+				<button id="showResultsButton" data-inline="inline" onclick="showResults()">Update Results</button>
 			</div>
-			<button id="showResultsButton" data-inline="inline" onclick="showResults()">Update Results</button>
 		</div>
-	</div>
+	<?php } ?>
 	
 	<?php if ($this->survey->kioskMode == false || $this->user->userID != 0 && $this->user->userID == $this->survey->userID) { ?>
 		<div class="bigContainer">
