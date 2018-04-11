@@ -225,7 +225,8 @@ function popMsg(html, print)
 		a: 'printtext', 
 		ajax: '1',
 		print: print,
-		html: html
+		html: html,
+		title: "<?php echo $this->survey->title; ?>"
 	}, function(data) {
 		//var jData = JSON.parse(data);
 		receiptWindow=window.open('','','width='+wWidth+',height='+wHeight);
