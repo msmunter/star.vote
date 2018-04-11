@@ -222,13 +222,14 @@ function popMsg(html, print)
 	wHeight = 600;
 	$.post("/", { 
 		c: 'survey', 
-		a: 'printtextheader', 
-		ajax: '1'
-	}, function(printText) {
+		a: 'printtext', 
+		ajax: '1',
+		print: print,
+		html: html
+	}, function(data) {
+		//var jData = JSON.parse(data);
 		receiptWindow=window.open('','','width='+wWidth+',height='+wHeight);
-		if (print) receiptWindow.document.write(printText);
-		receiptWindow.document.write("<div id=\"voteInput\" style=\"font-family: monospace;\">"+html+"</div>");
-		receiptWindow.document.close();
+		receiptWindow.document.write(data);
 		receiptWindow.focus();
 	});
 }

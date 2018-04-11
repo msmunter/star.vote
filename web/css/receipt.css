@@ -1,0 +1,57 @@
+body {
+	background-color: white;
+	color: black;
+	width: 70mm;
+	font-size: 11pt;
+	margin: 0px;
+	padding: 0px;
+	font-family: monospace;
+}
+
+div.cutReceipt {
+	page-break-after: always;
+	clear: both;
+}
+
+div.addBottomSpace {
+	height: 10px;
+	width: 100%;
+	border-bottom: solid 1px #ffffff;
+}
+
+div.receiptPageTitle {
+	text-align: center;
+	border: solid 1px black;
+}
+
+div.receiptPageTitle.inverted {
+	color: white;
+	background-color: black;
+}
+
+table#resultsTable th, table#yourVoteTable th, table.yourVoteTable th, table#runoffResultsTable th {
+	font-size: 11pt;
+}
+
+table#resultsTable td.number, table#yourVoteTable td.number, table.yourVoteTable td.number, table#runoffResultsTable td.number {
+	font-size: 11pt;
+}
+
+div.receiptQrContainer {
+	float: left;
+	width: 100%;
+	text-align: center;
+	border: solid 0px orange;
+}
+
+img#receiptQr {
+	float: left;
+	margin-left: 5px;
+	padding: 1px;
+}
+
+div#qrText {
+	margin-top: 10px;
+	float: left;
+	border: solid 0px purple;
+}
