@@ -780,10 +780,26 @@ class SurveyController extends Controller
 		echo json_encode($return);
 	}
 	
-	public function printtextheader()
+	public function printtext()
 	{
 		$this->ajax = 1;
-		echo '<script type="text/javascript">setTimeout(function () { window.print(); }, 500);window.onfocus = function () { setTimeout(function () { window.close(); }, 500); }</script>';
+		$this->doHeader = 0;
+		$this->doFooter = 0;
+		$this->doPrintHeader = 1;
+		$this->doPrintFooter = 1;
+		$this->customCSS = "receipt";
+		//if ($_POST['print']) $return['html'] = '<script type="text/javascript">setTimeout(function () { window.print(); }, 500);window.onfocus = function () { setTimeout(function () { window.close(); }, 500); }</script>';
+		// Voter Copy
+		$return['html'] .= '<div class="receiptTitle">'.$this->survey->title.'</div><div class="receiptPageTitle">Voter Copy</div>';
+		$return['html'] .= '<div class="receiptPage">'.$_POST['html'].'</div>';
+		$return['html'] .= '<div class="receiptQrContainer"><div id="qrText">See star.vote for details: </div><img id="receiptQr" src="../web/images/starvote_qr.png" /></div>';
+		// Cut
+		$return['html'] .= '<div class="cutReceipt"></div>';
+		// Admin Copy
+		$return['html'] .= '<div class="receiptTitle">'.$this->survey->title.'</div><div class="receiptPageTitle inverted">Admin Copy</div>';
+		$return['html'] .= '<div class="receiptPage">'.$_POST['html'].'</div><div class="addBottomSpace" />';
+		//echo json_encode($return);
+		echo $return['html'];
 	}
 	
 	/*public function printvote()
