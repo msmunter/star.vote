@@ -8,6 +8,11 @@ body {
 	font-family: monospace;
 }
 
+div.receiptTitle {
+	width: 100%;
+	text-align: center;
+}
+
 div.cutReceipt {
 	page-break-after: always;
 	clear: both;

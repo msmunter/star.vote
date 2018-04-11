@@ -790,13 +790,13 @@ class SurveyController extends Controller
 		$this->customCSS = "receipt";
 		if ($_POST['print']) $return['html'] = '<script type="text/javascript">setTimeout(function () { window.print(); }, 500);window.onfocus = function () { setTimeout(function () { window.close(); }, 500); }</script>';
 		// Voter Copy
-		$return['html'] .= '<div class="receiptTitle">'.$this->survey->title.'</div><div class="receiptPageTitle">Voter Copy</div>';
+		$return['html'] .= '<div class="receiptTitle">'.$_POST['title'].'</div><div class="receiptPageTitle">Voter Copy</div>';
 		$return['html'] .= '<div class="receiptPage">'.$_POST['html'].'</div>';
 		$return['html'] .= '<div class="receiptQrContainer"><div id="qrText">See star.vote for details: </div><img id="receiptQr" src="../web/images/starvote_qr.png" /></div>';
 		// Cut
 		$return['html'] .= '<div class="cutReceipt"></div>';
 		// Admin Copy
-		$return['html'] .= '<div class="receiptTitle">'.$this->survey->title.'</div><div class="receiptPageTitle inverted">Admin Copy</div>';
+		$return['html'] .= '<div class="receiptTitle">'.$_POST['title'].'</div><div class="receiptPageTitle inverted">Admin Copy</div>';
 		$return['html'] .= '<div class="receiptPage">'.$_POST['html'].'</div><div class="addBottomSpace" />';
 		//echo json_encode($return);
 		echo $return['html'];
