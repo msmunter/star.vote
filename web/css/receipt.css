@@ -16,6 +16,7 @@ div.cutReceipt {
 div.addBottomSpace {
 	height: 10px;
 	width: 100%;
+	border-bottom: solid 1px #ffffff;
 }
 
 div.receiptPageTitle {
