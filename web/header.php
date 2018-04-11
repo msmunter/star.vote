@@ -75,7 +75,7 @@
 						<?php } ?>
 					</a>
 				</div>
-				<?php if ($this->kioskMode) {
+				<?php if ($this->kioskMode && empty($this->user->userID)) {
 					?><div id="breadCrumbsTitle"><?php
 					if ($this->survey->surveyID) { 
 						echo $this->survey->title;
