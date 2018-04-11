@@ -21,6 +21,7 @@ if ($this->survey) {
 				<div id="voteInput">
 					<?php include_once('view/survey/voteinput.view.php'); ?>
 				</div>
+				<div class="clear"></div>
 				<div id="prevNextPollButtons">
 					<button id="prevPollButton" disabled="disabled" data-inline="inline" data-mini="mini" onclick="changePoll('d')">&larr;</button>Part <span id="pollIndex">1</span> of <?php echo count($this->survey->polls); ?><button id="nextPollButton" data-inline="inline" data-mini="mini" onclick="changePoll('u')">&rarr;</button>
 				</div>

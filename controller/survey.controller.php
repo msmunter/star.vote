@@ -141,10 +141,12 @@ class SurveyController extends Controller
 		}
 		// Condorcet
 		$poll->condorcet = true;
-		foreach ($poll->orderedRunoff[$poll->runoffResults['first']['answerID']] as $comIndex => $item) {
-			$comVotes = $poll->orderedRunoff[$comIndex][$poll->runoffResults['first']['answerID']]->votes;
-			if ($item->votes <= $comVotes) {
-				$poll->condorcet = false;
+		if (count($poll->answers) > 2) {
+			foreach ($poll->orderedRunoff[$poll->runoffResults['first']['answerID']] as $comIndex => $item) {
+				$comVotes = $poll->orderedRunoff[$comIndex][$poll->runoffResults['first']['answerID']]->votes;
+				if ($item->votes <= $comVotes) {
+					$poll->condorcet = false;
+				}
 			}
 		}
 	}
