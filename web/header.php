@@ -65,7 +65,7 @@
 				<!-- Header -->
 				<div id="pageHeader">
 					<a href="https://<?php echo $_SERVER['SERVER_NAME']; ?>/">
-						<img id="headerLogo" src="https://<?php echo $_SERVER['SERVER_NAME']; ?>/web/images/starvote_logo.png" alt="Logo" />
+						<img id="headerLogo" src="/web/images/starvote_logo.png" alt="Logo" />
 					</a>
 					<a id="headerTitle" href="https://<?php echo $_SERVER['SERVER_NAME']; ?>/">
 						<?php if ($_SERVER['SERVER_NAME'] == 'star.vote') { ?>
