@@ -1,5 +1,5 @@
 <?php
-if ($_SERVER['SERVER_NAME'] == 'test.greenhealtheugene.com') {
+if (in_array($_SERVER['SERVER_NAME'], array('test.greenhealtheugene.com', 'localhost'))) {
 	// Only display errors on the test server
 	error_reporting(E_ALL ^ E_NOTICE);
 	ini_set('display_errors', '1');
@@ -11,7 +11,7 @@ if ($_SERVER['SERVER_NAME'] == 'test.greenhealtheugene.com') {
 	} else {
 		$userIP = $_SERVER['REMOTE_ADDR'];
 	}
-	$testOkayIPs = array('67.189.2.252', '50.137.133.184', '67.170.165.87');
+	$testOkayIPs = array('67.189.2.252', '50.137.133.184', '67.170.165.87', '127.0.0.1', '::1');
 	// Fine to view locally
 	if (stristr($userIP, '192.168.') === FALSE) {
 		if (!in_array($userIP, $testOkayIPs)) {
