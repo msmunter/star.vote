@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS `polls` (
   `votes` int(11) NOT NULL,
   `userID` int(11) NOT NULL,
   `startTime` datetime,
-  `endTime` datetime
+  `endTime` datetime,
+  `numWinners` tinyint(4) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `surveys` (
