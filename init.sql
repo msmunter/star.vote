@@ -16,12 +16,15 @@ CREATE TABLE IF NOT EXISTS `polls` (
   `created` datetime NOT NULL,
   `private` tinyint(4) NOT NULL DEFAULT '0',
   `verifiedVoting` tinyint(4) NOT NULL DEFAULT '0',
-  `verifyMethod` varchar(3) DEFAULT NULL,
+  `verifiedVotingType` varchar(3) DEFAULT NULL,
   `allowComments` tinyint(4) NOT NULL DEFAULT '0',
   `randomAnswerOrder` tinyint(4) NOT NULL DEFAULT '1',
   `creatorIP` varchar(15) NOT NULL,
   `surveyID` varchar(8) NOT NULL DEFAULT '0',
-  `votes` int(11) NOT NULL
+  `votes` int(11) NOT NULL,
+  `userID` int(11) NOT NULL,
+  `startTime` datetime,
+  `endTime` datetime
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `surveys` (
