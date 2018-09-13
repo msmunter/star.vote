@@ -611,6 +611,10 @@ class SurveyController extends Controller
 							}
 							unset($voteArrayToDestroy[$answerID]);
 						}
+						$mVoter = new VoterModel();
+						$userInfo = $mVoter->getUserInfo($this->voter->voterID);
+						if ($userInfo->email == "") $mVoter->saveUserInfo($this->voter->voterID, $_POST['fname'], $_POST['lname'], $_POST['email'], $_POST['mailingList']);
+						unset($mVoter, $userInfo);
 						$this->model->incrementSurveyVoteCount($this->surveyID);
 						// If a verified vote, write extra db info
 						if ($this->survey->verifiedVoting) {

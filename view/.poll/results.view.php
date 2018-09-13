@@ -87,11 +87,11 @@ if ($this->poll) {
 			</div>
 		</div>
 		
-		<div class="bigContainer">
+		<!--<div class="bigContainer">
 			<div class="bigContainerTitle">Runoff Matrix</div>
 			<div class="bigContainerInner">
 				<div id="runoffMatrixContainer">
-					<!-- AJAX -->
+					
 				</div>
 				<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="runoffMatrixShowButton" onclick="showRunoffMatrix()">Show</button>
 			</div>
@@ -100,11 +100,11 @@ if ($this->poll) {
 			<div class="bigContainerTitle">Ballot Record</div>
 			<div class="bigContainerInner">
 				<div id="ballotRecordContainer">
-					<!-- AJAX -->
+					
 				</div>
 				<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="ballotRecordShowButton" onclick="showCvrHtml()">Show</button>
 			</div>
-		</div>
+		</div>-->
 	<?php } else { ?>
 		This poll is a part of a survey; it must be viewed there.
 	<?php } ?>

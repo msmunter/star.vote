@@ -167,7 +167,7 @@ function vote()
 		// Need to validate key
 		checkVoterKey(function(){
 			if (voterKeyResult == true) {
-				voteActual();
+				voteActual(resultsButtonHtml);
 			} else {
 				enableButtons();
 			}
@@ -175,39 +175,58 @@ function vote()
 	});
 }
 
-function voteActual()
+function voteActual(resultsButtonHtml)
 {
-	$.post("/", { 
-		c: 'survey', 
-		a: 'ajaxvote', 
-		ajax: '1',
-		voterID: getCookie('voterID'),
-		surveyID: $('#surveyID').val(),
-		votes: $('.voteForm').serialize(),
-		voterKey: $('#voterKey').val(),
-	}, function(data) {
-		var jData = JSON.parse(data);
-		if (jData.error) {
-			updateStatus("ERROR: "+jData.error);
-			$('#voteShowResultsButtons').html(resultsButtonHtml);
-			enableButtons();
-		} else {
-			ballotText = jData.html;
-			// Replace voting mechanism with personal results
-			$('#voteInput').html(jData.html);
-			// Hide buttons
-			hideButtons();
-			$('#voteShowResultsButtons').html('');
-			// View results
-			clearStatus();
-			showResults();
-			// Show reset voter button
-			if ($('#resetVoterButton').length > 0) $('#resetVoterButton').show();
-			if ($('#reprintVoteButton').length > 0) $('#reprintVoteButton').show();
-			// Print results
-			popMsg(ballotText, 1);
-		}
-	});
+	if ($('#haveUserInfo').val() == 0 && $('#fname').val() == "") {
+		alert('First name required');
+		enableButtons();
+		$('#voteShowResultsButtons').html(resultsButtonHtml);
+	} else if ($('#haveUserInfo').val() == 0 && $('#lname').val() == "") {
+		alert('Last name required');
+		enableButtons();
+		$('#voteShowResultsButtons').html(resultsButtonHtml);
+	} else if ($('#haveUserInfo').val() == 0 && $('#email').val() == "") {
+		alert('Email required');
+		enableButtons();
+		$('#voteShowResultsButtons').html(resultsButtonHtml);
+	} else {
+		$.post("/", { 
+			c: 'survey', 
+			a: 'ajaxvote', 
+			ajax: '1',
+			voterID: getCookie('voterID'),
+			surveyID: $('#surveyID').val(),
+			votes: $('.voteForm').serialize(),
+			voterKey: $('#voterKey').val(),
+			fname: $('#fname').val(),
+			lname: $('#lname').val(),
+			email: $('#email').val(),
+			mailingList: $('#mailingList').val()
+		}, function(data) {
+			var jData = JSON.parse(data);
+			if (jData.error) {
+				updateStatus("ERROR: "+jData.error);
+				$('#voteShowResultsButtons').html(resultsButtonHtml);
+				enableButtons();
+			} else {
+				ballotText = jData.html;
+				// Replace voting mechanism with personal results
+				$('#voteInput').html(jData.html);
+				// Hide buttons
+				hideButtons();
+				$('#userInputContainer').hide();
+				$('#voteShowResultsButtons').html('');
+				// View results
+				clearStatus();
+				showResults();
+				// Show reset voter button
+				if ($('#resetVoterButton').length > 0) $('#resetVoterButton').show();
+				if ($('#reprintVoteButton').length > 0) $('#reprintVoteButton').show();
+				// Print results
+				//popMsg(ballotText, 1);
+			}
+		});
+	}
 }
 
 function popMsg(html, print)

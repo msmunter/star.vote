@@ -93,6 +93,51 @@ img#equalVoteLogo {
 	border: dashed 0px purple;
 }
 
+img#weeklyLogo {
+	/*width: 200px;*/
+	width: 100%;
+	max-width: 600px;
+}
+
+.starVotingTitle {
+	text-align: center;
+}
+
+table#logoTable {
+	width: 95%;
+	max-width: 900px;
+	border-collapse: collapse;
+	border: solid 0px orange;
+}
+
+@media screen and (min-width: 501px) {
+	td.boeTitle {
+		font-size: 48px;
+		font-weight: bold;
+		line-height: 95%;
+	}
+}
+
+@media screen and (max-width: 500px) {
+	td.boeTitle {
+		font-size: 9vw;
+		font-weight: bold;
+		line-height: 95%;
+	}
+}
+
+.boeSubtitle {
+	font-size: 16px;
+}
+
+td.boeLogoCell {
+	width: 50%
+}
+
+td.boeTextCell {
+	width: 50%
+}
+
 div.bigContainer {
 	box-shadow: 4px 4px 4px #cccccc;
 	border-radius: 10px;
@@ -344,6 +389,25 @@ div#voteInstructions ul {
 	padding-left: 1.5em;
 }
 
+div.nextPollLink {
+	float: left;
+}
+
+a.nextPollLink {
+	display: block;
+	float: left;
+	font-size: 20px;
+	text-decoration: none;
+	border: solid 1px #38c;
+	border-radius: 7px;
+	padding: 3px;
+}
+
+a.nextPollLink:hover {
+	color: #059;
+	border-color: #059;
+}
+
 div.yourPollMsg {
 	font-size: 14px;
 	background-color: #38C;
@@ -392,6 +456,7 @@ div.surveyPollTitle {
 
 div.surveyResultsPollTitle, div.recentOrPopularBar, div.placeHeader {
 	background-color: #38c;
+	/*background-color: #b00202;*/
 	color: white;
 	text-shadow: 1px 1px 2px #333333;
 	padding: 5px;

@@ -7,8 +7,8 @@
 		<meta name="keywords" content="vote, voting" />
 		<meta name="robots" content="follow, index" />
 		<title>
-		<?php if ($_SERVER['SERVER_NAME'] == 'star.vote') { ?>
-			&#9733;.&#10003;
+		<?php if ($_SERVER['SERVER_NAME'] == 'weekly.star.vote') { ?>
+			&#9733;.&#10003; &amp; EW Present: Best of Eugene
 		<?php } else { ?>
 			&#9733;.&#10003; [Dev]
 		<?php } ?>
@@ -47,9 +47,9 @@
 		</script>
 		<!-- jQuery Mobile -->
 		<script src="/web/js/jquery.mobile-1.4.5.min.js"></script>
-		<?php if ($_SERVER['SERVER_NAME'] == 'star.vote') { ?>
+		<?php if ($_SERVER['SERVER_NAME'] == 'weekly.star.vote') { ?>
 		<!-- Global site tag (gtag.js) - Google Analytics -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113220345-1"></script>
+		<!--<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113220345-1"></script>-->
 		<script>
 			window.dataLayer = window.dataLayer || [];
 			function gtag(){dataLayer.push(arguments);}
@@ -68,8 +68,8 @@
 						<img id="headerLogo" src="https://<?php echo $_SERVER['SERVER_NAME']; ?>/web/images/starvote_logo.png" alt="Logo" />
 					</a>
 					<a id="headerTitle" href="https://<?php echo $_SERVER['SERVER_NAME']; ?>/">
-						<?php if ($_SERVER['SERVER_NAME'] == 'star.vote') { ?>
-							.vote
+						<?php if ($_SERVER['SERVER_NAME'] == 'weekly.star.vote') { ?>
+							Best of Eugene
 						<?php } else { ?>
 							&raquo; Dev &laquo;
 						<?php } ?>
@@ -94,11 +94,11 @@
 						<a href="/user/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-user"><?php echo $this->user->info->initials; ?></a>
 						<a href="/poll/create/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-plus">New</a>
 						<a href="/user/logout/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-delete">Logout</a>
-					<?php } else { ?>
+					<?php } /*else { ?>
 						<a href="/poll/history/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-bullets">More</a>
 						<a href="http://equal.vote/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-info">Learn</a>
 						<a href="/user/login/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-user">Login</a>
-					<?php } ?>
+					<?php }*/ ?>
 					</div>
 				<?php } ?>
 			</div>

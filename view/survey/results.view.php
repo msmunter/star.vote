@@ -43,9 +43,33 @@ if ($this->survey) {
 			<div class="bigContainerInner">
 				<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
 				<div class="clear"></div>
+				<?php 
+				if ($this->survey->customSlug == "eats") {
+					echo '<a class="nextPollLink" href="/civics/">There\'s another section! Vote on Civics &rarr;</a>';
+				} else if ($this->survey->customSlug == "civics") {
+					echo '<a class="nextPollLink" href="/eats/">There\'s another section! Vote on Eats &rarr;</a>';
+				} else if ($this->survey->customSlug == "spending") {
+					echo '<a class="nextPollLink" href="/liveaction/">There\'s another section! Vote on Live Action &rarr;</a>';
+				} else if ($this->survey->customSlug == "liveaction") {
+					echo '<a class="nextPollLink" href="/spending/">There\'s another section! Vote on Spending &rarr;</a>';
+				}
+				?>
+				<div class="clear" style="height: 10px;"></div>
 				<div id="voteInput">
 					<?php include_once('view/survey/yourvote.view.php'); ?>
 				</div>
+				<div class="clear"></div>
+				<?php 
+				if ($this->survey->customSlug == "eats") {
+					echo '<a class="nextPollLink" href="/civics/">There\'s another section! Vote on Civics &rarr;</a>';
+				} else if ($this->survey->customSlug == "civics") {
+					echo '<a class="nextPollLink" href="/eats/">There\'s another section! Vote on Eats &rarr;</a>';
+				} else if ($this->survey->customSlug == "spending") {
+					echo '<a class="nextPollLink" href="/liveaction/">There\'s another section! Vote on Live Action &rarr;</a>';
+				} else if ($this->survey->customSlug == "liveaction") {
+					echo '<a class="nextPollLink" href="/spending/">There\'s another section! Vote on Spending &rarr;</a>';
+				}
+				?>
 				<div class="clear"></div>
 				<?php if ($this->survey->kioskMode) { ?>
 				<button id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button>
@@ -70,6 +94,11 @@ if ($this->survey) {
 				<div id="prevNextPollButtons">
 					<button id="prevPollButton" disabled="disabled" data-inline="inline" data-mini="mini" onclick="changePoll('d')">&larr;</button>Part <span id="pollIndex">1</span> of <?php echo count($this->survey->polls); ?><button id="nextPollButton" data-inline="inline" data-mini="mini" onclick="changePoll('u')">&rarr;</button>
 				</div>
+
+				<div id="userInputContainer">
+					<?php include_once('view/survey/userinput.view.php'); ?>
+				</div>
+
 				<div id="voteShowResultsButtons">
 					<button disabled="disabled" id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
 					<button <?php if ($this->survey->verifiedVoting || ($this->survey->verbage == 'el' && $this->survey->votingWindowDirection != 'after')) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
@@ -102,11 +131,12 @@ if ($this->survey) {
 			</div>
 		</div>
 		
+		<!--
 		<div class="bigContainer">
 			<div class="bigContainerTitle">Runoff Matrix</div>
 			<div class="bigContainerInner">
 				<div id="runoffMatrixContainer">
-					<!-- AJAX -->
+					
 				</div>
 				<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="runoffMatrixShowButton" onclick="showRunoffMatrix()">Show</button>
 			</div>
@@ -115,11 +145,12 @@ if ($this->survey) {
 			<div class="bigContainerTitle">Ballot Record</div>
 			<div class="bigContainerInner">
 				<div id="ballotRecordContainer">
-					<!-- AJAX -->
+					
 				</div>
 				<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="ballotRecordShowButton" onclick="showCvrHtml()">Show</button>
 			</div>
 		</div>
+		-->
 	<?php } ?>
 <?php } else { ?>
 	Survey not found

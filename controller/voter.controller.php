@@ -42,11 +42,14 @@ class VoterController extends Controller
 				setcookie("voterID", $this->voterID, $cookieExpires, '/');
 			}
 		}
+		if (strlen($this->voterID) > 0) {
+			$this->userInfo = $this->model->getUserInfo($this->voterID);
+		}
 		// Generate voter ID if necessary
 		if (strlen($this->voterID) < 1) {
 			$this->voterID = $this->generateUniqueID(10, "voters", "voterID");
 			// Save voter to DB
-			$this->model->insertVoter($this->voterID, $_SERVER['REMOTE_ADDR']);
+			$this->model->insertVoter($this->voterID, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], gethostbyaddr($_SERVER['REMOTE_ADDR']));
 			// Save a cookie with their voter ID
 			setcookie("voterID", $this->voterID, $cookieExpires, '/');
 			// Save session variable

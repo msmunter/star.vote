@@ -13,12 +13,36 @@ class VoterModel extends Model
 		} else return false;
 	}
 	
-	public function insertVoter($voterID, $ip)
+	public function insertVoter($voterID, $ip, $browserInfo, $clientHost)
 	{
-		$this->query = "INSERT INTO `voters` (`voterID`, `ip`)
-							VALUES ('".$voterID."', '".$ip."')";
+		$this->query = "INSERT INTO `voters` (`voterID`, `ip`, `browserInfo`, `clientHost`)
+							VALUES ('".$voterID."', '".$ip."', '".$browserInfo."', '".$clientHost."')";
 		// Insert
 		$this->doInsertQuery();
+	}
+
+	public function getUserInfo($voterID)
+	{
+		$this->query = "SELECT `fname`, `lname`, `email`, `mailingList`
+						FROM `voters`
+						WHERE `voterID` LIKE '".$voterID."'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (!empty($this->results)) {
+			return $this->results[0];
+		} else return false;
+	}
+
+	public function saveUserInfo($voterID, $fname, $lname, $email, $mailingList)
+	{
+		$this->query = 'UPDATE `voters`
+						SET `fname` = "'.$fname.'", 
+							`lname` = "'.$lname.'", 
+							`email` = "'.$email.'", 
+							`mailingList` = '.$mailingList.'
+						WHERE `voterID` LIKE "'.$voterID.'" 
+						LIMIT 1;';
+		$this->doUpdateQuery();
 	}
 	
 	public function isGeneratedIDTaken($table, $column, $newID)

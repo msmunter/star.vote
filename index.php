@@ -1,5 +1,5 @@
 <?php
-if ($_SERVER['SERVER_NAME'] == 'test.greenhealtheugene.com') {
+if ($_SERVER['SERVER_NAME'] == 'test.star.vote') {
 	// Only display errors on the test server
 	error_reporting(E_ALL ^ E_NOTICE);
 	ini_set('display_errors', '1');

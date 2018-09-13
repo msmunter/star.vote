@@ -1,42 +1,30 @@
 <div id="indexHeaderContainer">
 	<div id="indexHeader">
-		Simple, fair voting using the STAR method. Learn more: <a href="http://equal.vote"><img id="equalVoteLogo" src="web/images/equalvote_logo.png" /></a>
-	</div>
-</div>
-<div class="bigContainer">
-	<div class="bigContainerTitle">Create Your Own Poll</div>
-	<div id="indexCreatePollContainer">
-		<?php include('view/poll/pollinputform.view.php'); ?>
-	</div>
-</div>
-
-<div class="bigContainer">
-	<div class="bigContainerTitle">Polls</div>
-	<div class="bigContainerInner">
-		<div id="pollContainer">
-			<?php include('view/poll/pollset.view.php'); ?>
+		<!--<table id="logoTable">
+			<tr>
+				<td id="boeLogoCell"><a href="https://www.eugeneweekly.com"><img id="weeklyLogo" src="web/images/boe_logo.png" alt="Eugene Weekly" /></a></td>
+				<td class="boeTitle">Best of<br />Eugene</td>
+			</tr>
+		</table>-->
+		<div id="logoLink">
+			<a href="https://www.eugeneweekly.com"><img id="weeklyLogo" src="web/images/boe_logo.png" alt="Eugene Weekly" /></a>
 		</div>
-		<?php if (!empty($this->mostPopularPolls)) { ?>
-			<div class="center">
-				<button data-inline="true" onclick="loadMorePolls()">Load More</button>
-			</div>
-		<?php } ?>
+		<!--<div class="boeSubtitle">
+			Now with STAR voting! Learn more: <a href="http://equal.vote"><img id="equalVoteLogo" src="web/images/equalvote_logo.png" /></a>
+		</div>-->
 	</div>
 </div>
 
 <div class="bigContainer">
-	<div class="bigContainerTitle">Surveys</div>
+	<!--<div class="bigContainerTitle">Rounds &amp; Categories</div>-->
+	<div class="bigContainerTitle starVotingTitle">	
+		<div class="boeSubtitle">
+			Now with STAR voting! Learn more: <a href="http://equal.vote"><img id="equalVoteLogo" src="web/images/equalvote_logo.png" /></a>
+		</div>
+	</div>
 	<div class="bigContainerInner">
 		<div id="surveyContainer">
-			<?php include('view/survey/surveyset.view.php'); ?>
+			<?php include('view/survey/surveyset_weekly.view.php'); ?>
 		</div>
-		<?php if (!empty($this->mostPopularSurveys)) { ?>
-			<div class="center">
-				<button data-inline="true" onclick="loadMoreSurveys()">Load More</button>
-			</div>
-		<?php } ?>
 	</div>
 </div>
-
-<script><?php include('web/js/poll/create.js'); ?></script>
-<script><?php include('web/js/poll/history.js'); ?></script>
