@@ -3,17 +3,22 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="description" content="star.vote Voting">
+		<meta name="description" content="STAR Voting">
 		<meta name="keywords" content="vote, voting" />
 		<meta name="robots" content="follow, index" />
-		<title>
+		<meta property="og:image" content="https://<?php echo $_SERVER['SERVER_NAME']; ?>/web/images/boe_logo_og.png" />
+		<meta property="og:type" content="website" />
+		<meta property="og:description" content="STAR Voting" />
+		<meta property="og:url" content="<?php echo "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"; ?>" />
+		
 		<?php if ($_SERVER['SERVER_NAME'] == 'weekly.star.vote') { ?>
-			&#9733;.&#10003; &amp; EW Present: Best of Eugene
+			<title>&#9733;.&#10003; &amp; EW Present: Best of Eugene<?php if (!empty($this->title)) echo ' - '.$this->title; ?></title>
+			<meta property="og:title" content="&#9733;.&#10003; &amp; EW Present: Best of Eugene<?php if (!empty($this->title)) echo ' - '.$this->title; ?>" />
 		<?php } else { ?>
-			&#9733;.&#10003; [Dev]
+			<title>&#9733;.&#10003; [Dev]<?php if (!empty($this->title)) echo ' - '.$this->title; ?></title>
+			<meta property="og:title" content="&#9733;.&#10003; [Dev]<?php if (!empty($this->title)) echo ' - '.$this->title; ?>" />
 		<?php } ?>
-		<?php if (!empty($this->title)) echo ' - '.$this->title; ?>
-		</title>
+		
 		<!-- Icon/Favicon -->
 		<link rel="apple-touch-icon" sizes="57x57" href="/web/images/ico/apple-icon-57x57.png">
 		<link rel="apple-touch-icon" sizes="60x60" href="/web/images/ico/apple-icon-60x60.png">
