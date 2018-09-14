@@ -43,33 +43,9 @@ if ($this->survey) {
 			<div class="bigContainerInner">
 				<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
 				<div class="clear"></div>
-				<?php 
-				if ($this->survey->customSlug == "eats") {
-					echo '<a class="nextPollLink" href="/civics/">There\'s another section! Vote on Civics &rarr;</a>';
-				} else if ($this->survey->customSlug == "civics") {
-					echo '<a class="nextPollLink" href="/eats/">There\'s another section! Vote on Eats &rarr;</a>';
-				} else if ($this->survey->customSlug == "spending") {
-					echo '<a class="nextPollLink" href="/liveaction/">There\'s another section! Vote on Live Action &rarr;</a>';
-				} else if ($this->survey->customSlug == "liveaction") {
-					echo '<a class="nextPollLink" href="/spending/">There\'s another section! Vote on Spending &rarr;</a>';
-				}
-				?>
-				<div class="clear" style="height: 10px;"></div>
 				<div id="voteInput">
 					<?php include_once('view/survey/yourvote.view.php'); ?>
 				</div>
-				<div class="clear"></div>
-				<?php 
-				if ($this->survey->customSlug == "eats") {
-					echo '<a class="nextPollLink" href="/civics/">There\'s another section! Vote on Civics &rarr;</a>';
-				} else if ($this->survey->customSlug == "civics") {
-					echo '<a class="nextPollLink" href="/eats/">There\'s another section! Vote on Eats &rarr;</a>';
-				} else if ($this->survey->customSlug == "spending") {
-					echo '<a class="nextPollLink" href="/liveaction/">There\'s another section! Vote on Live Action &rarr;</a>';
-				} else if ($this->survey->customSlug == "liveaction") {
-					echo '<a class="nextPollLink" href="/spending/">There\'s another section! Vote on Spending &rarr;</a>';
-				}
-				?>
 				<div class="clear"></div>
 				<?php if ($this->survey->kioskMode) { ?>
 				<button id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button>
