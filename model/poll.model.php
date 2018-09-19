@@ -158,6 +158,10 @@ class PollModel extends Model
 		if ($oDateEnd <= $oDateStart) {
 			$endDateActual = 'NULL';
 		} else $endDateActual = "'".$oDateEnd->format('Y-m-d H:i:s')."'";
+		
+		// Cleanup
+		$question = htmlentities($question, ENT_QUOTES);
+
 		// Poll first
 		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `verifiedVoting`, `verifiedVotingType`, `allowComments`, `randomAnswerOrder`, `creatorIP`, `votes`, `customSlug`, `userID`, `surveyID`, `startTime`, `endTime`, `numWinners`)
 						VALUES ('".$pollID."', '".$question."', '".$oDateCreated->format('Y-m-d H:i:s')."', ".$private.", ".$verifiedVoting.", '".$verifiedVotingType."', 0, ".$randomOrder.", '".$creatorIP."', 0, '".$customSlug."', '".$userID."', '".$surveyID."', '".$oDateStart->format('Y-m-d H:i:s')."', ".$endDateActual.", ".$numWinners.")";
@@ -169,6 +173,7 @@ class PollModel extends Model
 		// Now answers
 		$this->answerIDs = array();
 		foreach ($answers as $answer) {
+			$answer = htmlentities($answer, ENT_QUOTES);
 			$this->query = "INSERT INTO `answers` (`pollID`, `text`, `votes`, `points`)
 							VALUES ('".$pollID."', '".$answer."', 0, 0)";
 			// Insert
