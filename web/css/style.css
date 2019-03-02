@@ -198,6 +198,7 @@ div#pollButtonContainer {
 }
 
 .legendImg {
+	width: 99%;
 	max-width: 400px;
 }
 
