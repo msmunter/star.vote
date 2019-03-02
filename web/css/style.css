@@ -197,6 +197,14 @@ div#pollButtonContainer {
     display: none;
 }
 
+.legendImg {
+	max-width: 400px;
+}
+
+.legendImgSmall {
+	max-width: 150px;
+}
+
 .emptystar{background-image:url(../../../web/images/star-empty-blue.png);}
 .fullstar{background-image:url(../../../web/images/star-full-blue.png);}
 

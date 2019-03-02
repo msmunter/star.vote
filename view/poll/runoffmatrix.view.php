@@ -7,14 +7,24 @@
 						<?php
 							foreach ($this->poll->runoffAnswerArray as $answer) {
 								echo '<th colspan="5">';
-								echo $answer->text;
+								if ($answer->imgur == 1) {
+									echo '<a href="'.$answer->text.'" target="_new"><img class="legendImgSmall" src="'.$answer->text.'" alt="" /></a>';
+								} else {
+									echo $answer->text;
+								}
 								echo '</th>';
 							}
 							echo '</tr>';
 							foreach ($this->poll->runoffAnswerArray as $answer) {
 								$empty++;
 								$z = 0;
-								echo '<tr><td>'.$answer->text.'</td><td>&gt;</td>';
+								if ($answer->imgur == 1) {
+									echo '<tr><td>';
+									echo '<a href="'.$answer->text.'" target="_new"><img class="legendImgSmall" src="'.$answer->text.'" alt="" /></a>';
+									echo '</td><td>&gt;</td>';
+								} else {
+									echo '<tr><td>'.$answer->text.'</td><td>&gt;</td>';
+								}
 								foreach ($this->poll->runoffAnswerArray as $innerAnswer) {
 									$z++;
 									if ($z == $empty) {

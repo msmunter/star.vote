@@ -66,45 +66,51 @@ if ($this->poll) {
 					</div>
 					<div class="clear"></div>
 					<button <?php if ($this->poll->verifiedVoting || !$this->poll->inVotingWindow) echo 'disabled="disabled" '; ?>id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
-					<button <?php if ($this->poll->verifiedVoting) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
+					<?php if ($this->poll->blind == 0) { ?>
+						<button <?php if ($this->poll->verifiedVoting) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
+					<?php } ?>
 					<?php if ($this->poll->kioskMode) {?><button class="hidden" id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button><?php } ?>
 				</div>
 			</div>
 		<?php } ?>
-		<div id="pollResults" class="bigContainer<?php if (!$this->hasVoted) echo ' hidden'; ?>">
-			<div class="bigContainerTitle">Results for "<?php echo $this->poll->question; ?>"</div>
-			<div class="bigContainerInner">
-				<div id="pollResultsActual">
-					<?php include('view/poll/resultsactual.view.php');?>
+		<?php if ($this->poll->blind == 0 || ($this->user->userID == $this->poll->userID && $this->user->userID > 0)) { ?>
+			<div id="pollResults" class="bigContainer<?php if (!$this->hasVoted) echo ' hidden'; ?>">
+				<div class="bigContainerTitle">Results for "<?php echo $this->poll->question; ?>"</div>
+				<div class="bigContainerInner">
+					<div id="pollResultsActual">
+						<?php include('view/poll/resultsactual.view.php');?>
+					</div>
+					<button id="showResultsButton" data-inline="inline" onclick="showResults()">Update Results</button>
 				</div>
-				<button id="showResultsButton" data-inline="inline" onclick="showResults()">Update Results</button>
 			</div>
-		</div>
+		<?php } ?>
 		<div class="bigContainer">
 			<div class="bigContainerTitle">Share</div>
 			<div class="bigContainerInner">
 				<input type="text" id="shareURLInput" name="shareURLInput" data-mini="true" data-inline="true" value="https://<?php echo $_SERVER['SERVER_NAME']; ?>/<?php if ($this->poll->customSlug != "") {echo $this->poll->customSlug;} else echo $this->poll->pollID; ?>/" />
 			</div>
 		</div>
-		
-		<div class="bigContainer">
-			<div class="bigContainerTitle">Runoff Matrix</div>
-			<div class="bigContainerInner">
-				<div id="runoffMatrixContainer">
-					<!-- AJAX -->
+		<?php if ($this->poll->blind == 0 || ($this->user->userID == $this->poll->userID && $this->user->userID > 0)) { ?>
+			<div class="bigContainer">
+				<div class="bigContainerTitle">Runoff Matrix</div>
+				<div class="bigContainerInner">
+					<div id="runoffMatrixContainer">
+						<!-- AJAX -->
+					</div>
+					<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="runoffMatrixShowButton" onclick="showRunoffMatrix()">Show</button>
 				</div>
-				<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="runoffMatrixShowButton" onclick="showRunoffMatrix()">Show</button>
 			</div>
-		</div>
-		<div class="bigContainer">
-			<div class="bigContainerTitle">Ballot Record</div>
-			<div class="bigContainerInner">
-				<div id="ballotRecordContainer">
-					<!-- AJAX -->
+
+			<div class="bigContainer">
+				<div class="bigContainerTitle">Ballot Record</div>
+				<div class="bigContainerInner">
+					<div id="ballotRecordContainer">
+						<!-- AJAX -->
+					</div>
+					<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="ballotRecordShowButton" onclick="showCvrHtml()">Show</button>
 				</div>
-				<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="ballotRecordShowButton" onclick="showCvrHtml()">Show</button>
 			</div>
-		</div>
+		<?php } ?>
 	<?php } else { ?>
 		This poll is a part of a survey; it must be viewed there.
 	<?php } ?>

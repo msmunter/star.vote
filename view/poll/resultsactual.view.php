@@ -29,7 +29,12 @@ foreach ($this->placedPolls as $placeNumber => $currentPoll) {
 					} else {
 						echo '<tr class="answerResults"><td class="rankCell">'.$rank.'</td>';
 					}
-					echo '<td>'.$answer->text.'</td><td class="number">'.$answer->points.'</td><td class="number">'.number_format($answer->avgVote, 1).'</td></tr>';
+					if ($answer->imgur == 1) {
+						echo '<td><a href="'.$answer->text.'" target="_new"><img class="legendImgSmall" src="'.$answer->text.'" alt="" /></a></td>';
+					} else {
+						echo '<td>'.$answer->text.'</td>';
+					}
+					echo '<td class="number">'.$answer->points.'</td><td class="number">'.number_format($answer->avgVote, 1).'</td></tr>';
 					echo '<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="4"><div class="barGraph" style="width: '.$answer->avgPercent.'%;"><div class="barGraphData">'.$answer->avgPercent.'% ('.number_format($answer->avgVote, 1).'/5)</div></div></td></tr>';
 				}
 				?>

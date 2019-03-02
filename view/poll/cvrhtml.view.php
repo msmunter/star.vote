@@ -7,7 +7,11 @@ $answerCount = count($this->poll->answers);
 echo '<tr><th>Voter ID</th><th>Timestamp</th><th>Poll ID</th>';
 foreach ($this->poll->answers as $answer) {
 	//array_push($headerArray, $answer->text);
-	echo '<th>'.$answer->text.'</th>';
+	if ($answer->imgur == 1) {
+		echo '<th><a href="'.$answer->text.'" target="_new"><img class="legendImgSmall" src="'.$answer->text.'" alt="" /></a></th>';
+	} else {
+		echo '<th>'.$answer->text.'</th>';
+	}
 }
 echo '</tr>';
 // Process ballots

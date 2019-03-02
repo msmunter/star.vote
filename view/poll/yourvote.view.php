@@ -4,6 +4,14 @@
 	<tr><th>#</th><th>Option</th><th>Vote</th></tr>
 	<?php foreach ($this->yourVote as $answer) {
 		$i++;
-		echo '<tr><td class="orderCell">'.$i.'</td><td>'.$answer->text.'</td><td class="number">'.$answer->vote.'</td></tr>';
+		//if ($this->verifyImgurExists($answer->text) { // Needs to make fewer calls to imgur before being used in production
+		if ($answer->imgur == 1) {
+			// Image
+			echo '<tr><td class="orderCell">'.$i.'</td><td>';
+			echo '<a href="'.$answer->text.'" target="_new"><img class="legendImg" src="'.$answer->text.'" alt="" /></a>';
+			echo '</td><td class="number">'.$answer->vote.'</td></tr>';
+		} else {
+			echo '<tr><td class="orderCell">'.$i.'</td><td>'.$answer->text.'</td><td class="number">'.$answer->vote.'</td></tr>';
+		}
 	} ?>
 </table>
