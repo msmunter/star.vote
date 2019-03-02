@@ -4,7 +4,7 @@ $answerSet = $this->poll->answers;
 if ($this->poll->randomAnswerOrder > 0) shuffle($answerSet);
 foreach ($answerSet as $answer) { ?>
 	<form class="voteForm" id="voteForm|<?php echo $answer->answerID; ?>">
-		<?php if ($this->verifyImgurExists($answer->text)) { ?>
+		<?php if ($answer->imgur == 1) { ?>
 			<legend class="voteLegend">
 				<a href="<?php echo $answer->text; ?>" target="_new">
 					<img class="legendImg" src="<?php echo $answer->text; ?>" alt="" />
