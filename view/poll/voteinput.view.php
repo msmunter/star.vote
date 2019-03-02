@@ -3,8 +3,12 @@
 $answerSet = $this->poll->answers;
 if ($this->poll->randomAnswerOrder > 0) shuffle($answerSet);
 foreach ($answerSet as $answer) { ?>
-<form class="voteForm" id="voteForm|<?php echo $answer->answerID; ?>">
-		<legend class="voteLegend"><?php echo $answer->text; ?></legend>
+	<form class="voteForm" id="voteForm|<?php echo $answer->answerID; ?>">
+		<?php if ($this->verifyImgurExists($answer->text)) { ?>
+			<legend class="voteLegend"><a href="<?php echo $answer->text; ?>" target="_new"><img src="<?php echo $answer->text; ?>" alt="" style="width: 80%" /></a></legend>
+		<?php } else { ?>
+			<legend class="voteLegend"><?php echo $answer->text; ?></legend>
+		<?php } ?>
 		<input checked="checked" type="radio" name="radioVote|<?php echo $answer->answerID; ?>" id="radioVote|<?php echo $answer->answerID; ?>|0" value="0" data-role="none" />
 		<label class="voteFormLabel emptystar" for="radioVote|<?php echo $answer->answerID; ?>|0">0</label>
 		
