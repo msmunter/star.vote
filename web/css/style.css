@@ -203,7 +203,7 @@ div#pollButtonContainer {
 }
 
 .legendImgSmall {
-	max-width: 150px;
+	max-width: 100px;
 }
 
 .emptystar{background-image:url(../../../web/images/star-empty-blue.png);}

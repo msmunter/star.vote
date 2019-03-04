@@ -53,16 +53,29 @@ foreach ($this->placedPolls as $placeNumber => $currentPoll) {
 					if ($currentPoll->runoffResults['tieEndsAt'] > 2) {
 						// Multi-way tie
 						echo '<tr class="noTopBorder"><td colspan="3">Tie between '.$currentPoll->runoffResults['tieEndsAt'].' questions, '.$currentPoll->runoffResults['first']['question'].' and '.$currentPoll->runoffResults['second']['question'].' with '.$currentPoll->runoffResults['first']['votes'].' votes each</td></tr>';
+						// EDIT THIS TO HAVE A LOOP THAT SHOWS EACH TIED QUESTION UP TO A POINT (MAYBE THREE?)
 					} else {
 						// Two-way tie
 						?>
 						<tr class="headerRow"><th>#</th><th>Option</th><th>Voters</th></tr>
 						
-						<tr><td class="rankCell winner">1</td><td><?php echo $currentPoll->runoffResults['first']['question']; ?></td><td class="number"><?php echo $currentPoll->runoffResults['first']['votes']; ?></td></tr>
+						<tr><td class="rankCell winner">1</td><td>
+						<?php if ($answer->imgur == 1) {
+							echo '<a href="'.$currentPoll->runoffResults['first']['question'].'" target="_new"><img class="legendImgSmall" src="'.$currentPoll->runoffResults['first']['question'].'" alt="" /></a>';
+						} else {
+							echo $currentPoll->runoffResults['first']['question'];
+						} ?>
+						</td><td class="number"><?php echo $currentPoll->runoffResults['first']['votes']; ?></td></tr>
 						
 						<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($currentPoll->runoffResults['first']['votes']/$currentPoll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($currentPoll->runoffResults['first']['votes']/$currentPoll->totalVoterCount*100), 2); ?>% (<?php echo $currentPoll->runoffResults['first']['votes']; ?>/<?php echo $currentPoll->totalVoterCount; ?>)</div></div></td></tr>
 						
-						<tr><td class="rankCell winner">1</td><td><?php echo $currentPoll->runoffResults['second']['question']; ?></td><td class="number"><?php echo $currentPoll->runoffResults['second']['votes']; ?></td></tr>
+						<tr><td class="rankCell winner">1</td><td>
+							<?php if ($answer->imgur == 1) {
+								echo '<a href="'.$currentPoll->runoffResults['second']['question'].'" target="_new"><img class="legendImgSmall" src="'.$currentPoll->runoffResults['second']['question'].'" alt="" /></a>';
+							} else {
+								echo $currentPoll->runoffResults['second']['question'];
+							} ?>
+							</td><td class="number"><?php echo $currentPoll->runoffResults['second']['votes']; ?></td></tr>
 						
 						<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($currentPoll->runoffResults['second']['votes']/$currentPoll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($currentPoll->runoffResults['second']['votes']/$currentPoll->totalVoterCount*100), 2); ?>% (<?php echo $currentPoll->runoffResults['second']['votes']; ?>/<?php echo $currentPoll->totalVoterCount; ?>)</div></div></td></tr>
 						<?php
@@ -72,11 +85,23 @@ foreach ($this->placedPolls as $placeNumber => $currentPoll) {
 					?>
 					<tr class="headerRow"><th>#</th><th>Option</th><th>Votes</th></tr>
 					
-					<tr><td class="rankCell winner">1</td><td><?php echo $currentPoll->runoffResults['first']['question']; ?></td><td class="number"><?php echo $currentPoll->runoffResults['first']['votes']; ?></td></tr>
+					<tr><td class="rankCell winner">1</td><td>
+						<?php if ($answer->imgur == 1) {
+							echo '<a href="'.$currentPoll->runoffResults['first']['question'].'" target="_new"><img class="legendImgSmall" src="'.$currentPoll->runoffResults['first']['question'].'" alt="" /></a>';
+						} else {
+							echo $currentPoll->runoffResults['first']['question'];
+						} ?>
+						</td><td class="number"><?php echo $currentPoll->runoffResults['first']['votes']; ?></td></tr>
 					
 					<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($currentPoll->runoffResults['first']['votes']/$currentPoll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($currentPoll->runoffResults['first']['votes']/$currentPoll->totalVoterCount*100), 2); ?>% (<?php echo $currentPoll->runoffResults['first']['votes']; ?>/<?php echo $currentPoll->totalVoterCount; ?>)</div></div></td></tr>
 					
-					<tr><td class="rankCell">2</td><td><?php echo $currentPoll->runoffResults['second']['question']; ?></td><td class="number"><?php echo $currentPoll->runoffResults['second']['votes']; ?></td></tr>
+					<tr><td class="rankCell">2</td><td>
+						<?php if ($answer->imgur == 1) {
+							echo '<a href="'.$currentPoll->runoffResults['second']['question'].'" target="_new"><img class="legendImgSmall" src="'.$currentPoll->runoffResults['second']['question'].'" alt="" /></a>';
+						} else {
+							echo $currentPoll->runoffResults['second']['question'];
+						} ?>
+						</td><td class="number"><?php echo $currentPoll->runoffResults['second']['votes']; ?></td></tr>
 					
 					<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($currentPoll->runoffResults['second']['votes']/$currentPoll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($currentPoll->runoffResults['second']['votes']/$currentPoll->totalVoterCount*100), 2); ?>% (<?php echo $currentPoll->runoffResults['second']['votes']; ?>/<?php echo $currentPoll->totalVoterCount; ?>)</div></div></td></tr>
 					
