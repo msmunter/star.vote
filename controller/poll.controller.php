@@ -150,6 +150,7 @@ class PollController extends Controller
 					$this->hasVoted = true;
 					// Get their vote
 					$this->yourVote = $this->model->getYourVote($this->voterID, $this->poll->pollID);
+					$this->processAnswerImages($this->yourVote);
 				} else $this->hasVoted = false;
 				// Load the answers
 				if (empty($this->poll)) {
@@ -158,6 +159,8 @@ class PollController extends Controller
 					// Timey wimey stuff
 					$this->setupTimes();
 					$this->poll->answers = $this->model->getAnswersByPollIDScoreOrder($this->URLdata);
+					// Determine if answers have associated images
+					$this->processAnswerImages($this->poll->answers);
 					$this->poll->voterCount = $this->model->getPollVoterCount($this->URLdata);
 					// Get top answers, sort out tie
 					$this->processPoll($this->poll);
@@ -179,6 +182,15 @@ class PollController extends Controller
 			}
 		} else {
 			$this->error = 'Must provide poll ID';
+		}
+	}
+
+	private function processAnswerImages($answers) {
+		// Determine if answers have associated images
+		foreach ($answers as $answer) {
+			if ($this->verifyImgurMatches($answer->text)) {
+				$answer->imgur = 1;
+			} else $answer->imgur = 0;
 		}
 	}
 	
@@ -259,8 +271,11 @@ class PollController extends Controller
 	{
 		$tPoll->topAnswers = $this->model->getTopAnswersByPollID($tPoll->pollID);
 		foreach ($tPoll->topAnswers as $index => $answer) {
+			// Set average vote
 			$tPoll->topAnswers[$index]->avgVote = $this->model->getAvgVoteByAnswerID($answer->answerID);
 		}
+		// Determine if answers have associated images
+		$this->processAnswerImages($tPoll->topAnswers);
 		$tPoll->runoffResults = $this->model->getRunoffResultsByAnswerID($this->URLdata, $tPoll->topAnswers[0]->answerID, $tPoll->topAnswers[1]->answerID);
 		if ($tPoll->runoffResults['first']['answerID'] == $tPoll->topAnswers[0]->answerID) {
 			$tPoll->runoffResults['first']['question'] = $tPoll->topAnswers[0]->text;
@@ -511,6 +526,8 @@ class PollController extends Controller
 			$this->poll->rawRunoff = $this->model->getRunoffResultsRawByPollID($pollID);
 			$this->poll->voterCount = $this->model->getPollVoterCount($pollID);
 			$this->poll->answers = $this->model->getAnswersByPollIDScoreOrder($pollID);
+			// Check to see if answers are images
+			$this->processAnswerImages($this->poll->answers);
 			foreach ($this->poll->answers as $index => $answer) {
 				$this->poll->runoffAnswerArray[$answer->answerID] = $answer;
 			}
@@ -652,6 +669,8 @@ class PollController extends Controller
 		if (($this->poll->verifiedVoting && $this->user->userID == $this->poll->userID) || ($this->poll->verifiedVoting && $this->model->userHasVoted($this->voterID, $this->poll->pollID)) || $this->poll->verifiedVoting == false) {
 			if (!empty($this->poll)) {
 				$this->poll->answers = $this->model->getAnswersByPollID($_POST['pollID']);
+				// Check for images
+				$this->processAnswerImages($this->poll->answers);
 				$this->poll->ballots = $this->model->getBallotsByPollID($_POST['pollID']);
 				// Process ballots into a single, cohesive array
 				$this->poll->processedBallots = $this->processBallots($this->poll->ballots);
@@ -754,7 +773,14 @@ class PollController extends Controller
 		} else return false;
 	}
 
-	public function verifyImgurExists($url)
+	public function verifyImgurMatches($url)
+	{
+		if (!preg_match('~^https?://i\.imgur\.com/\w+\.(png|jpe?g|gif)$~i', $url)) {
+			return false;
+		} else return true;
+	}
+
+	/*public function verifyImgurExists($url)
 	{
 		$urlMatchString = "https://i.imgur.com";
 		if (substr($urlMatchString, 0, strlen($urlMatchString)) === $urlMatchString) {
@@ -776,6 +802,6 @@ class PollController extends Controller
 			// Negative IMGUR
 			return false;
 		}
-	}
+	}*/
 }
 ?>
