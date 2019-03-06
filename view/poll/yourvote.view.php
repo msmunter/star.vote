@@ -7,7 +7,7 @@
 		if ($answer->imgur == 1) {
 			// Image
 			echo '<tr><td class="orderCell">'.$i.'</td><td>';
-			echo '<a href="'.$answer->text.'" target="_new"><img class="legendImg" src="'.$answer->text.'" alt="" /></a>';
+			echo '<a href="'.$answer->text.'" target="_new"><img class="legendImgSmall" src="'.$answer->text.'" alt="" /></a>';
 			echo '</td><td class="number">'.$answer->vote.'</td></tr>';
 		} else {
 			echo '<tr><td class="orderCell">'.$i.'</td><td>'.$answer->text.'</td><td class="number">'.$answer->vote.'</td></tr>';

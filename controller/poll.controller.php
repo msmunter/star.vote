@@ -471,6 +471,8 @@ class PollController extends Controller
 					unset($yourVote);
 					$this->poll = $this->model->getPollByID($this->pollID);
 					if (empty($this->poll->answers)) $this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
+					// Determine if answers are images
+					$this->processAnswerImages($this->poll->answers);
 					$this->yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
 					$return['html'] .= $this->ajaxInclude('view/poll/yourvote.view.php');
 				} else {
