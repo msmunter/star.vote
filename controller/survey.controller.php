@@ -738,12 +738,12 @@ class SurveyController extends Controller
 			$this->setupTimes();
 			if ($this->survey->okDisplayResults == true) {
 				foreach ($this->survey->polls as $zPoll) {
-					if (!empty($zPoll)) {
+					/*if (!empty($zPoll)) {
 						$zPoll->answers = $mPoll->getAnswersByPollID($zPoll->pollID);
 						$zPoll->ballots = $mPoll->getBallotsByPollID($zPoll->pollID);
 						// Process ballots into a single, cohesive array
 						$zPoll->processedBallots = $this->processBallots($zPoll->ballots);
-					} else $return['error'] = 'Poll not found';
+					} else $return['error'] = 'Poll not found';*/
 				}
 				$return['html'] = $this->ajaxInclude('view/survey/cvrhtml.view.php');
 			} else {

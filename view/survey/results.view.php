@@ -107,7 +107,7 @@ if ($this->survey) {
 			</div>
 		</div>
 		
-		<!--
+		<?php if ($this->user->info->admin_level == 1) { ?>
 		<div class="bigContainer">
 			<div class="bigContainerTitle">Runoff Matrix</div>
 			<div class="bigContainerInner">
@@ -126,7 +126,7 @@ if ($this->survey) {
 				<button class="ui-btn ui-mini ui-btn-inline ui-corner-all" data-inline="true" id="ballotRecordShowButton" onclick="showCvrHtml()">Show</button>
 			</div>
 		</div>
-		-->
+		<?php } ?>
 	<?php } ?>
 <?php } else { ?>
 	Survey not found

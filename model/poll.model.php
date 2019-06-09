@@ -1,6 +1,17 @@
 <?php
 class PollModel extends Model
 {
+	public function getExtendedVoterInfo($voterID)
+	{
+		$this->query = "SELECT *
+						FROM `voters`
+						WHERE `voterID` LIKE '$voterID'
+						LIMIT 0,1;";
+		//echo '<pre>';print_r($this->query);echo '</pre>'; // DEBUG ONLY!!!
+		$this->doSelectQuery();
+		return $this->results[0];
+	}
+
 	public function getPollByID($pollID)
 	{
 		$this->query = "SELECT *
