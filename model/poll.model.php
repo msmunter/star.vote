@@ -115,6 +115,17 @@ class PollModel extends Model
 		$this->doSelectQuery();
 		return $this->results;
 	}
+
+	public function getCvrBallotsByPollID($pollID, $index, $limit)
+	{
+		$this->query = "SELECT *
+						FROM `votes`
+						WHERE `votes`.`pollID` LIKE '$pollID'
+						ORDER BY `voteTime` ASC, `voterID` ASC
+						LIMIT $index,$limit;";
+		$this->doSelectQuery();
+		return $this->results;
+	}
 	
 	public function getVoterKeysByPollID($pollID)
 	{

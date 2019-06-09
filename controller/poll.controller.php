@@ -673,7 +673,8 @@ class PollController extends Controller
 				$this->poll->answers = $this->model->getAnswersByPollID($_POST['pollID']);
 				// Check for images
 				$this->processAnswerImages($this->poll->answers);
-				$this->poll->ballots = $this->model->getBallotsByPollID($_POST['pollID']);
+				$numBallotsToFetch = count($this->poll->answers) * 20;
+				$this->poll->ballots = $this->model->getCvrBallotsByPollID($_POST['pollID'], 0, $numBallotsToFetch);
 				// Process ballots into a single, cohesive array
 				$this->poll->processedBallots = $this->processBallots($this->poll->ballots);
 			} else $return['error'] = 'Poll not found';
