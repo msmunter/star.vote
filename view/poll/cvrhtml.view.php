@@ -1,6 +1,6 @@
 Download Full CVR: <a class="ui-btn ui-mini ui-btn-inline ui-corner-all" href="/poll/csv/<?php echo $this->poll->pollID; ?>/">CSV</a>
 <div class="clear"/>
-<div>Latest 20 votes:</div>
+<div>Most recent 20 votes:</div>
 <table id="cvrTable">
 <?php
 $headerArray = array('voterID', 'voteTime', 'pollID');
