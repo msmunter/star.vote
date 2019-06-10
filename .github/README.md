@@ -13,4 +13,5 @@ Apache home directory needs `AllowOverride All` set for pretty URLs (i.e. star.v
     AllowOverride All
     Order allow,deny
     allow from all
-</Directory>```
+</Directory>
+```
