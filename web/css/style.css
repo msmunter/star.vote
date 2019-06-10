@@ -84,7 +84,21 @@ div#indexHeader {
 	vertical-align: middle;
 }
 
-img#equalVoteLogo {
+div#indexHeaderText {
+	float: left;
+	margin-right: 10px;
+	margin-top: 4px;
+}
+
+div#indexHeaderText a:link, a:active, a:hover, a:visited {
+	cursor: pointer;
+}
+
+div#indexHeaderImageContainer {
+	float: left;
+}
+
+img#starvotingLogo {
 	width: 140px;
 	padding: 2px;
 	margin-bottom: -6px;
