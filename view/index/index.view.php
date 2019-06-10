@@ -1,6 +1,13 @@
 <div id="indexHeaderContainer">
 	<div id="indexHeader">
-		Simple, fair voting using the STAR method. Learn more: <a href="http://equal.vote"><img id="equalVoteLogo" src="web/images/equalvote_logo.png" /></a>
+		<a href="https://www.starvoting.us">
+			<div id="indexHeaderText">
+				<div>Simple, fair voting.</div><div>Learn more:</div>
+			</div>
+			<div id="indexHeaderImageContainer">
+				<img id="starvotingLogo" src="web/images/starvoting_us_logo.png" />
+			</div>
+		</a>
 	</div>
 </div>
 <div class="bigContainer">

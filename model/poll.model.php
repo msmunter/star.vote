@@ -121,7 +121,7 @@ class PollModel extends Model
 		$this->query = "SELECT *
 						FROM `votes`
 						WHERE `votes`.`pollID` LIKE '$pollID'
-						ORDER BY `voteTime` ASC, `voterID` ASC
+						ORDER BY `voteTime` DESC, `voterID` ASC
 						LIMIT $index,$limit;";
 		$this->doSelectQuery();
 		return $this->results;
