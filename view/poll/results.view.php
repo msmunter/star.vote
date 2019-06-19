@@ -58,9 +58,16 @@ if ($this->poll) {
 					<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
 					<div class="clear"></div>
 					<div id="voteInput">
-						<?php if ($this->poll->verifiedVoting) { ?>
+						<?php if ($this->poll->verifiedVoting && $this->poll->verifiedVotingType == "gkc") { ?>
 							<label for="voterKey">Voter Key:</label>
 							<input id="voterKey" />
+						<?php } ?>
+						<?php if ($this->poll->verifiedVotingType == "eml") { ?>
+							<div>Register via email:</div>
+							<input type="text" data-clear-btn="true" class="pollAnswer" name="verificationEmail" id="verificationEmail" placeholder="your@email.com" />
+							<div class="clear"></div>
+							<button id="registerViaEmailButton" data-inline="inline" onclick="registerViaEmail()">Register</button>
+							<div class="clear"></div>
 						<?php } ?>
 						<?php include_once('view/poll/voteinput.view.php'); ?>
 					</div>

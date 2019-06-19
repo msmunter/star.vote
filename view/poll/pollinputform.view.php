@@ -52,9 +52,9 @@
 <div class="ui-field-contain" id="verifiedVotingSelectContainer">
 	<label for="fsVerifiedVotingType">Verification Type:</label>
 	<select name="fsVerifiedVotingType" id="fsVerifiedVotingType">
-		<option selected value="gkc">Generate CSV w/ Keys</option>
-		<option disabled value="eml">Email Keys/Link</option>
-		<option disabled value="gau">Google Auth</option>
+		<option selected value="eml">Verify via email</option>
+		<option value="gkc">Generate voter keys</option>
+		<!--<option disabled value="gau">Google Auth</option>-->
 	</select>
 </div>
 <?php } ?>

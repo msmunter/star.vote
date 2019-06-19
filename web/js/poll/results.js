@@ -237,3 +237,22 @@ function resetVoter() {
 		}
 	});
 }
+
+function registerViaEmail() {
+	$.post("/", { 
+		c: 'poll', 
+		a: 'ajaxregisterviaemail', 
+		ajax: '1',
+		pollID: $('#pollID').val(),
+		address: $('#verificationEmail').val(),
+	}, function(data) {
+		var jData = JSON.parse(data);
+		if (jData.error) {
+			$('#statusMsg').html("ERROR: "+jData.error);
+		} else {
+			$('#statusMsg').html(jData.html);
+			console.log(jData.html);
+			//location.reload();
+		}
+	});
+}

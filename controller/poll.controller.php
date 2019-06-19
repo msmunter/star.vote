@@ -717,6 +717,22 @@ class PollController extends Controller
 		$return['html'] = 'Success';
 		echo json_encode($return);
 	}
+
+	public function ajaxregisterviaemail()
+	{
+		if ($_POST['address'] && $_POST['pollID']) {
+			// Insert to-be-completed validation
+
+			$return['html'] = 'Success';
+		} else {
+			if (!$_POST['address']) {
+				$return['error'] = 'Missing Email';
+			} else {
+				$return['error'] = 'Missing Poll ID';
+			}
+		}
+		echo json_encode($return);
+	}
 	
 	private function initVoter($voterID)
 	{
