@@ -261,7 +261,7 @@ class PollModel extends Model
 
 	public function ipHasVoted($pollID, $ip)
 	{
-		$this->query = "SELECT DISTINCT COUNT(`voters`.`voterID`) as `ct`
+		$this->query = "SELECT COUNT(`voters`.`voterID`) as `ct`
 						FROM `voters`, `votes`
 						WHERE `voters`.`ip` LIKE '$ip'
 						AND `votes`.`pollID` LIKE '$pollID'
