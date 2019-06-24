@@ -1,6 +1,4 @@
 <input type="hidden" id="pollID" value="<?php echo $this->poll->pollID; ?>" />
-<div id="statusMsg" class="hidden"></div>
-<div class="clear"></div>
 <?php if ($this->user->userID != '' && $this->user->userID == $this->poll->userID) { ?>
 	<div class="yourPollMsg">Your poll: "<?php echo $this->poll->question; ?>"
 	<?php
@@ -19,8 +17,11 @@
 		<li>You may give the same score to multiple candidates.</li>
 		<li>The two highest-scoring candidates are finalists.</li>
 		<li>The finalist scored higher by more voters wins.</li>
+		<?php if ($this->poll->oneVotePerIp) echo '<li>Votes are limited to one per IP address.</li>'; ?>
 	</ul>
 </div>
+<div id="statusMsg" class="hidden"></div>
+<div class="clear"></div>
 <?php
 if ($this->poll) { 
 	if (empty($this->poll->surveyID)) {

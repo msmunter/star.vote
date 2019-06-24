@@ -58,6 +58,13 @@
 	</select>
 </div>
 <?php } ?>
+<div class="ui-field-contain" id="oneVotePerIpInputContainer">
+	<label for="fsOneVotePerIp">One Vote Per IP:</label>
+	<select name="fsOneVotePerIp" id="fsOneVotePerIp" data-role="flipswitch">
+		<option selected value="0">No</option>
+		<option value="1">Yes</option>
+	</select>
+</div>
 <div class="ui-field-contain">
 	<label for="fsStartEndSwitch">Start/End Times:</label>
 	<select name="fsStartEndSwitch" id="fsStartEndSwitch" data-role="flipswitch">
