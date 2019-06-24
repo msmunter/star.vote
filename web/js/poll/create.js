@@ -147,7 +147,8 @@ function createPollActual()
 		fsStartTime: $('#fsStartTime').val(),
 		fsEndDate: $('#fsEndDate').val(),
 		fsEndTime: $('#fsEndTime').val(),
-		fsNumWinners: $('#fsNumWinners').val()
+		fsNumWinners: $('#fsNumWinners').val(),
+		fsOneVotePerIp: $('#fsOneVotePerIp').val()
 	}, function(data) {
 		// Disable inputs
 		disableInputs();

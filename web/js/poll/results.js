@@ -117,6 +117,9 @@ function voteActual()
 		if (jData.error) {
 			updateStatus("ERROR: "+jData.error);
 			enableButtons();
+		} else if (jData.caution) {
+			updateStatus("Warning: "+jData.caution);
+			enableButtons();
 		} else {
 			// Replace voting mechanism with personal results
 			$('#voteInput').html(jData.html);
