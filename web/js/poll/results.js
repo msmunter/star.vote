@@ -238,20 +238,20 @@ function resetVoter() {
 	});
 }
 
-function registerViaEmail() {
+function emailTest() {
 	$.post("/", { 
 		c: 'poll', 
-		a: 'ajaxregisterviaemail', 
+		a: 'ajaxtestemail', 
 		ajax: '1',
 		pollID: $('#pollID').val(),
 		address: $('#verificationEmail').val(),
 	}, function(data) {
 		var jData = JSON.parse(data);
 		if (jData.error) {
-			$('#statusMsg').html("ERROR: "+jData.error);
+			updateStatus("ERROR: "+jData.error);
 		} else {
 			$('#statusMsg').html(jData.html);
-			console.log(jData.html);
+			updateStatus(jData.html);
 			//location.reload();
 		}
 	});

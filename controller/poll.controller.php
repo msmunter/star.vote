@@ -718,7 +718,7 @@ class PollController extends Controller
 		echo json_encode($return);
 	}
 
-	public function ajaxregisterviaemail()
+	public function ajaxtestemail()
 	{
 		if ($_POST['address'] && $_POST['pollID']) {
 			// Insert to-be-completed validation
