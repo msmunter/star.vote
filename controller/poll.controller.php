@@ -108,7 +108,7 @@ class PollController extends Controller
 				if (!in_array($_POST['fsVerifiedVotingType'], $this->verifiedVotingTypes)) $_POST['fsVerifiedVotingType'] = 'gkc';
 				$oDateCreated = new DateTime();
 				// Insert actual
-				$this->model->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug'], $_POST['fsVerifiedVoting'], $_POST['fsVerifiedVotingType'], $userID, null, $oDateCreated, $_POST['fsStartDate'], $_POST['fsStartTime'], $_POST['fsEndDate'], $_POST['fsEndTime'], $_POST['fsNumWinners']);
+				$this->model->insertPoll($newPollID, $this->pollQuestion, $this->pollAnswers, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug'], $_POST['fsVerifiedVoting'], $_POST['fsVerifiedVotingType'], $userID, null, $oDateCreated, $_POST['fsStartDate'], $_POST['fsStartTime'], $_POST['fsEndDate'], $_POST['fsEndTime'], $_POST['fsNumWinners'], $_POST['fsOneVotePerIp']);
 				$return['html'] .= 'Poll saved! Loading results...';
 				//$return['html'] = 'numAnswers: '.$numAnswers.'<br />'.$this->model->displayQuery; // DEBUG ONLY!!!
 			} else {
@@ -422,61 +422,66 @@ class PollController extends Controller
 			if ($this->survey->endTime != null) $oEnd = new DateTime($this->survey->endTime);
 			$oNow = new DateTime();
 			if ($oNow >= $oStart && ($oNow < $oEnd || empty($oEnd))) {
-				// Determine whether this key has voted
-				if (empty($voterKeyResult->voteTime)) {
-					parse_str($_POST['votes'], $dirtyVoteArray);
-					// Cleanup array
-					foreach ($dirtyVoteArray as $index => $vote) {
-						$indexBoom = explode('|', $index);
-						$answerID = $indexBoom[1];
-						unset($indexBoom);
-						$voteArray[$answerID] = $vote;
-					}
-					$voteArrayToDestroy = $voteArray;
-					// Verify no vote has been entered for this voter on this poll
-					$yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
-					if (empty($yourVote)) {
-						// No vote, get the answers to make sure we have a score for each
-						$this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
-						foreach ($this->poll->answers as $answer) {
-							if (!array_key_exists($answer->answerID, $voteArray)) {
-								$voteArray[$answer->answerID] = 0;
-							}
+				// If option is set, verify this IP has not voted
+				if ($this->poll->oneVotePerIp == 0 || ($this->poll->oneVotePerIp == 1 && !$this->model->ipHasvoted($this->pollID, $_SERVER['REMOTE_ADDR']))) {
+					// Determine whether this key has voted
+					if (empty($voterKeyResult->voteTime)) {
+						parse_str($_POST['votes'], $dirtyVoteArray);
+						// Cleanup array
+						foreach ($dirtyVoteArray as $index => $vote) {
+							$indexBoom = explode('|', $index);
+							$answerID = $indexBoom[1];
+							unset($indexBoom);
+							$voteArray[$answerID] = $vote;
 						}
-						foreach ($voteArray as $answerID => $vote) {
-							$this->votes[] = $vote;
-							// Insert vote
-							$voteTime = date("Y-m-d H:i:s");
-							$this->model->insertVote($this->pollID, $this->voterID, $answerID, $vote, $voteTime);
-							// Update the matrix. Maybe replace the windows with bricks?
-							foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
-								if ($answerID != $answerID2) {
-									if ($vote > $vote2) {
-										$this->model->updateVoteMatrix($this->pollID, $answerID, $answerID2);
-									} else if ($vote < $vote2) {
-										$this->model->updateVoteMatrix($this->pollID, $answerID2, $answerID);
-									} // and do nothing if they're equal
+						$voteArrayToDestroy = $voteArray;
+						// Verify no vote has been entered for this voter on this poll
+						$yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
+						if (empty($yourVote)) {
+							// No vote, get the answers to make sure we have a score for each
+							$this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
+							foreach ($this->poll->answers as $answer) {
+								if (!array_key_exists($answer->answerID, $voteArray)) {
+									$voteArray[$answer->answerID] = 0;
 								}
 							}
-							unset($voteArrayToDestroy[$answerID]);
+							foreach ($voteArray as $answerID => $vote) {
+								$this->votes[] = $vote;
+								// Insert vote
+								$voteTime = date("Y-m-d H:i:s");
+								$this->model->insertVote($this->pollID, $this->voterID, $answerID, $vote, $voteTime);
+								// Update the matrix. Maybe replace the windows with bricks?
+								foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
+									if ($answerID != $answerID2) {
+										if ($vote > $vote2) {
+											$this->model->updateVoteMatrix($this->pollID, $answerID, $answerID2);
+										} else if ($vote < $vote2) {
+											$this->model->updateVoteMatrix($this->pollID, $answerID2, $answerID);
+										} // and do nothing if they're equal
+									}
+								}
+								unset($voteArrayToDestroy[$answerID]);
+							}
+							$this->model->incrementPollVoteCount($this->pollID);
+							// If a verified vote, write extra db info
+							if ($this->poll->verifiedVoting) {
+								$this->model->updateVoterKeyEntry($_POST['voterKey'], $this->pollID, $this->voterID, $voteTime);
+							}
+						} else {
+							$return['caution'] = 'Your vote had already been recorded for this poll';
 						}
-						$this->model->incrementPollVoteCount($this->pollID);
-						// If a verified vote, write extra db info
-						if ($this->poll->verifiedVoting) {
-							$this->model->updateVoterKeyEntry($_POST['voterKey'], $this->pollID, $this->voterID, $voteTime);
-						}
+						unset($yourVote);
+						$this->poll = $this->model->getPollByID($this->pollID);
+						if (empty($this->poll->answers)) $this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
+						// Determine if answers are images
+						$this->processAnswerImages($this->poll->answers);
+						$this->yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
+						$return['html'] .= $this->ajaxInclude('view/poll/yourvote.view.php');
 					} else {
-						$return['caution'] = 'Your vote had already been recorded for this poll';
+						$return['caution'] = 'This key has already been used to record a vote on this poll';
 					}
-					unset($yourVote);
-					$this->poll = $this->model->getPollByID($this->pollID);
-					if (empty($this->poll->answers)) $this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
-					// Determine if answers are images
-					$this->processAnswerImages($this->poll->answers);
-					$this->yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
-					$return['html'] .= $this->ajaxInclude('view/poll/yourvote.view.php');
 				} else {
-					$return['caution'] = 'This key has already been used to record a vote on this poll';
+					$return['error'] = 'A vote has already been registered from your IP address.';
 				}
 			} else {
 				// Too late or too early

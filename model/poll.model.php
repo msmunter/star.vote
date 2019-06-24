@@ -160,18 +160,27 @@ class PollModel extends Model
 		} else return false;
 	}
 	
-	public function insertPoll($pollID, $question, $answers, $randomOrder, $private, $creatorIP, $customSlug, $verifiedVoting, $verifiedVotingType, $userID, $surveyID, $oDateCreated, $startDate, $startTime, $endDate, $endTime, $numWinners)
+	public function insertPoll($pollID, $question, $answers, $randomOrder, $private, $creatorIP, $customSlug, $verifiedVoting, $verifiedVotingType, $userID, $surveyID, $oDateCreated, $startDate, $startTime, $endDate, $endTime, $numWinners, $oneVotePerIp)
 	{
 		if ($verifiedVoting == '') $verifiedVoting = 0;
+		if ($oneVotePerIp) {
+			$oneVotePerIp = 1;
+		} else {
+			$oneVotePerIp = 0;
+		}
 		$oDateStart = new DateTime($startDate.' '.$startTime);
 		$oDateEnd = new DateTime($endDate.' '.$endTime);
 		if ($oDateStart < $oDateCreated) $oDateStart = $oDateCreated;
 		if ($oDateEnd <= $oDateStart) {
 			$endDateActual = 'NULL';
 		} else $endDateActual = "'".$oDateEnd->format('Y-m-d H:i:s')."'";
+		
+		// Cleanup
+		$question = htmlentities($question, ENT_QUOTES);
+
 		// Poll first
-		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `verifiedVoting`, `verifiedVotingType`, `allowComments`, `randomAnswerOrder`, `creatorIP`, `votes`, `customSlug`, `userID`, `surveyID`, `startTime`, `endTime`, `numWinners`)
-						VALUES ('".$pollID."', '".$question."', '".$oDateCreated->format('Y-m-d H:i:s')."', ".$private.", ".$verifiedVoting.", '".$verifiedVotingType."', 0, ".$randomOrder.", '".$creatorIP."', 0, '".$customSlug."', '".$userID."', '".$surveyID."', '".$oDateStart->format('Y-m-d H:i:s')."', ".$endDateActual.", ".$numWinners.")";
+		$this->query = "INSERT INTO `polls` (`pollID`, `question`, `created`, `private`, `verifiedVoting`, `verifiedVotingType`, `allowComments`, `randomAnswerOrder`, `creatorIP`, `votes`, `customSlug`, `userID`, `surveyID`, `startTime`, `endTime`, `numWinners`, `oneVotePerIp`)
+						VALUES ('".$pollID."', '".$question."', '".$oDateCreated->format('Y-m-d H:i:s')."', ".$private.", ".$verifiedVoting.", '".$verifiedVotingType."', 0, ".$randomOrder.", '".$creatorIP."', 0, '".$customSlug."', '".$userID."', '".$surveyID."', '".$oDateStart->format('Y-m-d H:i:s')."', ".$endDateActual.", ".$numWinners.", ".$oneVotePerIp.")";
 		//$this->displayQuery = $this->query; // DEBUG ONLY!!!
 		// Insert
 		$this->doInsertQuery();
@@ -180,6 +189,7 @@ class PollModel extends Model
 		// Now answers
 		$this->answerIDs = array();
 		foreach ($answers as $answer) {
+			$answer = htmlentities($answer, ENT_QUOTES);
 			$this->query = "INSERT INTO `answers` (`pollID`, `text`, `votes`, `points`)
 							VALUES ('".$pollID."', '".$answer."', 0, 0)";
 			// Insert
@@ -247,6 +257,21 @@ class PollModel extends Model
 							VALUES ('".$voterID."', '".$ip."')";
 		// Insert
 		$this->doInsertQuery();
+	}
+
+	public function ipHasVoted($pollID, $ip)
+	{
+		$this->query = "SELECT COUNT(`voters`.`voterID`) as `ct`
+						FROM `voters`, `votes`
+						WHERE `voters`.`ip` LIKE '$ip'
+						AND `votes`.`pollID` LIKE '$pollID'
+						AND `votes`.`voterID` LIKE `voters`.`voterID`;";
+		$this->doSelectQuery();
+		if ($this->results[0]->ct > 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	public function insertVote($pollID, $voterID, $answerID, $vote, $voteTime)

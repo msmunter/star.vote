@@ -155,6 +155,10 @@ class SurveyModel extends Model
 		if ($oDateEnd <= $oDateStart) {
 			$endDateActual = 'NULL';
 		} else $endDateActual = "'".$oDateEnd->format('Y-m-d H:i:s')."'";
+		
+		// Cleanup
+		$title = htmlentities($title, ENT_QUOTES);
+
 		$this->query = "INSERT INTO `surveys` (`surveyID`, `title`, `created`, `private`, `verifiedVoting`, `verifiedVotingType`, `randomOrder`, `creatorIP`, `customSlug`, `userID`, `verbage`, `startTime`, `endTime`)
 						VALUES ('".$surveyID."', '".$title."', '".$oDateCreated->format('Y-m-d H:i:s')."', ".$private.", ".$verifiedVoting.", '".$verifiedVotingType."', ".$randomOrder.", '".$creatorIP."', '".$customSlug."', '".$userID."', '".$verbage."', '".$oDateStart->format('Y-m-d H:i:s')."', ".$endDateActual.")";
 		// Insert
