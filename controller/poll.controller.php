@@ -453,7 +453,7 @@ class PollController extends Controller
 									}
 								}
 								$voteTime = date("Y-m-d H:i:s");
-								/*foreach ($voteArray as $answerID => $vote) {
+								foreach ($voteArray as $answerID => $vote) {
 									$this->votes[] = $vote;
 									// Insert vote
 									$this->model->insertVote($this->pollID, $this->voterID, $answerID, $vote, $voteTime);
@@ -469,7 +469,8 @@ class PollController extends Controller
 									}
 									unset($voteArrayToDestroy[$answerID]);
 								}
-								$this->model->incrementPollVoteCount($this->pollID);*/
+								// Increment the poll count but only if it's not a verified-by-email poll
+								if (!$this->poll->verifiedVoting || ($this->poll->verifiedVoting && $this->poll->verifiedVotingType != 'eml')) $this->model->incrementPollVoteCount($this->pollID);
 								// If a verified vote, write extra db info
 								if ($this->poll->verifiedVoting) {
 									// Email validation gets handled differently
@@ -728,6 +729,8 @@ class PollController extends Controller
 				$this->status['success'] = 'Vote previously verified at '.$this->verifyTime;
 			} else {
 				$this->verifyTime = $this->model->updateVoterEmailEntry($this->URLdata);
+				// Increment the poll count since this vote is now real
+				$this->model->incrementPollVoteCount($this->voterKeyEntry->pollID);
 				$this->status['success'] = 'Vote verified at '.$this->verifyTime;
 			}
 		} else {
