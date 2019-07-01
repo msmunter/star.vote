@@ -93,13 +93,17 @@ function vote()
 {
 	disableButtons();
 	// Need to validate key
-	checkVoterKey(function(){
-		if (voterKeyResult == true) {
-			voteActual();
-		} else {
-			enableButtons();
-		}
-	});
+	<?php if ($this->poll->verifiedVoting && $this->poll->verifiedVotingType == 'eml') { ?>
+		voteActual();
+	<?php } else { ?>
+		checkVoterKey(function(){
+			if (voterKeyResult == true) {
+				voteActual();
+			} else {
+				enableButtons();
+			}
+		});
+	<?php } ?>
 }
 
 function voteActual()
@@ -111,7 +115,8 @@ function voteActual()
 		voterID: getCookie('voterID'),
 		pollID: $('#pollID').val(),
 		votes: $('.voteForm').serialize(),
-		voterKey: $('#voterKey').val()
+		voterKey: $('#voterKey').val(),
+		verificationEmail: $('#verificationEmail').val()
 	}, function(data) {
 		var jData = JSON.parse(data);
 		if (jData.error) {

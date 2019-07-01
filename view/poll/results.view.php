@@ -67,7 +67,7 @@ if ($this->poll) {
 						<?php if ($this->poll->verifiedVotingType == "eml") { ?>
 							<div>Must validate vote by email:</div>
 							<input type="text" data-clear-btn="true" class="pollAnswer" name="verificationEmail" id="verificationEmail" placeholder="your@email.com" />
-							<button id="testEmailButton" data-inline="inline" onclick="emailTest()">Test</button>
+							<!-- <button id="testEmailButton" data-inline="inline" onclick="emailTest()">Test</button> -->
 							<div class="clear"></div>
 						<?php } ?>
 					</div>
