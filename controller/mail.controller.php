@@ -45,9 +45,9 @@ class MailController extends Controller
 
 	public function ajaxsendemailverification() {
 		// These are TEST ONLY
-		$this->toFirstName = 'Steen';
-		$this->toLastName = 'Munter';
-		$this->toAddress = 'msmunter@gmail.com';
+		$this->toFirstName = 'Test';
+		$this->toLastName = 'User';
+		$this->toAddress = 'test@star.vote';
 		// Not test only from here on out
 		$return = [];
 		// Ensure address exists to associate with verification key

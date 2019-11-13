@@ -52,7 +52,7 @@
 <div class="ui-field-contain" id="verifiedVotingSelectContainer">
 	<label for="fsVerifiedVotingType">Verification Type:</label>
 	<select name="fsVerifiedVotingType" id="fsVerifiedVotingType">
-		<option selected value="eml">Verify via email</option>
+		<!-- <option selected value="eml">Verify via email</option> -->
 		<option value="gkc">Generate voter keys</option>
 		<!--<option disabled value="gau">Google Auth</option>-->
 	</select>
