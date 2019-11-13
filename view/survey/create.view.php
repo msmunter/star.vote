@@ -15,6 +15,22 @@
 			</select>
 		</div>
 		<div class="ui-field-contain">
+			<label for="fsKioskMode">Kiosk Mode:</label>
+			<select name="fsKioskMode" id="fsKioskMode" data-role="flipswitch">
+				<option value="0">No</option>
+				<option value="1">Yes</option>
+			</select>
+			<div>Reset for a new voter after each vote</div>
+		</div>
+		<div class="ui-field-contain">
+			<label for="fsPrintVote">Print Vote:</label>
+			<select name="fsPrintVote" id="fsPrintVote" data-role="flipswitch">
+				<option value="0">No</option>
+				<option value="1">Yes</option>
+			</select>
+			<div>Display a printable record after each vote</div>
+		</div>
+		<div class="ui-field-contain">
 			<label for="fsPrivate">Make Private:</label>
 			<select name="fsPrivate" id="fsPrivate" data-role="flipswitch">
 				<option value="0">No</option>

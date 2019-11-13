@@ -405,8 +405,8 @@ class SurveyController extends Controller
 			// Cleanup type if needed
 			if (!in_array($_POST['fsVerifiedVotingType'], $this->verifiedVotingTypes)) $_POST['fsVerifiedVotingType'] = 'gkc';
 			// Insert actual
-			$this->model->insertSurvey($newSurveyID, $this->surveyTitle, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug'], $_POST['fsVerifiedVoting'], $_POST['fsVerifiedVotingType'], $userID, $_POST['fsVerbage'], $_POST['fsStartDate'], $_POST['fsStartTime'], $_POST['fsEndDate'], $_POST['fsEndTime']);
-			$return['html'] .= 'Survey saved! Loading results...';
+			$this->model->insertSurvey($newSurveyID, $this->surveyTitle, $_POST['fsRandomOrder'], $_POST['fsPrivate'], $_SERVER['REMOTE_ADDR'], $_POST['fsCustomSlug'], $_POST['fsVerifiedVoting'], $_POST['fsVerifiedVotingType'], $userID, $_POST['fsVerbage'], $_POST['fsStartDate'], $_POST['fsStartTime'], $_POST['fsEndDate'], $_POST['fsEndTime'], $_POST['fsKioskMode'], $_POST['fsPrintVote']);
+			$return['html'] = 'Survey saved! Loading results...';
 		} else {
 			$return['error'] = 'Must provide a title';
 		}

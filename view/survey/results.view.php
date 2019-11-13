@@ -48,9 +48,11 @@ if ($this->survey) {
 				</div>
 				<div class="clear"></div>
 				<?php if ($this->survey->kioskMode) { ?>
-				<button id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button>
-				<button id="reprintVoteButton" data-inline="inline">Reprint Vote</button>
+					<button id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button>
 				<?php } ?>
+				<?php if ($this->survey->printVote) { ?>
+					<button id="reprintVoteButton" data-inline="inline">Reprint Vote</button>
+				<?php } ?>	
 			</div>
 		</div>
 		<?php } else { ?>
@@ -75,8 +77,11 @@ if ($this->survey) {
 					<button <?php if ($this->survey->verifiedVoting || ($this->survey->verbage == 'el' && $this->survey->votingWindowDirection != 'after')) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
 				</div>
 				<?php if ($this->survey->kioskMode) { ?>
-				<button class="hidden" id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button>
-				<button class="hidden" id="reprintVoteButton" data-inline="inline">Reprint Vote</button>
+					<button class="hidden" id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button>
+					
+				<?php } ?>
+				<?php if ($this->survey->printVote) { ?>
+					<button class="hidden" id="reprintVoteButton" data-inline="inline">Reprint Vote</button>
 				<?php } ?>
 			</div>
 		</div>

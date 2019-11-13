@@ -108,10 +108,13 @@ function createSurveyActual()
 		fsStartDate: $('#fsStartDate').val(),
 		fsStartTime: $('#fsStartTime').val(),
 		fsEndDate: $('#fsEndDate').val(),
-		fsEndTime: $('#fsEndTime').val()
+		fsEndTime: $('#fsEndTime').val(),
+		fsKioskMode: $('#fsKioskMode').val(),
+		fsPrintVote: $('#fsPrintVote').val(),
 	}, function(data) {
 		// Disable inputs
 		disableInputs();
+		console.log(jData); // DEBUG ONLY!!!
 		var jData = JSON.parse(data);
 		if (jData.error) {
 			//alert(jData.error);
