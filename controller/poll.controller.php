@@ -771,6 +771,7 @@ class PollController extends Controller
 		echo json_encode($return);
 	}
 
+	/* Currently disabled
 	public function ajaxtestemail()
 	{
 		if ($_POST['address'] && $_POST['pollID']) {
@@ -785,7 +786,7 @@ class PollController extends Controller
 			}
 		}
 		echo json_encode($return);
-	}
+	}*/
 	
 	private function initVoter($voterID)
 	{
