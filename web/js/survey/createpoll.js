@@ -105,10 +105,10 @@ function createPoll()
 		} else if ($('#surveySlug').val() != '') {
 			updateStatus(jData.html);
 			window.location = '/'+$('#surveySlug').val()+'/';
-		} else if (surveyID) {
+		} else if ($('#surveyID').val() != '') {
 			// Success, update status and go see poll
 			updateStatus(jData.html);
-			window.location = '/'+surveyID+'/';
+			window.location = '/'+$('#surveyID').val()+'/';
 		} else {
 			alert('ERROR: Poll seems to have saved but no ID was returned');
 			window.location = '/user/';

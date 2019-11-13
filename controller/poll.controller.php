@@ -414,9 +414,14 @@ class PollController extends Controller
 		$this->initVoter($_POST['voterID']);
 		$this->pollID = $_POST['pollID'];
 		$this->poll = $this->model->getPollByID($this->pollID);
-		$voterKeyResult = $this->model->verifyVoterKey($_POST['voterKey'], $this->pollID);
-		// Determine eligibility if necessary
-		if (($this->poll->verifiedVoting && $voterKeyResult->pollID) || $this->poll->verifiedVoting == false) {
+		// Get voter key unless we're doing email verification
+		if ($this->poll->verifiedVotingType != 'eml') {
+			$voterKeyResult = $this->model->verifyVoterKey($_POST['voterKey'], $this->pollID);
+		} else {
+			$voterKeyResult = false;
+		}
+		// Determine eligibility
+		if ($this->poll->verifiedVoting == false || ($this->poll->verifiedVoting && $this->poll->verifiedVotingType == 'eml') || ($this->poll->verifiedVoting && $voterKeyResult->pollID)) {
 			// Determine if within voting window
 			$oStart = new DateTime($this->survey->startTime);
 			if ($this->survey->endTime != null) $oEnd = new DateTime($this->survey->endTime);
@@ -438,34 +443,54 @@ class PollController extends Controller
 						// Verify no vote has been entered for this voter on this poll
 						$yourVote = $this->model->getYourVote($this->voterID, $this->pollID);
 						if (empty($yourVote)) {
-							// No vote, get the answers to make sure we have a score for each
-							$this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
-							foreach ($this->poll->answers as $answer) {
-								if (!array_key_exists($answer->answerID, $voteArray)) {
-									$voteArray[$answer->answerID] = 0;
-								}
-							}
-							foreach ($voteArray as $answerID => $vote) {
-								$this->votes[] = $vote;
-								// Insert vote
-								$voteTime = date("Y-m-d H:i:s");
-								$this->model->insertVote($this->pollID, $this->voterID, $answerID, $vote, $voteTime);
-								// Update the matrix. Maybe replace the windows with bricks?
-								foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
-									if ($answerID != $answerID2) {
-										if ($vote > $vote2) {
-											$this->model->updateVoteMatrix($this->pollID, $answerID, $answerID2);
-										} else if ($vote < $vote2) {
-											$this->model->updateVoteMatrix($this->pollID, $answerID2, $answerID);
-										} // and do nothing if they're equal
+							// No vote yet, verify this email hasn't voted if email-verified
+							if ($this->poll->verifiedVoting && $this->poll->verifiedVotingType == 'eml' && !$this->model->emailHasVoted($this->pollID, $_POST['verificationEmail']) || $this->poll->verifiedVoting && $this->poll->verifiedVotingType != 'eml' || !$this->poll->verifiedVoting) {
+								// Get the answers to make sure we have a score for each
+								$this->poll->answers = $this->model->getAnswersByPollID($this->pollID);
+								foreach ($this->poll->answers as $answer) {
+									if (!array_key_exists($answer->answerID, $voteArray)) {
+										$voteArray[$answer->answerID] = 0;
 									}
 								}
-								unset($voteArrayToDestroy[$answerID]);
-							}
-							$this->model->incrementPollVoteCount($this->pollID);
-							// If a verified vote, write extra db info
-							if ($this->poll->verifiedVoting) {
-								$this->model->updateVoterKeyEntry($_POST['voterKey'], $this->pollID, $this->voterID, $voteTime);
+								$voteTime = date("Y-m-d H:i:s");
+								foreach ($voteArray as $answerID => $vote) {
+									$this->votes[] = $vote;
+									// Insert vote
+									$this->model->insertVote($this->pollID, $this->voterID, $answerID, $vote, $voteTime);
+									// Update the matrix. Maybe replace the windows with bricks?
+									foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
+										if ($answerID != $answerID2) {
+											if ($vote > $vote2) {
+												$this->model->updateVoteMatrix($this->pollID, $answerID, $answerID2);
+											} else if ($vote < $vote2) {
+												$this->model->updateVoteMatrix($this->pollID, $answerID2, $answerID);
+											} // and do nothing if they're equal
+										}
+									}
+									unset($voteArrayToDestroy[$answerID]);
+								}
+								// Increment the poll count but only if it's not a verified-by-email poll
+								if (!$this->poll->verifiedVoting || ($this->poll->verifiedVoting && $this->poll->verifiedVotingType != 'eml')) $this->model->incrementPollVoteCount($this->pollID);
+								// If a verified vote, write extra db info
+								if ($this->poll->verifiedVoting) {
+									// Email validation gets handled differently
+									if ($this->poll->verifiedVotingType == 'eml') {
+										// Generate voter key to insert
+										$oVoter = new VoterController;
+										$oVoter->model = new VoterModel;
+										$oVoter->generateVoterKey();
+										$voterKey = $oVoter->voterID;
+										unset($oVoter);
+										// Insert "voter key" entry
+										$this->model->insertVoterEmailValidation($this->pollID, $voterKey, $this->voterID, $voteTime, $_POST['verificationEmail']);
+										// Send them the validation link/key
+										//$this->sendVoterValidationEmail();
+									} else {
+										$this->model->updateVoterKeyEntry($_POST['voterKey'], $this->pollID, $this->voterID, $voteTime);
+									}
+								}
+							} else {
+								$return['error'] = 'A vote has already been registered from your email address.';
 							}
 						} else {
 							$return['caution'] = 'Your vote had already been recorded for this poll';
@@ -689,6 +714,29 @@ class PollController extends Controller
 		}
 		echo json_encode($return);
 	}
+
+	public function verifyvote()
+	{
+		$this->status = false;
+		$this->verifyTime = false;
+		if ($this->URLdata) {
+			$this->voterKeyEntry = $this->model->voterKeyEntry($this->URLdata);
+			if (!$this->voterKeyEntry) {
+				$this->verifyTime = false;
+				$this->status['error'] = 'Key not valid';
+			} else if ($this->voterKeyEntry->verifyTime) {
+				$this->verifyTime = $this->voterKeyEntry->verifyTime;
+				$this->status['success'] = 'Vote previously verified at '.$this->verifyTime;
+			} else {
+				$this->verifyTime = $this->model->updateVoterEmailEntry($this->URLdata);
+				// Increment the poll count since this vote is now real
+				$this->model->incrementPollVoteCount($this->voterKeyEntry->pollID);
+				$this->status['success'] = 'Vote verified at '.$this->verifyTime;
+			}
+		} else {
+			$status['error'] = 'No key provided';
+		}
+	}
 	
 	private function processBallots($ballots)
 	{
@@ -722,6 +770,23 @@ class PollController extends Controller
 		$return['html'] = 'Success';
 		echo json_encode($return);
 	}
+
+	/* Currently disabled
+	public function ajaxtestemail()
+	{
+		if ($_POST['address'] && $_POST['pollID']) {
+			// Insert to-be-completed validation
+
+			$return['html'] = 'Success';
+		} else {
+			if (!$_POST['address']) {
+				$return['error'] = 'Missing Email';
+			} else {
+				$return['error'] = 'Missing Poll ID';
+			}
+		}
+		echo json_encode($return);
+	}*/
 	
 	private function initVoter($voterID)
 	{

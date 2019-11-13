@@ -81,7 +81,7 @@ class VoterController extends Controller
 		}
 	}
 	
-	private function generateVoterKey()
+	public function generateVoterKey()
 	{
 		$this->voterID = $this->generateUniqueID($this->voterKeyLength, "voterKeys", "voterKey");
 	}

@@ -227,6 +227,16 @@ class PollModel extends Model
 		}
 	}
 	
+	public function insertVoterEmailValidation($pollID, $key, $voterID, $voteTime, $email)
+	{
+		if (!empty($pollID) && !empty($key)) {
+			$this->query = "INSERT INTO `voterKeys` (`pollID`, `voterKey`, `createdTime`, `voteTime`, `voterID`, `email`, `invalid`, `verifyTime`)
+						VALUES ('".$pollID."', '".$key."', '".$voteTime."', '".$voteTime."', '".$voterID."', '".$email."', 0, NULL)";
+			// Insert
+			$this->doInsertQuery();
+		}
+	}
+
 	public function voterExists($voterID)
 	{
 		$this->query = "SELECT `voters`.`voterID`
@@ -266,6 +276,21 @@ class PollModel extends Model
 						WHERE `voters`.`ip` LIKE '$ip'
 						AND `votes`.`pollID` LIKE '$pollID'
 						AND `votes`.`voterID` LIKE `voters`.`voterID`;";
+		$this->doSelectQuery();
+		if ($this->results[0]->ct > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function emailHasVoted($pollID, $email)
+	{
+		// Implies a key exists since email otherwise not tracked
+		$this->query = "SELECT COUNT(`voterkeys`.`voterKey`) as `ct`
+						FROM `voterkeys`
+						WHERE `voterkeys`.`pollID` LIKE '$pollID'
+						AND `voterkeys`.`email` LIKE '$email';";
 		$this->doSelectQuery();
 		if ($this->results[0]->ct > 0) {
 			return true;
@@ -326,6 +351,29 @@ class PollModel extends Model
 					LIMIT 1;";
 		// Insert
 		$this->doUpdateQuery();
+	}
+
+	public function voterKeyEntry($voterKey)
+	{
+		$this->query = "SELECT `pollID`, `verifyTime`
+						FROM `voterkeys`
+						WHERE `voterKey` LIKE '".$voterKey."'
+						LIMIT 1";
+		$this->doSelectQuery();
+		return $this->results[0];
+	}
+
+	public function updateVoterEmailEntry($voterKey)
+	{
+		$verifyTime = date("Y-m-d H:i:s");
+		// Update
+		$this->query = "UPDATE `voterkeys`
+					SET `verifyTime` = '".$verifyTime."' 
+					WHERE `voterKey` LIKE '$voterKey'
+					LIMIT 1;";
+		// Insert
+		$this->doUpdateQuery();
+		return $verifyTime;
 	}
 	
 	public function getMostRecentPolls($index, $limit)
