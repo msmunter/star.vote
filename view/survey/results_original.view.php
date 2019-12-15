@@ -57,18 +57,13 @@ if ($this->survey) {
 		</div>
 		<?php } else { ?>
 		<div class="bigContainer">
-			<div class="bigContainerTitle">Election: "<?php echo $this->survey->title; ?>" (<?php echo count($this->survey->polls); ?>-Part)</div>
+			<div class="bigContainerTitle">Survey "<?php echo $this->survey->title; ?>" (<?php echo count($this->survey->polls); ?>-Part)</div>
 			<div class="bigContainerInner">
 				<?php if ($this->survey->verifiedVoting) { ?>
 					<label for="voterKey">Voter Key:</label>
 					<input id="voterKey" />
 				<?php } ?>
 				<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
-				<div class="clear"></div>
-				<div id="voterInfoInput">
-					<?php include('view/survey/voterinfoinput.view.php'); ?>
-				</div>
-				<div id="statusMsg2" class="hidden"></div>
 				<div class="clear"></div>
 				<div id="voteInput">
 					<?php include_once('view/survey/voteinput.view.php'); ?>
@@ -79,7 +74,7 @@ if ($this->survey) {
 				</div>
 				<div id="voteShowResultsButtons">
 					<button disabled="disabled" id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
-					<!-- <button <?php //if ($this->survey->verifiedVoting || ($this->survey->verbage == 'el' && $this->survey->votingWindowDirection != 'after')) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button> -->
+					<button <?php if ($this->survey->verifiedVoting || ($this->survey->verbage == 'el' && $this->survey->votingWindowDirection != 'after')) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
 				</div>
 				<?php if ($this->survey->kioskMode) { ?>
 					<button class="hidden" id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button>
@@ -92,9 +87,7 @@ if ($this->survey) {
 		</div>
 		<?php }
 	} ?>
-	<?php //if ($this->survey->verbage == 'el' && $this->survey->kioskMode == false || $this->survey->verbage != 'el' || ($this->user->userID > 0 && $this->survey->userID == $this->user->userID) || ($this->survey->verbage == 'el' && $this->survey->votingWindowDirection == 'after')) { 
-	if ($this->user->userID > 0 && $this->survey->userID == $this->user->userID) {
-	?>
+	<?php if ($this->survey->verbage == 'el' && $this->survey->kioskMode == false || $this->survey->verbage != 'el' || ($this->user->userID > 0 && $this->survey->userID == $this->user->userID) || ($this->survey->verbage == 'el' && $this->survey->votingWindowDirection == 'after')) { ?>
 		<div id="pollResults" class="bigContainer<?php if (!$this->hasVoted) echo ' hidden'; ?>">
 			<div class="bigContainerTitle">Results for "<?php echo $this->survey->title; ?>"</div>
 			<div class="bigContainerInner">
@@ -106,9 +99,14 @@ if ($this->survey) {
 		</div>
 	<?php } ?>
 	
-	<?php //if ($this->survey->kioskMode == false || $this->user->userID != 0 && $this->user->userID == $this->survey->userID) { 
-	if ($this->user->userID > 0 && $this->survey->userID == $this->user->userID) {
-	?>
+	<?php if ($this->survey->kioskMode == false || $this->user->userID != 0 && $this->user->userID == $this->survey->userID) { ?>
+		<div class="bigContainer">
+			<div class="bigContainerTitle">Share</div>
+			<div class="bigContainerInner">
+				<input type="text" id="shareURLInput" name="shareURLInput" data-mini="true" data-inline="true" value="https://<?php echo $_SERVER['SERVER_NAME']; ?>/<?php if ($this->survey->customSlug != "") {echo $this->survey->customSlug;} else echo $this->survey->surveyID; ?>/" />
+			</div>
+		</div>
+		
 		<div class="bigContainer">
 			<div class="bigContainerTitle">Runoff Matrix</div>
 			<div class="bigContainerInner">

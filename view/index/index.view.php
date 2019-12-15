@@ -1,4 +1,4 @@
-<div id="indexHeaderContainer">
+<!-- <div id="indexHeaderContainer">
 	<div id="indexHeader">
 		<a href="https://www.starvoting.us">
 			<div id="indexHeaderText">
@@ -9,41 +9,11 @@
 			</div>
 		</a>
 	</div>
-</div>
+</div> -->
 <div class="bigContainer">
-	<div class="bigContainerTitle">Create Your Own Poll</div>
+	<div class="bigContainerTitle">IPO 2020 Primary</div>
 	<div id="indexCreatePollContainer">
-		<?php include('view/poll/pollinputform.view.php'); ?>
+		<?php //include('view/poll/pollinputform.view.php'); ?>
+		<a class="ui-btn ui-btn-inline ui-mini ui-corner-all" href="/ipo2020/">Vote!</a>
 	</div>
 </div>
-
-<div class="bigContainer">
-	<div class="bigContainerTitle">Polls</div>
-	<div class="bigContainerInner">
-		<div id="pollContainer">
-			<?php include('view/poll/pollset.view.php'); ?>
-		</div>
-		<?php if (!empty($this->mostPopularPolls)) { ?>
-			<div class="center">
-				<button data-inline="true" onclick="loadMorePolls()">Load More</button>
-			</div>
-		<?php } ?>
-	</div>
-</div>
-
-<div class="bigContainer">
-	<div class="bigContainerTitle">Surveys</div>
-	<div class="bigContainerInner">
-		<div id="surveyContainer">
-			<?php include('view/survey/surveyset.view.php'); ?>
-		</div>
-		<?php if (!empty($this->mostPopularSurveys)) { ?>
-			<div class="center">
-				<button data-inline="true" onclick="loadMoreSurveys()">Load More</button>
-			</div>
-		<?php } ?>
-	</div>
-</div>
-
-<script><?php include('web/js/poll/create.js'); ?></script>
-<script><?php include('web/js/poll/history.js'); ?></script>

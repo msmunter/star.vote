@@ -73,6 +73,7 @@
 						<?php } else { ?>
 							&raquo; Dev &laquo;
 						<?php } ?>
+						 - IPO 2020 Primary
 					</a>
 				</div>
 				<?php if ($this->kioskMode && empty($this->user->userID)) {
@@ -95,9 +96,9 @@
 						<a href="/poll/create/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-plus">New</a>
 						<a href="/user/logout/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-delete">Logout</a>
 					<?php } else { ?>
-						<a href="/poll/history/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-bullets">More</a>
+						<!-- <a href="/poll/history/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-bullets">More</a>
 						<a href="https://www.starvoting.us/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-info">Learn</a>
-						<a href="/user/login/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-user">Login</a>
+						<a href="/user/login/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-user">Login</a> -->
 					<?php } ?>
 					</div>
 				<?php } ?>

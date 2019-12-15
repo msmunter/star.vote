@@ -176,6 +176,39 @@ class SurveyModel extends Model
 			return true;
 		} else return false;
 	}
+
+	public function getVoterFileMatch($fname, $lname, $street, $city, $state, $zip, $birthyear)
+	{
+		$lname = $this->escapeString($lname);
+		$street = $this->escapeString($street);
+		$city = $this->escapeString($city);
+		$state = $this->escapeString($state);
+		$zip = $this->escapeString($zip);
+		$birthyear = $this->escapeString($birthyear);
+		$this->query = "SELECT * FROM `voterfile`
+						WHERE `lname` LIKE '$lname'
+						AND `street` LIKE '$street'
+						AND `city` LIKE '$city'
+						AND `state` LIKE '$state'
+						AND `zip` = $zip
+						AND `birthyear` = $birthyear
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results[0];
+		} else return false;
+	}
+
+	public function associateVoter($voterID, $voterfileID, $phone, $email)
+	{
+		$this->query = "UPDATE `voterfile`
+						SET `voterID` = '$voterID',
+							`phone` = '$phone',
+							`email` = '$email'
+						WHERE `voterfileID` = '$voterfileID'
+						LIMIT 1;";
+		$this->doUpdateQuery();
+	}
 	
 	public function insertVote($pollID, $voterID, $answerID, $vote, $voteTime)
 	{
@@ -191,7 +224,6 @@ class SurveyModel extends Model
 							`votes` = `votes` + 1
 						WHERE `answerID` = $answerID
 						LIMIT 1;";
-		// Insert
 		$this->doUpdateQuery();
 	}
 	
@@ -202,7 +234,6 @@ class SurveyModel extends Model
 						SET `votes` = `votes` + 1
 						WHERE `surveyID` LIKE '$surveyID'
 						LIMIT 1;";
-		// Insert
 		$this->doUpdateQuery();
 	}
 	
@@ -215,7 +246,6 @@ class SurveyModel extends Model
 					AND `gtID` = $gtID
 					AND `ltID` = $ltID
 					LIMIT 1;";
-		// Insert
 		$this->doUpdateQuery();
 	}
 	
@@ -227,7 +257,6 @@ class SurveyModel extends Model
 					WHERE `voterKey` LIKE '$voterKey'
 					AND `surveyID` LIKE '$surveyID'
 					LIMIT 1;";
-		// Insert
 		$this->doUpdateQuery();
 	}
 	

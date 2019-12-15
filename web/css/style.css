@@ -143,6 +143,16 @@ div.bigContainerSubheader {
 	border: solid 2px #cccccc;
 }
 
+#statusMsg2 {
+	display: none;
+	border-radius: 7px;
+	padding: 0px 5px 0px 5px;
+	float: left;
+	border: solid 2px #a00000;
+	font-size: 15pt;
+	margin-bottom: 20px;
+}
+
 div#pollTitle {
 	font-weight: bold;
 	font-size: 14pt;
