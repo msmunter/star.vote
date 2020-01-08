@@ -7,6 +7,7 @@
 	if ($this->survey->verifiedVoting) { ?>
 		 - <a href="/survey/voterkeys/<?php echo $this->survey->surveyID; ?>/">Voter Keys</a>
 	<?php } ?>
+	- <a href="/survey/votervalidation/<?php echo $this->survey->surveyID; ?>/">Validate Voters</a>
 	</div>
 <?php } ?>
 <?php
@@ -66,7 +67,7 @@ if ($this->survey) {
 				<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
 				<div class="clear"></div>
 				<div id="voterInfoInput">
-					<?php include('view/survey/voterinfoinput.view.php'); ?>
+					<?php include_once('view/survey/voterinfoinput.view.php'); ?>
 				</div>
 				<div id="statusMsg2" class="hidden"></div>
 				<div class="clear"></div>

@@ -231,7 +231,8 @@ function popMsg(html, print)
 	wHeight = 600;
 	$.post("/", { 
 		c: 'survey', 
-		a: 'printtext', 
+		//a: 'printtext', 
+		a: 'printmailer', 
 		ajax: '1',
 		print: print,
 		html: html,

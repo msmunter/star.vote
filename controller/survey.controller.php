@@ -608,9 +608,16 @@ class SurveyController extends Controller
 							}
 							$oDate = new DateTime();	
 							$voteTime = $oDate->format("Y-m-d H:i:s");
-							// Populate an array with 
+							// IPO changes
+							$return['voteArray'] = json_encode($voteArray);
+							// Write temp vote
+							$this->model->insertTempVote($this->surveyID, $this->voter->voterID, json_encode($voteArray), $voteTime);
+							
+							// vvv For IPO, skipping this part until voter is validated vvv
+							
 							// Submit the votes and update matrices
-							foreach ($voteArray as $answerID => $vote) {
+							/*foreach ($voteArray as $answerID => $vote) {
+								
 								$this->votes[] = $vote;
 								// Determine pollID
 								$pollID = $this->answerToPollArray[$answerID];
@@ -627,12 +634,19 @@ class SurveyController extends Controller
 									}
 								}
 								unset($voteArrayToDestroy[$answerID]);
+								
 							}
-							$this->model->incrementSurveyVoteCount($this->surveyID);
+							*/
+							//$this->model->incrementSurveyVoteCount($this->surveyID); // will do on validation
+							// vvv UNUSED IN IPO vvv
 							// If a verified vote, write extra db info
-							if ($this->survey->verifiedVoting) {
+							/*if ($this->survey->verifiedVoting) {
 								$this->model->updateVoterKeyEntry($_POST['voterKey'], $this->surveyID, $this->voter->voterID, $voteTime);
-							}
+							}*/
+							// ^^^ UNUSED IN IPO ^^^
+							
+							// ^^^ For IPO, skipping this part until voter is validated ^^^
+
 							unset($voteTime, $oDate);
 						} else {
 							$return['caution'] = 'Your vote had already been recorded for this poll';
@@ -651,6 +665,11 @@ class SurveyController extends Controller
 								$this->yourVotes[$zPoll->pollID] = $existingVote;
 								if (empty($this->yourVoteTime)) $this->yourVoteTime = $existingVote[0]->voteTime;
 							}
+						}
+						$imgpath_create = 'web/images/qr_voterid/'.$this->voter->voterID.'.png';
+						if (!file_exists($imgpath_create)) {
+							include_once('utilities/phpqrcode/qrlib.php');
+							QRcode::png($this->voter->voterID, $imgpath_create);
 						}
 						$return['html'] .= $this->ajaxInclude('view/survey/yourvote.view.php');
 					} else {
@@ -810,7 +829,7 @@ class SurveyController extends Controller
 		$this->doPrintHeader = 1;
 		$this->doPrintFooter = 1;
 		$this->customCSS = "receipt";
-		if ($_POST['print']) $return['html'] = '<script type="text/javascript">setTimeout(function () { window.print(); }, 500);window.onfocus = function () { setTimeout(function () { window.close(); }, 500); }</script>';
+		//if ($_POST['print']) $return['html'] = '<script type="text/javascript">setTimeout(function () { window.print(); }, 500);window.onfocus = function () { setTimeout(function () { window.close(); }, 500); }</script>';
 		// Voter Copy
 		$return['html'] .= '<div class="receiptTitle">'.$_POST['title'].'</div><div class="receiptPageTitle">Voter Copy</div>';
 		$return['html'] .= '<div class="receiptPage">'.$_POST['html'].'</div>';
@@ -821,6 +840,20 @@ class SurveyController extends Controller
 		$return['html'] .= '<div class="receiptTitle">'.$_POST['title'].'</div><div class="receiptPageTitle inverted">Admin Copy</div>';
 		$return['html'] .= '<div class="receiptPage">'.$_POST['html'].'</div><div class="addBottomSpace" />';
 		//echo json_encode($return);
+		echo $return['html'];
+	}
+
+	public function printmailer()
+	{
+		$this->ajax = 1;
+		$this->doHeader = 0;
+		$this->doFooter = 0;
+		$this->doPrintHeader = 1;
+		$this->doPrintFooter = 1;
+		$this->customCSS = "receipt";
+		if ($_POST['print']) $return['html'] = '<script type="text/javascript">setTimeout(function () { window.print(); }, 500);window.onfocus = function () { setTimeout(function () { window.close(); }, 500); }</script>';
+		$return['html'] .= '<div class="receiptTitle">'.$_POST['title'].'</div><div class="receiptPageTitle inverted">Mail In Copy</div>';
+		$return['html'] .= '<div class="receiptPage">'.$_POST['html'].'</div><div class="addBottomSpace" />';
 		echo $return['html'];
 	}
 	
@@ -835,6 +868,85 @@ class SurveyController extends Controller
 		$this->title = "Print Vote Record";
 		echo 'Will be printing the vote record here.';
 	}*/
+
+	public function votervalidation()
+	{
+		$this->title = 'Voter Validation';
+		if ($this->URLdata) {
+			$this->survey = $this->model->getSurveyByID($this->URLdata);
+			$this->voterVerifiedCount = $this->model->getVerifiedVoterCount($this->survey->surveyID);
+			//$this->voterCount = $this->model->getVoterCount($this->survey->surveyID);
+			$this->voterCount = $this->model->getTempVoterCount($this->survey->surveyID);
+		}
+	}
+
+	public function ajaxvalidatevoter()
+	{
+		$this->ajax = 1;
+		$this->doHeader = 0;
+		$this->doFooter = 0;
+		$this->survey = $this->model->getSurveyByID($_POST['surveyID']);
+		if ($this->survey) {
+			$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
+			$mPoll = new PollModel();
+			foreach ($this->survey->polls as $poll) {
+				$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
+			}
+			unset($mPoll);
+			foreach ($this->survey->polls as $xPoll) {
+				foreach ($xPoll->answers as $xAnswer) {
+					$this->answerToPollArray[$xAnswer->answerID] = $xPoll->pollID;
+				}
+			}
+			$validateResult = false;
+			if ($_POST['voterID']) {
+				$voterfileExists = $this->model->voterfileExists($this->survey->surveyID, $_POST['voterID']);
+				if ($voterfileExists) {
+					$voterAlreadyVerified = $this->model->voterAlreadyVerified($this->survey->surveyID, $_POST['voterID']);
+					if (!$voterAlreadyVerified) {
+						$oDate = new DateTime();	
+						$validateTime = $oDate->format("Y-m-d H:i:s");
+						$validateResult = $this->model->validatevoter($this->survey->surveyID, $_POST['voterID'], $validateTime);
+						$return['voterID'] = $_POST['voterID'];
+						$return['voterVerifiedCount'] = $this->model->getVerifiedVoterCount($this->survey->surveyID);
+						$return['voterCount'] = $this->model->getVoterCount($this->survey->surveyID);
+						// Input the votes from the temp table
+						$tempVoteResult = $this->model->getTempVote($_POST['surveyID'], $_POST['voterID']);
+						$voteArray = json_decode($tempVoteResult->voteJson, true);
+						$voteArrayToDestroy = $voteArray;
+						$voteTime = $tempVoteResult->voteTime;
+						foreach ($voteArray as $answerID => $vote) {
+							$this->votes[] = $vote;
+							// Determine pollID
+							$pollID = $this->answerToPollArray[$answerID];
+							$this->model->insertVote($pollID, $_POST['voterID'], $answerID, $vote, $voteTime);
+							// Update the matrix; maybe replace the windows with bricks?
+							foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
+								if ($answerID != $answerID2) {
+									if ($vote > $vote2) {
+										$this->model->updateVoteMatrix($pollID, $answerID, $answerID2);
+									} else if ($vote < $vote2) {
+										$this->model->updateVoteMatrix($pollID, $answerID2, $answerID);
+									} // and do nothing if they're equal
+								}
+							}
+							unset($voteArrayToDestroy[$answerID]);
+						}
+						$this->model->incrementSurveyVoteCount($this->surveyID);
+						//$this->model->deleteTempVote($_POST['surveyID'], $_POST['voterID']);
+						$this->model->validateTempVote($_POST['surveyID'], $_POST['voterID'], $validateTime);
+					} else {
+						$return['error'] = 'Voter already validated';
+					}
+				} else {
+					$return['error'] = 'Voter not found';
+				}
+			}
+		} else {
+			$return['error'] = 'Survey not found';
+		}
+		echo json_encode($return);
+	}
 	
 	private function generateUniqueID($length, $table, $column)
 	{

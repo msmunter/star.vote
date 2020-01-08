@@ -209,6 +209,110 @@ class SurveyModel extends Model
 						LIMIT 1;";
 		$this->doUpdateQuery();
 	}
+
+	public function getVoterCount($surveyID)
+	{
+		$this->query = "SELECT COUNT(*) AS `count` FROM `voterfile`
+						WHERE `surveyID` LIKE '$surveyID';";
+		$this->doSelectQuery();
+		return $this->results[0]->count;
+	}
+
+	public function getVerifiedVoterCount($surveyID)
+	{
+		$this->query = "SELECT COUNT(*) AS `count` FROM `voterfile`
+						WHERE `verified` IS NOT NULL
+						AND `surveyID` LIKE '$surveyID';";
+		$this->doSelectQuery();
+		return $this->results[0]->count;
+	}
+
+	public function voterfileExists($surveyID, $voterID)
+	{
+		$this->query = "SELECT COUNT(*) AS `count` FROM `voterfile`
+						WHERE `surveyID` LIKE '$surveyID'
+						AND `voterID` LIKE '$voterID'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if ($this->results[0]->count > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	public function voterAlreadyVerified($surveyID, $voterID)
+	{
+		$this->query = "SELECT `verified` FROM `voterfile`
+						WHERE `surveyID` LIKE '$surveyID'
+						AND `voterID` LIKE '$voterID'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			if ($this->results[0]->verified) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public function validateVoter($surveyID, $voterID, $validateTime)
+	{
+		$this->query = "UPDATE `voterfile`
+						SET `verified` = '$validateTime'
+						WHERE `surveyID` LIKE '$surveyID'
+						AND `voterID` LIKE '$voterID'
+						LIMIT 1;";
+		$this->doUpdateQuery();
+		return true;
+	}
+
+	public function getTempVoterCount($surveyID)
+	{
+		$this->query = "SELECT COUNT(*) AS `count` FROM `tempvotes`
+						WHERE `surveyID` LIKE '$surveyID';";
+		$this->doSelectQuery();
+		return $this->results[0]->count;
+	}
+
+	public function getTempVote($surveyID, $voterID)
+	{
+		$this->query = "SELECT * FROM `tempvotes`
+						WHERE `voterID` LIKE '$voterID'
+						AND `surveyID` LIKE '$surveyID'
+						LIMIT 0,1";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results[0];
+		} else {
+			return false;
+		}
+	}
+
+	public function insertTempVote($surveyID, $voterID, $voteJson, $voteTime)
+	{
+		$this->query = "INSERT INTO `tempvotes` (`surveyID`, `voterID`, `voteJson`, `voteTime`)
+							VALUES ('".$surveyID."', '".$voterID."', '".$voteJson."', '".$voteTime."')";
+		$this->doInsertQuery();
+	}
+
+	// public function deleteTempVote($surveyID, $voterID)
+	// {
+	// 	$this->query = "DELETE FROM `tempvotes`
+	// 					WHERE `voterID` LIKE '$voterID'
+	// 					AND `surveyID` LIKE '$surveyID'
+	// 					LIMIT 1";
+	// 	$this->doSelectQuery();
+	// }
+
+	public function validateTempVote($surveyID, $voterID, $validateTime)
+	{
+		$this->query = "UPDATE `tempvotes`
+						SET `validateTime` = '$validateTime'
+						WHERE `surveyID` LIKE '$surveyID'
+						AND `voterID` LIKE '$voterID'
+						LIMIT 1;";
+		$this->doUpdateQuery();
+	}
 	
 	public function insertVote($pollID, $voterID, $answerID, $vote, $voteTime)
 	{
