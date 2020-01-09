@@ -274,6 +274,23 @@ class SurveyModel extends Model
 		return $this->results[0]->count;
 	}
 
+	// public function getYourVote($voterID, $pollID)
+	// {
+	// 	$this->query = "SELECT `votes`.`answerID`, `votes`.`vote`, `answers`.`text`, `votes`.`voteTime`
+	// 					FROM `votes`, `answers`
+	// 					WHERE `votes`.`pollID` LIKE '$pollID'
+	// 					AND `votes`.`voterID` LIKE '$voterID'
+	// 					AND `answers`.`answerID` LIKE `votes`.`answerID`
+	// 					ORDER BY `votes`.`vote` DESC;";
+	// 	$this->doSelectQuery();
+	// 	return $this->results;
+	// }
+
+	public function getPollQuestions($pollID)
+	{
+
+	}
+
 	public function getTempVote($surveyID, $voterID)
 	{
 		$this->query = "SELECT * FROM `tempvotes`

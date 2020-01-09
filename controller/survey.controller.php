@@ -659,13 +659,15 @@ class SurveyController extends Controller
 							$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
 						}
 						unset($mPoll);
-						foreach ($this->survey->polls as $zPoll) {
-							$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
-							if (count($existingVote) > 0 && $existingVote[0]->answerID != '') {
-								$this->yourVotes[$zPoll->pollID] = $existingVote;
-								if (empty($this->yourVoteTime)) $this->yourVoteTime = $existingVote[0]->voteTime;
-							}
-						}
+
+						// foreach ($this->survey->polls as $zPoll) {
+						// 	$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
+						// 	if (count($existingVote) > 0 && $existingVote[0]->answerID != '') {
+						// 		$this->yourVotes[$zPoll->pollID] = $existingVote;
+						// 	}
+						// }
+						$this->yourVoteTime = $voteTime;
+						$this->voteArray = $voteArray;
 						$imgpath_create = 'web/images/qr_voterid/'.$this->voter->voterID.'.png';
 						if (!file_exists($imgpath_create)) {
 							include_once('utilities/phpqrcode/qrlib.php');
