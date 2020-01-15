@@ -911,7 +911,8 @@ class SurveyController extends Controller
 						$validateResult = $this->model->validatevoter($this->survey->surveyID, $_POST['voterID'], $validateTime);
 						$return['voterID'] = $_POST['voterID'];
 						$return['voterVerifiedCount'] = $this->model->getVerifiedVoterCount($this->survey->surveyID);
-						$return['voterCount'] = $this->model->getVoterCount($this->survey->surveyID);
+						//$return['voterCount'] = $this->model->getVoterCount($this->survey->surveyID);
+						$return['voterCount'] = $this->model->getTempVoterCount($this->survey->surveyID);
 						// Input the votes from the temp table
 						$tempVoteResult = $this->model->getTempVote($_POST['surveyID'], $_POST['voterID']);
 						$voteArray = json_decode($tempVoteResult->voteJson, true);
@@ -949,6 +950,28 @@ class SurveyController extends Controller
 		}
 		echo json_encode($return);
 	}
+
+	public function uploadvoterfile()
+	{
+		$this->title = "Upload Voter File";
+		$this->survey = $this->model->getSurveyByID($this->URLdata);
+	}
+
+	// public function ajaxuploadvoterfile()
+	// {
+	// 	$this->ajax = 1;
+	// 	$this->doHeader = 0;
+	// 	$this->doFooter = 0;
+	// 	$this->model = ;
+	// 	$this->survey = $this->model->getSurveyByID($_POST['surveyID']);
+	// 	if ($this->survey) {
+
+	// 		$return['status'] = 'Success';
+	// 	} else {
+	// 		$return['error'] = 'Survey not found';
+	// 	}
+	// 	echo json_encode($return);
+	// }
 	
 	private function generateUniqueID($length, $table, $column)
 	{
