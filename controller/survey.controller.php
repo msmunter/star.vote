@@ -48,11 +48,11 @@ class SurveyController extends Controller
 								if (empty($this->yourVoteTime)) $this->yourVoteTime = $existingVote[0]->voteTime;
 							}
 						}
-						// Get ident image
-						$this->identImage = $this->model->getIdentImage($this->survey->surveyID, $this->voter->voterID);
 						if (!empty($this->yourVotes)) {
 							$this->hasVoted = true;
 						} else $this->hasVoted = false;
+						// Get ident image
+						$this->identImage = $this->model->getIdentImage($this->survey->surveyID, $this->voter->voterID);
 						// Timey wimey stuff
 						$this->setupTimes();
 						// Get answers and voter counts, then populate and copy
@@ -539,6 +539,7 @@ class SurveyController extends Controller
 
 	public function ajaxuploadidentimage()
 	{
+		$return['error'] = false;
 		if ($_POST['surveyID'] && $_POST['voterID'] && $_POST['cdnHandle']) {
 			$this->model->insertIdentImage($_POST['surveyID'], $_POST['voterID'], $_POST['cdnHandle']);
 		} else {

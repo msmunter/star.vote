@@ -219,32 +219,38 @@ function voteActual()
 	});
 }
 
+function disableUploadButton()
+{
+	$('#uploadIdentImageButton').prop("disabled", true);
+}
+
+function enableUploadButton()
+{
+	$('#uploadIdentImageButton').prop("disabled", false);
+}
+
 function uploadIdentImage()
 {
 	$.getScript('https://static.filestackapi.com/filestack-js/3.x.x/filestack.min.js', function() {
+		var voterID = getCookie('voterID');
 		const fsClient = filestack.init('AgR2nmPs2QcGSWGwWcmNTz');
 		const options = {
-			onUploadDone: res => {
-				console.log('Upload done -- res:'); // DEBUG ONLY!!!
-				console.log(res); // DEBUG ONLY!!!
+			onUploadDone: (res) => {
 				$.post("/", { 
 					c: 'survey', 
 					a: 'ajaxuploadidentimage', 
 					ajax: '1',
-					voterID: getCookie('voterID'),
+					voterID: voterID,
 					surveyID: $('#surveyID').val(),
 					cdnHandle: res.filesUploaded[0].handle,
 				}, function(data) {
-					//console.log(data); // DEBUG ONLY!!!
 					var jData = JSON.parse(data);
 					if (jData.error) {
 						updateStatus("ERROR: "+jData.error);
-						//enableUploadButton();
+						enableUploadButton();
 					} else {
-						//hideUploadButton();
-						console.log('URL: '+res.filesUploaded[0].url); // DEBUG ONLY!!!
+						disableUploadButton();
 						$('#identImagePreview').attr('src', res.filesUploaded[0].url);
-						updateStatus("Image saved");
 					}
 				});
 			},
