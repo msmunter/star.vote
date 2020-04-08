@@ -48,6 +48,8 @@ class SurveyController extends Controller
 								if (empty($this->yourVoteTime)) $this->yourVoteTime = $existingVote[0]->voteTime;
 							}
 						}
+						// Get ident image
+						$this->identImage = $this->model->getIdentImage($this->survey->surveyID, $this->voter->voterID);
 						if (!empty($this->yourVotes)) {
 							$this->hasVoted = true;
 						} else $this->hasVoted = false;
@@ -532,6 +534,16 @@ class SurveyController extends Controller
 			$return['returncode'] = '0';
 		}
 		
+		echo json_encode($return);
+	}
+
+	public function ajaxuploadidentimage()
+	{
+		if ($_POST['surveyID'] && $_POST['voterID'] && $_POST['cdnHandle']) {
+			$this->model->insertIdentImage($_POST['surveyID'], $_POST['voterID'], $_POST['cdnHandle']);
+		} else {
+			$return['error'] = 'Missing metadata';
+		}
 		echo json_encode($return);
 	}
 	

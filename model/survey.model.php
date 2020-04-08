@@ -291,6 +291,27 @@ class SurveyModel extends Model
 
 	}
 
+	public function getIdentImage($surveyID, $voterID)
+	{
+		$this->query = "SELECT `cdnHandle`, `state` FROM `voteridentimages`
+						WHERE `surveyID` LIKE '$surveyID'
+						AND `voterID` LIKE '$voterID'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results[0];
+		} else {
+			return false;
+		}
+	}
+
+	public function insertIdentImage($surveyID, $voterID, $cdnHandle)
+	{
+		$this->query = "INSERT INTO `voteridentimages` (`surveyID`, `voterID`, `cdnHandle`, `state`)
+							VALUES ('".$surveyID."', '".$voterID."', '".$cdnHandle."', 'new')";
+		$this->doInsertQuery();
+	}
+
 	public function getTempVote($surveyID, $voterID)
 	{
 		$this->query = "SELECT * FROM `tempvotes`

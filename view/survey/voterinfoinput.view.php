@@ -46,4 +46,16 @@
 		<!-- <input type="email" data-clear-btn="true" id="email" name="email" required="1" value="dude@mail.com"></input> -->
 		<input type="email" data-clear-btn="true" id="email" name="email" required="1"></input>
 	</div>
+	<div class="ui-field-contain">
+		<label for="identImageContainer">Identifying Image:</label>
+		<div id="identImageContainer">
+			<?php if ($this->identImage) { ?>
+				<img id="identImagePreview" src="https://cdn.filestackcontent.com/<?php echo $this->identImage->cdnHandle; ?>" alt="Identifying Image Preview" />
+			<?php } else { ?>
+				<img id="identImagePreview" src="/web/images/img_placeholder.svg" alt="Identifying Image Preview" />
+				<button id="uploadIdentImageButton" data-inline="inline" onclick="uploadIdentImage()">Add Image</button>
+			<?php } ?>
+		</div>
+	</div>
+	
 <?php } ?>

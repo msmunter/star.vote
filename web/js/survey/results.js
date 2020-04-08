@@ -212,10 +212,46 @@ function voteActual()
 			showResults();
 			// Show reset voter button
 			if ($('#resetVoterButton').length > 0) $('#resetVoterButton').show();
-			if ($('#reprintVoteButton').length > 0) $('#reprintVoteButton').show();
+			//if ($('#reprintVoteButton').length > 0) $('#reprintVoteButton').show();
 			// Print results
-			popMsg(ballotText, 1);
+			//popMsg(ballotText, 1);
 		}
+	});
+}
+
+function uploadIdentImage()
+{
+	$.getScript('https://static.filestackapi.com/filestack-js/3.x.x/filestack.min.js', function() {
+		const fsClient = filestack.init('AgR2nmPs2QcGSWGwWcmNTz');
+		const options = {
+			onUploadDone: res => {
+				console.log('Upload done -- res:'); // DEBUG ONLY!!!
+				console.log(res); // DEBUG ONLY!!!
+				$.post("/", { 
+					c: 'survey', 
+					a: 'ajaxuploadidentimage', 
+					ajax: '1',
+					voterID: getCookie('voterID'),
+					surveyID: $('#surveyID').val(),
+					cdnHandle: res.filesUploaded[0].handle,
+				}, function(data) {
+					//console.log(data); // DEBUG ONLY!!!
+					var jData = JSON.parse(data);
+					if (jData.error) {
+						updateStatus("ERROR: "+jData.error);
+						//enableUploadButton();
+					} else {
+						//hideUploadButton();
+						console.log('URL: '+res.filesUploaded[0].url); // DEBUG ONLY!!!
+						$('#identImagePreview').attr('src', res.filesUploaded[0].url);
+						updateStatus("Image saved");
+					}
+				});
+			},
+			accept: ["image/*"],
+			// imageMin: [600, 800],
+		};
+		fsClient.picker(options).open();
 	});
 }
 

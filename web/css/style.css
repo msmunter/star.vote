@@ -377,6 +377,16 @@ div#voteInstructions ul {
 	padding-left: 1.5em;
 }
 
+/* Image Uploader */
+
+img#identImagePreview {
+	/*cursor: pointer;*/
+	width: 100px;
+	height: 100px;
+}
+
+/* END Image Uploader */
+
 div.yourPollMsg {
 	font-size: 14px;
 	background-color: #38C;
