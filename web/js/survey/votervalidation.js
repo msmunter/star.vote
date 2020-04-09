@@ -1,5 +1,6 @@
 $(document).ready(function() {
-	$('#voterID').select();
+	//$('#voterID').select();
+	$('.validateVoterButtons').prop("disabled", true);
 });
 
 function updateStatus(msg)
@@ -16,15 +17,22 @@ function clearStatus()
 	});
 }
 
-function validatevoter()
+function loadvalidation()
 {
-	$('#validateVoterButton').prop("disabled", true);
+	alert('Soon.');
+}
+
+function validatevoter(accept, reason)
+{
+	$('.validateVoterButtons').prop("disabled", true);
 	$.post("/", { 
 		c: 'survey', 
 		a: 'ajaxvalidatevoter', 
 		ajax: '1',
 		surveyID: $('#surveyID').val(),
-		voterID: $('#voterID').val()
+		voterID: $('#voterID').val(),
+		accept: accept,
+		reason: reason,
 	}, function(data) {
 		var jData = JSON.parse(data);
 		if (jData.error) {
@@ -34,7 +42,7 @@ function validatevoter()
 			$('#voterVerifiedCount').html(jData.voterVerifiedCount);
 			$('#voterCount').html(jData.voterCount);
 		}
-		$('#validateVoterButton').prop("disabled", false);
+		$('.validateVoterButtons').prop("disabled", false);
 		$('#voterID').select();
 	});
 }

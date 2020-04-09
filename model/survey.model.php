@@ -351,6 +351,19 @@ class SurveyModel extends Model
 						LIMIT 1;";
 		$this->doUpdateQuery();
 	}
+
+	public function userCanValidate($userID, $surveyID)
+	{
+		$this->query = "SELECT COUNT(*) AS `count` FROM `usersurveyvalauth`
+						WHERE `userID` LIKE '$userID'
+						AND `surveyID` LIKE '$surveyID';";
+		$this->doSelectQuery();
+		if ($this->results[0]->count > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	public function insertVote($pollID, $voterID, $answerID, $vote, $voteTime)
 	{

@@ -387,6 +387,46 @@ img#identImagePreview {
 
 /* END Image Uploader */
 
+table#validateVoterButtonTable {
+	/*width: 100%;*/
+}
+
+table#validateVoterButtonTable td {
+	vertical-align: middle;
+	text-align: center;
+}
+
+td.verticalSpacer {
+	width: 10px;
+}
+
+td.verticalSpacer.border {
+	border-right: dashed 1px darkgray;
+}
+
+.validateVoterButtons {
+
+}
+
+td.spacerRow {
+	height: 20px;
+}
+
+table#validateVoterTable td {
+	vertical-align: top;
+}
+
+td#verifiedVoterStatCell {
+	border: solid 1px navy;
+	border-radius: 7px;
+	font-weight: bold;
+}
+
+td#verifiedVoterStatCell {
+	text-align: center;
+	margin-bottom: 20px;
+}
+
 div.yourPollMsg {
 	font-size: 14px;
 	background-color: #38C;

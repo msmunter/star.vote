@@ -887,11 +887,18 @@ class SurveyController extends Controller
 	public function votervalidation()
 	{
 		$this->title = 'Voter Validation';
-		if ($this->URLdata) {
-			$this->survey = $this->model->getSurveyByID($this->URLdata);
-			$this->voterVerifiedCount = $this->model->getVerifiedVoterCount($this->survey->surveyID);
-			//$this->voterCount = $this->model->getVoterCount($this->survey->surveyID);
-			$this->voterCount = $this->model->getTempVoterCount($this->survey->surveyID);
+		if ($this->user->userID == 1) {
+			$this->userCanValidate = true;
+		} else {
+			$this->userCanValidate = $this->model->userCanValidate($this->user->userID, $this->survey->surveyID);
+		}
+		if ($this->userCanValidate) {
+			if ($this->URLdata) {
+				$this->survey = $this->model->getSurveyByID($this->URLdata);
+				$this->voterVerifiedCount = $this->model->getVerifiedVoterCount($this->survey->surveyID);
+				//$this->voterCount = $this->model->getVoterCount($this->survey->surveyID);
+				$this->voterCount = $this->model->getTempVoterCount($this->survey->surveyID);
+			}
 		}
 	}
 
@@ -902,61 +909,70 @@ class SurveyController extends Controller
 		$this->doFooter = 0;
 		$this->survey = $this->model->getSurveyByID($_POST['surveyID']);
 		if ($this->survey) {
-			$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
-			$mPoll = new PollModel();
-			foreach ($this->survey->polls as $poll) {
-				$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
+			if ($this->user->userID == 1) {
+				$this->userCanValidate = true;
+			} else {
+				$this->userCanValidate = $this->model->userCanValidate($this->user->userID, $this->survey->surveyID);
 			}
-			unset($mPoll);
-			foreach ($this->survey->polls as $xPoll) {
-				foreach ($xPoll->answers as $xAnswer) {
-					$this->answerToPollArray[$xAnswer->answerID] = $xPoll->pollID;
+			if ($this->userCanValidate) {
+				$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
+				$mPoll = new PollModel();
+				foreach ($this->survey->polls as $poll) {
+					$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
 				}
-			}
-			$validateResult = false;
-			if ($_POST['voterID']) {
-				$voterfileExists = $this->model->voterfileExists($this->survey->surveyID, $_POST['voterID']);
-				if ($voterfileExists) {
-					$voterAlreadyVerified = $this->model->voterAlreadyVerified($this->survey->surveyID, $_POST['voterID']);
-					if (!$voterAlreadyVerified) {
-						$oDate = new DateTime();	
-						$validateTime = $oDate->format("Y-m-d H:i:s");
-						$validateResult = $this->model->validatevoter($this->survey->surveyID, $_POST['voterID'], $validateTime);
-						$return['voterID'] = $_POST['voterID'];
-						$return['voterVerifiedCount'] = $this->model->getVerifiedVoterCount($this->survey->surveyID);
-						//$return['voterCount'] = $this->model->getVoterCount($this->survey->surveyID);
-						$return['voterCount'] = $this->model->getTempVoterCount($this->survey->surveyID);
-						// Input the votes from the temp table
-						$tempVoteResult = $this->model->getTempVote($_POST['surveyID'], $_POST['voterID']);
-						$voteArray = json_decode($tempVoteResult->voteJson, true);
-						$voteArrayToDestroy = $voteArray;
-						$voteTime = $tempVoteResult->voteTime;
-						foreach ($voteArray as $answerID => $vote) {
-							$this->votes[] = $vote;
-							// Determine pollID
-							$pollID = $this->answerToPollArray[$answerID];
-							$this->model->insertVote($pollID, $_POST['voterID'], $answerID, $vote, $voteTime);
-							// Update the matrix; maybe replace the windows with bricks?
-							foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
-								if ($answerID != $answerID2) {
-									if ($vote > $vote2) {
-										$this->model->updateVoteMatrix($pollID, $answerID, $answerID2);
-									} else if ($vote < $vote2) {
-										$this->model->updateVoteMatrix($pollID, $answerID2, $answerID);
-									} // and do nothing if they're equal
-								}
-							}
-							unset($voteArrayToDestroy[$answerID]);
-						}
-						$this->model->incrementSurveyVoteCount($this->surveyID);
-						//$this->model->deleteTempVote($_POST['surveyID'], $_POST['voterID']);
-						$this->model->validateTempVote($_POST['surveyID'], $_POST['voterID'], $validateTime);
-					} else {
-						$return['error'] = 'Voter already validated';
+				unset($mPoll);
+				foreach ($this->survey->polls as $xPoll) {
+					foreach ($xPoll->answers as $xAnswer) {
+						$this->answerToPollArray[$xAnswer->answerID] = $xPoll->pollID;
 					}
-				} else {
-					$return['error'] = 'Voter not found';
 				}
+				$validateResult = false;
+				if ($_POST['voterID']) {
+					$voterfileExists = $this->model->voterfileExists($this->survey->surveyID, $_POST['voterID']);
+					if ($voterfileExists) {
+						$voterAlreadyVerified = $this->model->voterAlreadyVerified($this->survey->surveyID, $_POST['voterID']);
+						if (!$voterAlreadyVerified) {
+							$oDate = new DateTime();	
+							$validateTime = $oDate->format("Y-m-d H:i:s");
+							$validateResult = $this->model->validatevoter($this->survey->surveyID, $_POST['voterID'], $validateTime);
+							$return['voterID'] = $_POST['voterID'];
+							$return['voterVerifiedCount'] = $this->model->getVerifiedVoterCount($this->survey->surveyID);
+							//$return['voterCount'] = $this->model->getVoterCount($this->survey->surveyID);
+							$return['voterCount'] = $this->model->getTempVoterCount($this->survey->surveyID);
+							// Input the votes from the temp table
+							$tempVoteResult = $this->model->getTempVote($_POST['surveyID'], $_POST['voterID']);
+							$voteArray = json_decode($tempVoteResult->voteJson, true);
+							$voteArrayToDestroy = $voteArray;
+							$voteTime = $tempVoteResult->voteTime;
+							foreach ($voteArray as $answerID => $vote) {
+								$this->votes[] = $vote;
+								// Determine pollID
+								$pollID = $this->answerToPollArray[$answerID];
+								$this->model->insertVote($pollID, $_POST['voterID'], $answerID, $vote, $voteTime);
+								// Update the matrix; maybe replace the windows with bricks?
+								foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
+									if ($answerID != $answerID2) {
+										if ($vote > $vote2) {
+											$this->model->updateVoteMatrix($pollID, $answerID, $answerID2);
+										} else if ($vote < $vote2) {
+											$this->model->updateVoteMatrix($pollID, $answerID2, $answerID);
+										} // and do nothing if they're equal
+									}
+								}
+								unset($voteArrayToDestroy[$answerID]);
+							}
+							$this->model->incrementSurveyVoteCount($this->surveyID);
+							//$this->model->deleteTempVote($_POST['surveyID'], $_POST['voterID']);
+							$this->model->validateTempVote($_POST['surveyID'], $_POST['voterID'], $validateTime);
+						} else {
+							$return['error'] = 'Voter already validated';
+						}
+					} else {
+						$return['error'] = 'Voter not found';
+					}
+				}
+			} else {
+				$return['error'] = 'Not authorized to validate votes';
 			}
 		} else {
 			$return['error'] = 'Survey not found';
