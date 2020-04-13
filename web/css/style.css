@@ -404,8 +404,23 @@ td.verticalSpacer.border {
 	border-right: dashed 1px darkgray;
 }
 
-.validateVoterButtons {
+table#validationComparisonTable {
 
+}
+
+td#validationInfo {
+	width:1%;
+    white-space:nowrap;
+}
+
+td#validationComparisonImageCell {
+
+}
+
+img#validationImg {
+	max-width: 800px;
+	max-height: 800px;
+	object-fit: contain;
 }
 
 td.spacerRow {

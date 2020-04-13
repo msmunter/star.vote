@@ -52,7 +52,7 @@ class SurveyController extends Controller
 							$this->hasVoted = true;
 						} else $this->hasVoted = false;
 						// Get ident image
-						$this->identImage = $this->model->getIdentImage($this->survey->surveyID, $this->voter->voterID);
+						$this->identImage = $this->model->getIdent($this->survey->surveyID, $this->voter->voterID);
 						// Timey wimey stuff
 						$this->setupTimes();
 						// Get answers and voter counts, then populate and copy
@@ -625,6 +625,7 @@ class SurveyController extends Controller
 							$return['voteArray'] = json_encode($voteArray);
 							// Write temp vote
 							$this->model->insertTempVote($this->surveyID, $this->voter->voterID, json_encode($voteArray), $voteTime);
+							$this->model->updateVoterState('voted');
 							
 							// vvv For IPO, skipping this part until voter is validated vvv
 							
@@ -902,6 +903,39 @@ class SurveyController extends Controller
 		}
 	}
 
+	public function ajaxloadvoterval()
+	{
+		$this->ajax = 1;
+		$this->doHeader = 0;
+		$this->doFooter = 0;
+		$this->survey = $this->model->getSurveyByID($_POST['surveyID']);
+		$return['cdnHandle'] = false;
+		if ($this->survey) {
+			if ($this->user->userID == 1) {
+				$this->userCanValidate = true;
+			} else {
+				$this->userCanValidate = $this->model->userCanValidate($this->user->userID, $this->survey->surveyID);
+			}
+			if ($this->userCanValidate) {
+				$voterToValidate = $this->model->getVoterToValidate($this->survey->surveyID);
+				if ($voterToValidate) {
+					$ident = $this->model->getIdent($this->survey->surveyID, $voterToValidate->voterID);
+					$voterfileInfo = $this->model->getVoterfileByID($voterToValidate->voterfileID);
+					$return['cdnHandle'] = $ident->cdnHandle;
+					$return['voterName'] = $voterfileInfo->fname.' '.$voterfileInfo->lname;
+					$return['voterAddress'] = $voterfileInfo->street;
+					if ($voterfileInfo->street2) $return['voterAddress'] .= $voterfileInfo->street2;
+					$return['voterCSZ'] = $voterfileInfo->city.', '.$voterfileInfo->state.' '.$voterfileInfo->zip;
+					$return['voterVerifiedCount'] = $this->model->getVerifiedVoterCount($this->survey->surveyID);
+					$return['voterCount'] = $this->model->getTempVoterCount($this->survey->surveyID);
+				}
+			}
+		} else {
+			$return['error'] = 'Survey not found';
+		}
+		echo json_encode($return);
+	}
+
 	public function ajaxvalidatevoter()
 	{
 		$this->ajax = 1;
@@ -975,7 +1009,7 @@ class SurveyController extends Controller
 				$return['error'] = 'Not authorized to validate votes';
 			}
 		} else {
-			$return['error'] = 'Survey not found';
+			$return['error'] = 'Election not found';
 		}
 		echo json_encode($return);
 	}

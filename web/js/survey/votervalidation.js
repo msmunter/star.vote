@@ -19,7 +19,32 @@ function clearStatus()
 
 function loadvalidation()
 {
-	alert('Soon.');
+	$('#loadValidationButton').prop("disabled", true);
+	$.post("/", { 
+		c: 'survey', 
+		a: 'ajaxloadvoterval', 
+		ajax: '1',
+		surveyID: $('#surveyID').val(),
+	}, function(data) {
+		var jData = JSON.parse(data);
+		if (jData.error) {
+			updateStatus("ERROR: "+jData.error);
+		} else if (!jData.cdnHandle) {
+			updateStatus('No voters to process');
+			$('#loadValidationButton').prop("disabled", false);
+		} else {
+			console.log(jData);
+			//updateStatus("SUCCESS: Voter "+jData.voterID+" validated")
+			$('#validationComparisonTableName').html(jData.voterName);
+			$('#validationComparisonTableAddress').html(jData.voterAddress);
+			$('#validationComparisonTableCSZ').html(jData.voterCSZ);
+			$('#voterVerifiedCount').html(jData.voterVerifiedCount);
+			$('#voterCount').html(jData.voterCount);
+			$('#validationImg').attr('src', 'https://cdn.filestackcontent.com/'+jData.cdnHandle);
+			$('#validationImgHref').attr('href', 'https://cdn.filestackcontent.com/'+jData.cdnHandle);
+			$('.validateVoterButtons').prop("disabled", false);
+		}
+	});
 }
 
 function validatevoter(accept, reason)
@@ -34,6 +59,7 @@ function validatevoter(accept, reason)
 		accept: accept,
 		reason: reason,
 	}, function(data) {
+		console.log(data); // DEBUG ONLY!!!	
 		var jData = JSON.parse(data);
 		if (jData.error) {
 			updateStatus("ERROR: "+jData.error);

@@ -177,6 +177,17 @@ class SurveyModel extends Model
 		} else return false;
 	}
 
+	public function getVoterfileByID($voterfileID)
+	{
+		$this->query = "SELECT * FROM `voterfile`
+						WHERE `voterfileID` = '$voterfileID'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results[0];
+		} else return false;
+	}
+
 	public function getVoterFileMatch($fname, $lname, $street, $city, $state, $zip, $birthyear)
 	{
 		$lname = $this->escapeString($lname);
@@ -201,11 +212,11 @@ class SurveyModel extends Model
 
 	public function associateVoter($voterID, $voterfileID, $phone, $email)
 	{
-		$this->query = "UPDATE `voterfile`
-						SET `voterID` = '$voterID',
+		$this->query = "UPDATE `voters`
+						SET `voterfileID` = '$voterfileID',
 							`phone` = '$phone',
 							`email` = '$email'
-						WHERE `voterfileID` = '$voterfileID'
+						WHERE `voterID` = '$voterID'
 						LIMIT 1;";
 		$this->doUpdateQuery();
 	}
@@ -220,8 +231,8 @@ class SurveyModel extends Model
 
 	public function getVerifiedVoterCount($surveyID)
 	{
-		$this->query = "SELECT COUNT(*) AS `count` FROM `voterfile`
-						WHERE `verified` IS NOT NULL
+		$this->query = "SELECT COUNT(*) AS `count` FROM `voterIdent`
+						WHERE `verificationState` LIKE 'verifiedOnce'
 						AND `surveyID` LIKE '$surveyID';";
 		$this->doSelectQuery();
 		return $this->results[0]->count;
@@ -291,9 +302,9 @@ class SurveyModel extends Model
 
 	}
 
-	public function getIdentImage($surveyID, $voterID)
+	public function getIdent($surveyID, $voterID)
 	{
-		$this->query = "SELECT `cdnHandle`, `state` FROM `voteridentimages`
+		$this->query = "SELECT * FROM `voterident`
 						WHERE `surveyID` LIKE '$surveyID'
 						AND `voterID` LIKE '$voterID'
 						LIMIT 0,1;";
@@ -307,16 +318,30 @@ class SurveyModel extends Model
 
 	public function insertIdentImage($surveyID, $voterID, $cdnHandle)
 	{
-		$this->query = "INSERT INTO `voteridentimages` (`surveyID`, `voterID`, `cdnHandle`, `state`)
+		$this->query = "INSERT INTO `voterident` (`surveyID`, `voterID`, `cdnHandle`, `verificationState`)
 							VALUES ('".$surveyID."', '".$voterID."', '".$cdnHandle."', 'new')";
 		$this->doInsertQuery();
+	}
+
+	public function getVoterToValidate($surveyID)
+	{
+		$this->query = "SELECT * FROM `voterident`
+						WHERE `surveyID` LIKE '$surveyID'
+						AND `verificationState` LIKE 'voted' 
+						LIMIT 0,1";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results[0];
+		} else {
+			return false;
+		}
 	}
 
 	public function getTempVote($surveyID, $voterID)
 	{
 		$this->query = "SELECT * FROM `tempvotes`
-						WHERE `voterID` LIKE '$voterID'
-						AND `surveyID` LIKE '$surveyID'
+						WHERE `voterID` LIKE '".$this->escapeString($voterID)."'
+						AND `surveyID` LIKE '".$this->escapeString($surveyID)."'
 						LIMIT 0,1";
 		$this->doSelectQuery();
 		if (count($this->results) > 0) {
@@ -331,6 +356,15 @@ class SurveyModel extends Model
 		$this->query = "INSERT INTO `tempvotes` (`surveyID`, `voterID`, `voteJson`, `voteTime`)
 							VALUES ('".$surveyID."', '".$voterID."', '".$voteJson."', '".$voteTime."')";
 		$this->doInsertQuery();
+	}
+
+	public function updateVoterState($voterState)
+	{
+		$this->query = "UPDATE `voters`
+						SET `verificationState` = '$voterState'
+						WHERE `voterID` LIKE '$voterID'
+						LIMIT 1;";
+		$this->doUpdateQuery();
 	}
 
 	// public function deleteTempVote($surveyID, $voterID)

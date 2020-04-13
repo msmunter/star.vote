@@ -33,7 +33,7 @@
 								<tr><td id="validationComparisonTableAddress">123 TEST ST</td></tr>
 								<tr><td id="validationComparisonTableCSZ">EUGENE, OR 97405</td></tr>
 							</table>
-						</td><td><a href="/web/images/img_placeholder.svg" target="_blank"><img id="validationImg" src="/web/images/img_placeholder.svg" /></a></td></tr>
+						</td><td id="validationComparisonImageCell"><a id="validationImgHref" href="/web/images/img_placeholder.svg" target="_blank"><img id="validationImg" src="/web/images/img_placeholder.svg" /></a></td></tr>
 						</table>
 						<table id="validateVoterButtonTable">
 							<tr><td>
