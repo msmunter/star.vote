@@ -70,8 +70,8 @@ function validatevoter(accept, reason)
 		if (jData.error) {
 			updateStatus("ERROR: "+jData.error);
 		} else {
-			//updateStatus(jData.msg);
-			updateStatus(jData.msg+'<br />'+jData.query); // DEBUG ONLY!!!
+			updateStatus(jData.msg);
+			//updateStatus(jData.msg+'<br />'+jData.query); // DEBUG ONLY!!!
 			$('#voterVerifiedCount').html(jData.voterVerifiedCount);
 			$('#voterCount').html(jData.voterCount);
 			$('#loadValidationButton').prop("disabled", false);

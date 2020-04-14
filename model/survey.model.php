@@ -232,7 +232,8 @@ class SurveyModel extends Model
 	public function getVerifiedVoterCount($surveyID)
 	{
 		$this->query = "SELECT COUNT(*) AS `count` FROM `voterIdent`
-						WHERE `verificationState` LIKE 'verifiedOnce'
+						WHERE `verificationState` LIKE 'verifiedTwice'
+						OR `verificationState` LIKE 'rejectedTwice'
 						AND `surveyID` LIKE '$surveyID';";
 		$this->doSelectQuery();
 		return $this->results[0]->count;
@@ -416,16 +417,16 @@ class SurveyModel extends Model
 
 	public function updateVoterIdentState($surveyID, $voterID, $verificationState, $userID, $reason)
 	{
-		$set = "`verificationState` = '$verificationState'";
+		$set = "SET `verificationState` = '$verificationState', ";
 		if ($userID) {
 			if ($verificationState == 'rejectedOnce') {
-				$set .= "`firstVerifierID` = '$userID', `firstVerifierTime` = NOW(), `rejectedReason` = '$reason'";
+				$set .= "`firstVerifierID` = '$userID', `firstVerifierTime` = NOW(), `rejectedReason` = '$reason' ";
 			} else if ($verificationState == 'rejectedTwice') {
-				$set .= "`secondVerifierID` = '$userID', `secondVerifierTime` = NOW(), `rejectedReason` = '$reason'";
+				$set .= "`secondVerifierID` = '$userID', `secondVerifierTime` = NOW(), `rejectedReason` = '$reason' ";
 			} else if ($verificationState == 'verifiedOnce') {
-				$set .= "`firstVerifierID` = '$userID', `firstVerifierTime` = NOW()";
+				$set .= "`firstVerifierID` = '$userID', `firstVerifierTime` = NOW() ";
 			} else if ($verificationState == 'verifiedTwice') {
-				$set .= "`secondVerifierID` = '$userID', `secondVerifierTime` = NOW()";
+				$set .= "`secondVerifierID` = '$userID', `secondVerifierTime` = NOW() ";
 			}
 		}
 		$this->query = "UPDATE `voterident`
@@ -433,7 +434,7 @@ class SurveyModel extends Model
 						WHERE `voterID` LIKE '$voterID'
 						AND `surveyID` LIKE '$surveyID'
 						LIMIT 1;";
-		//$this->doUpdateQuery();
+		$this->doUpdateQuery();
 	}
 
 	// public function deleteTempVote($surveyID, $voterID)

@@ -992,7 +992,6 @@ class SurveyController extends Controller
 							}
 						}
 						$this->model->updateVoterIdentState($this->survey->surveyID, $this->voter->voterID, $newState, $this->user->userID, $this->reason);
-						$return['query'] = $this->model->query; // DEBUG ONLY!!!
 					} else if ($this->voterIdent->verificationState == 'verifiedOnce' || $this->voterIdent->verificationState == 'rejectedOnce') {
 						// Verified once, finalize if L2 or admin
 						if ($this->user->userID == 1 || $this->userCanValidate == 2) {
@@ -1005,7 +1004,6 @@ class SurveyController extends Controller
 								$return['msg'] .= ' (Rejected)';
 							}
 							$this->model->updateVoterIdentState($this->survey->surveyID, $this->voter->voterID, $newState, $this->user->userID, $this->reason);
-							$return['query'] = $this->model->query; // DEBUG ONLY!!!
 						} else {
 							$return['error'] = 'Must be L2 or admin to do L2 approvals';
 						}
