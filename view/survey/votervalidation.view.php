@@ -1,6 +1,7 @@
-<?php if ($this->userCanValidate || ($this->user->userID == $this->survey->userID && $this->user->userID != "")) { ?>
+<?php if ($this->userCanValidate > 0 || ($this->user->userID == $this->survey->userID && $this->user->userID != "")) { ?>
 	<?php if ($this->survey) { ?>
 		<input type="hidden" id="surveyID" value="<?php echo $this->survey->surveyID; ?>" />
+		<input type="hidden" id="voterID" value="" />
 		<div class="bigContainer">
 			<div class="bigContainerTitle">
 				Voter validation for <a href="/
@@ -15,23 +16,35 @@
 			</div>
 			<div class="bigContainerInner">
 				<p>
-					<!-- <div class="ui-field-contain">
-						<label for="voterID">Voter ID:</label>
-						<input id="voterID" />
-					</div> -->
 					<div id="statusMsg" class="hidden"></div>
 					<div class="clear"></div>
-					<table id="validateVoterTable">
-						<tr><td colspan="2" id="verifiedVoterStatCell">
-							Verified <span id="voterVerifiedCount"><?php echo $this->voterVerifiedCount; ?></span> out of <span id="voterCount"><?php echo $this->voterCount; ?></span> voters
+					<table id="verifierInfo">
+						<tr>
+							<td>
+								Verifier Role: 
+								<?php if ($this->user->userID == 1) { ?>
+									Site Admin
+								<?php } else if ($this->userCanValidate == 2) { ?>
+									Verifier L2
+								<?php } else { ?>
+									Verifier L1
+								<?php } ?>
+							</td>
+							<td>&nbsp;--&nbsp;</td>
+							<td id="verifiedVoterStatCell">
+							Verified: <span id="voterVerifiedCount"><?php echo $this->voterVerifiedCount; ?></span> out of <span id="voterCount"><?php echo $this->voterCount; ?></span> voters total
 						</td></tr>
-						<tr><td colspan="2" class="spacerRow"></td></tr>
-						<tr><th>Address</th><th>Validation Image</th></tr>
+					</table>
+					<table id="validateVoterTable">
+						<tr><th>Voter</th><th>Validation Image</th></tr>
 						<tr><td id="validationInfo">
 							<table id="validationComparisonTable">
-								<tr><td id="validationComparisonTableName">JOHN Q PUBLIC</td></tr>
-								<tr><td id="validationComparisonTableAddress">123 TEST ST</td></tr>
-								<tr><td id="validationComparisonTableCSZ">EUGENE, OR 97405</td></tr>
+								<tr><td>Checkout: </td><td id="checkoutTime">--:--:--</td></tr>
+								<tr><td>Status: </td><td id="validationComparisonTableValidationStatus">--</td></tr>
+								<tr><td>Name: </td><td id="validationComparisonTableName">--</td></tr>
+								<tr><td>Born: </td><td id="validationComparisonTableBirthyear">--</td></tr>
+								<tr><td>Address: </td><td id="validationComparisonTableAddress">--</td></tr>
+								<tr><td></td><td id="validationComparisonTableCSZ"></td></tr>
 							</table>
 						</td><td id="validationComparisonImageCell"><a id="validationImgHref" href="/web/images/img_placeholder.svg" target="_blank"><img id="validationImg" src="/web/images/img_placeholder.svg" /></a></td></tr>
 						</table>

@@ -413,10 +413,6 @@ td#validationInfo {
     white-space:nowrap;
 }
 
-td#validationComparisonImageCell {
-
-}
-
 img#validationImg {
 	max-width: 800px;
 	max-height: 800px;
@@ -427,14 +423,19 @@ td.spacerRow {
 	height: 20px;
 }
 
-table#validateVoterTable td {
-	vertical-align: top;
+table#verifierInfo {
+	margin-top: 20px;
+	background-color: #E7E7E7;
+	border: solid 1px #E7E7E7;
+	border-radius: 7px;
 }
 
-td#verifiedVoterStatCell {
-	border: solid 1px navy;
-	border-radius: 7px;
-	font-weight: bold;
+table#verifierInfo td {
+	
+}
+
+table#validateVoterTable td {
+	vertical-align: top;
 }
 
 td#verifiedVoterStatCell {

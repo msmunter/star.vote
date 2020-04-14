@@ -180,7 +180,7 @@ class SurveyModel extends Model
 	public function getVoterfileByID($voterfileID)
 	{
 		$this->query = "SELECT * FROM `voterfile`
-						WHERE `voterfileID` = '$voterfileID'
+						WHERE `voterfileID` LIKE '$voterfileID'
 						LIMIT 0,1;";
 		$this->doSelectQuery();
 		if (count($this->results) > 0) {
@@ -302,11 +302,23 @@ class SurveyModel extends Model
 
 	}
 
-	public function getIdent($surveyID, $voterID)
+	public function getVoterByID($voterID)
+	{
+		$this->query = "SELECT * FROM `voters`
+						WHERE `voterID` LIKE '$voterID'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results[0];
+		} else {
+			return false;
+		}
+	}
+
+	public function getVoterIdentByVoterID($voterID)
 	{
 		$this->query = "SELECT * FROM `voterident`
-						WHERE `surveyID` LIKE '$surveyID'
-						AND `voterID` LIKE '$voterID'
+						WHERE `voterID` LIKE '$voterID'
 						LIMIT 0,1;";
 		$this->doSelectQuery();
 		if (count($this->results) > 0) {
@@ -323,11 +335,11 @@ class SurveyModel extends Model
 		$this->doInsertQuery();
 	}
 
-	public function getVoterToValidate($surveyID)
+	public function getIdentImage($surveyID, $voterID)
 	{
 		$this->query = "SELECT * FROM `voterident`
 						WHERE `surveyID` LIKE '$surveyID'
-						AND `verificationState` LIKE 'voted' 
+						AND `voterID` LIKE '$voterID' 
 						LIMIT 0,1";
 		$this->doSelectQuery();
 		if (count($this->results) > 0) {
@@ -335,6 +347,50 @@ class SurveyModel extends Model
 		} else {
 			return false;
 		}
+	}
+
+	public function getVoterToValidate($surveyID, $userID)
+	{
+		// See if you have one checked out
+		$this->query = "SELECT * FROM `voterident`
+						WHERE `surveyID` LIKE '$surveyID'
+						AND `verificationState` LIKE 'checkedOut' 
+						AND `checkoutID` = '$userID'
+						LIMIT 0,1";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results[0];
+		} else {
+			// Check out one
+			$this->query = "UPDATE `voterident`
+							SET `checkoutID` = '$userID', `checkoutTime` = NOW(), `verificationState` = 'checkedOut'
+							WHERE `surveyID` LIKE '$surveyID'
+							AND `verificationState` LIKE 'voted' 
+							LIMIT 1;";
+			$this->doUpdateQuery();
+			// Read the one you checked out
+			$this->query = "SELECT * FROM `voterident`
+							WHERE `surveyID` LIKE '$surveyID'
+							AND `verificationState` LIKE 'checkedOut'
+							AND `checkoutID` = '$userID'  
+							LIMIT 0,1";
+			$this->doSelectQuery();
+			if (count($this->results) > 0) {
+				return $this->results[0];
+			} else {
+				return false;
+			}
+		}
+	}
+
+	public function timeoutValidations($surveyID)
+	{
+		$this->query = "UPDATE `voterident`
+						SET `checkoutID` = NULL, `checkoutTime` = NULL, `verificationState` = 'voted'
+						WHERE `surveyID` LIKE '$surveyID'
+						AND `verificationState` LIKE 'checkedOut'
+						AND `checkoutTime` < (NOW() - INTERVAL 5 MINUTE);";
+		$this->doUpdateQuery();
 	}
 
 	public function getTempVote($surveyID, $voterID)
@@ -358,13 +414,26 @@ class SurveyModel extends Model
 		$this->doInsertQuery();
 	}
 
-	public function updateVoterState($voterState)
+	public function updateVoterIdentState($surveyID, $voterID, $verificationState, $userID, $reason)
 	{
-		$this->query = "UPDATE `voters`
-						SET `verificationState` = '$voterState'
+		$set = "`verificationState` = '$verificationState'";
+		if ($userID) {
+			if ($verificationState == 'rejectedOnce') {
+				$set .= "`firstVerifierID` = '$userID', `firstVerifierTime` = NOW(), `rejectedReason` = '$reason'";
+			} else if ($verificationState == 'rejectedTwice') {
+				$set .= "`secondVerifierID` = '$userID', `secondVerifierTime` = NOW(), `rejectedReason` = '$reason'";
+			} else if ($verificationState == 'verifiedOnce') {
+				$set .= "`firstVerifierID` = '$userID', `firstVerifierTime` = NOW()";
+			} else if ($verificationState == 'verifiedTwice') {
+				$set .= "`secondVerifierID` = '$userID', `secondVerifierTime` = NOW()";
+			}
+		}
+		$this->query = "UPDATE `voterident`
+						$set
 						WHERE `voterID` LIKE '$voterID'
+						AND `surveyID` LIKE '$surveyID'
 						LIMIT 1;";
-		$this->doUpdateQuery();
+		//$this->doUpdateQuery();
 	}
 
 	// public function deleteTempVote($surveyID, $voterID)
@@ -388,12 +457,13 @@ class SurveyModel extends Model
 
 	public function userCanValidate($userID, $surveyID)
 	{
-		$this->query = "SELECT COUNT(*) AS `count` FROM `usersurveyvalauth`
+		$this->query = "SELECT `level` FROM `usersurveyvalauth`
 						WHERE `userID` LIKE '$userID'
-						AND `surveyID` LIKE '$surveyID';";
+						AND `surveyID` LIKE '$surveyID'
+						LIMIT 0,1;";
 		$this->doSelectQuery();
-		if ($this->results[0]->count > 0) {
-			return true;
+		if (count($this->results[0]) > 0) {
+			return $this->results[0]->level;
 		} else {
 			return false;
 		}

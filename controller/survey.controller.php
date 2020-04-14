@@ -7,10 +7,17 @@ class SurveyController extends Controller
 	);*/
 	public $survey;
 	
-	/*public function __construct()
+	public function __construct()
 	{
-		
-	}*/
+		$this->validationStatePrettyNames['new'] = 'New';
+		$this->validationStatePrettyNames['voted'] = 'Voted';
+		$this->validationStatePrettyNames['checkedOut'] = 'Checked Out';
+		$this->validationStatePrettyNames['rejectedOnce'] = 'Rejected Once';
+		$this->validationStatePrettyNames['rejectedTwice'] = 'Rejected Twice';
+		$this->validationStatePrettyNames['verifiedOnce'] = 'Verified Once';
+		$this->validationStatePrettyNames['verifiedTwice'] = 'Verified Twice';
+		$this->validationStatePrettyNames['inResults'] = 'In Results (DONE)';
+	}
 	
 	public function create()
 	{
@@ -52,7 +59,7 @@ class SurveyController extends Controller
 							$this->hasVoted = true;
 						} else $this->hasVoted = false;
 						// Get ident image
-						$this->identImage = $this->model->getIdent($this->survey->surveyID, $this->voter->voterID);
+						$this->identImage = $this->model->getIdentImage($this->survey->surveyID, $this->voter->voterID);
 						// Timey wimey stuff
 						$this->setupTimes();
 						// Get answers and voter counts, then populate and copy
@@ -625,7 +632,7 @@ class SurveyController extends Controller
 							$return['voteArray'] = json_encode($voteArray);
 							// Write temp vote
 							$this->model->insertTempVote($this->surveyID, $this->voter->voterID, json_encode($voteArray), $voteTime);
-							$this->model->updateVoterState('voted');
+							$this->model->updateVoterIdentState($this->surveyID, $this->voter->voterID, 'voted', false, false);
 							
 							// vvv For IPO, skipping this part until voter is validated vvv
 							
@@ -888,18 +895,15 @@ class SurveyController extends Controller
 	public function votervalidation()
 	{
 		$this->title = 'Voter Validation';
-		if ($this->user->userID == 1) {
-			$this->userCanValidate = true;
-		} else {
-			$this->userCanValidate = $this->model->userCanValidate($this->user->userID, $this->survey->surveyID);
-		}
-		if ($this->userCanValidate) {
-			if ($this->URLdata) {
-				$this->survey = $this->model->getSurveyByID($this->URLdata);
-				$this->voterVerifiedCount = $this->model->getVerifiedVoterCount($this->survey->surveyID);
-				//$this->voterCount = $this->model->getVoterCount($this->survey->surveyID);
-				$this->voterCount = $this->model->getTempVoterCount($this->survey->surveyID);
+		if ($this->URLdata) {
+			$this->survey = $this->model->getSurveyByID($this->URLdata);
+			if ($this->user->userID == 1) {
+				$this->userCanValidate = 2;
+			} else {
+				$this->userCanValidate = $this->model->userCanValidate($this->user->userID, $this->survey->surveyID);
 			}
+			$this->voterVerifiedCount = $this->model->getVerifiedVoterCount($this->survey->surveyID);
+			$this->voterCount = $this->model->getTempVoterCount($this->survey->surveyID);
 		}
 	}
 
@@ -917,15 +921,22 @@ class SurveyController extends Controller
 				$this->userCanValidate = $this->model->userCanValidate($this->user->userID, $this->survey->surveyID);
 			}
 			if ($this->userCanValidate) {
-				$voterToValidate = $this->model->getVoterToValidate($this->survey->surveyID);
+				// Clear old open validations
+				$this->model->timeoutValidations($this->survey->surveyID);
+				// Get a voter to validate.
+				$voterToValidate = $this->model->getVoterToValidate($this->survey->surveyID, $this->user->userID);
 				if ($voterToValidate) {
-					$ident = $this->model->getIdent($this->survey->surveyID, $voterToValidate->voterID);
-					$voterfileInfo = $this->model->getVoterfileByID($voterToValidate->voterfileID);
-					$return['cdnHandle'] = $ident->cdnHandle;
+					$voter = $this->model->getVoterByID($voterToValidate->voterID);
+					$voterfileInfo = $this->model->getVoterfileByID($voter->voterfileID);
+					$return['checkoutTime'] = $voterToValidate->checkoutTime;
+					$return['cdnHandle'] = $voterToValidate->cdnHandle;
 					$return['voterName'] = $voterfileInfo->fname.' '.$voterfileInfo->lname;
 					$return['voterAddress'] = $voterfileInfo->street;
 					if ($voterfileInfo->street2) $return['voterAddress'] .= $voterfileInfo->street2;
 					$return['voterCSZ'] = $voterfileInfo->city.', '.$voterfileInfo->state.' '.$voterfileInfo->zip;
+					$return['voterBirthyear'] = $voterfileInfo->birthyear;
+					$return['voterID'] = $voter->voterID;
+					$return['validationStatus'] = $this->validationStatePrettyNames[$voterToValidate->verificationState];
 					$return['voterVerifiedCount'] = $this->model->getVerifiedVoterCount($this->survey->surveyID);
 					$return['voterCount'] = $this->model->getTempVoterCount($this->survey->surveyID);
 				}
@@ -944,12 +955,87 @@ class SurveyController extends Controller
 		$this->survey = $this->model->getSurveyByID($_POST['surveyID']);
 		if ($this->survey) {
 			if ($this->user->userID == 1) {
-				$this->userCanValidate = true;
+				$this->userCanValidate = 2;
 			} else {
 				$this->userCanValidate = $this->model->userCanValidate($this->user->userID, $this->survey->surveyID);
 			}
 			if ($this->userCanValidate) {
-				$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
+				// Clear old open validations
+				$this->model->timeoutValidations($this->survey->surveyID);
+				$this->voterID = $_POST['voterID'];
+				$this->accept = $_POST['accept'];
+				$this->reason = $_POST['reason'];
+				// Ensure this validation is still good
+				$this->voter = $this->model->getVoterByID($this->voterID);
+				$this->voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
+				if ($this->voterIdent->checkoutID == $this->user->userID) {
+					// Still good
+					if ($this->voterIdent->verificationState == 'checkedOut') {
+						// Not yet verified, verify it
+						if ($this->user->userID == 1 || $this->userCanValidate == 2) {
+							$return['msg'] = 'Second verification complete';
+							if ($this->accept == 1) {
+								$newState = 'verifiedTwice';
+								$return['msg'] .= ' (Verified)';
+							} else {
+								$newState = 'rejectedTwice';
+								$return['msg'] .= ' (Rejected)';
+							}
+						} else {
+							$return['msg'] = 'First verification complete';
+							if ($this->accept == 1) {
+								$newState = 'verifiedOnce';
+								$return['msg'] .= ' (Verified)';
+							} else {
+								$newState = 'rejectedOnce';
+								$return['msg'] .= ' (Rejected)';
+							}
+						}
+						$this->model->updateVoterIdentState($this->survey->surveyID, $this->voter->voterID, $newState, $this->user->userID, $this->reason);
+						$return['query'] = $this->model->query; // DEBUG ONLY!!!
+					} else if ($this->voterIdent->verificationState == 'verifiedOnce' || $this->voterIdent->verificationState == 'rejectedOnce') {
+						// Verified once, finalize if L2 or admin
+						if ($this->user->userID == 1 || $this->userCanValidate == 2) {
+							$return['msg'] = 'Second verification complete';
+							if ($this->accept == 1) {
+								$newState = 'verifiedTwice';
+								$return['msg'] .= ' (Verified)';
+							} else {
+								$newState = 'rejectedTwice';
+								$return['msg'] .= ' (Rejected)';
+							}
+							$this->model->updateVoterIdentState($this->survey->surveyID, $this->voter->voterID, $newState, $this->user->userID, $this->reason);
+							$return['query'] = $this->model->query; // DEBUG ONLY!!!
+						} else {
+							$return['error'] = 'Must be L2 or admin to do L2 approvals';
+						}
+					} else {
+						// No other conditions should come up
+						$return['error'] = 'Invalid verification state change';
+					}
+				} else {
+					$return['error'] = 'Checkout timed out, please refresh your page and click the "Load" button.';
+				}
+			} else {
+				$return['error'] = 'Not authorized to validate votes';
+			}
+		} else {
+			$return['error'] = 'Election not found';
+		}
+		echo json_encode($return);
+	}
+
+	private function addVoteToResults($surveyID, $voterID)
+	{
+		$this->survey = $this->model->getSurveyByID($surveyID);
+		if ($this->survey) {
+			if ($this->user->userID == 1) {
+				$this->userCanValidate = 2;
+			} else {
+				$this->userCanValidate = $this->model->userCanValidate($this->user->userID, $this->survey->surveyID);
+			}
+			if ($this->userCanValidate) {
+				/*$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
 				$mPoll = new PollModel();
 				foreach ($this->survey->polls as $poll) {
 					$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
@@ -1004,14 +1090,13 @@ class SurveyController extends Controller
 					} else {
 						$return['error'] = 'Voter not found';
 					}
-				}
+				}*/
 			} else {
 				$return['error'] = 'Not authorized to validate votes';
 			}
 		} else {
 			$return['error'] = 'Election not found';
 		}
-		echo json_encode($return);
 	}
 
 	public function uploadvoterfile()

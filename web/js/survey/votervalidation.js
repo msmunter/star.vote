@@ -1,6 +1,7 @@
 $(document).ready(function() {
 	//$('#voterID').select();
 	$('.validateVoterButtons').prop("disabled", true);
+	updateStatus('Ready to load...');
 });
 
 function updateStatus(msg)
@@ -20,6 +21,7 @@ function clearStatus()
 function loadvalidation()
 {
 	$('#loadValidationButton').prop("disabled", true);
+	updateStatus('Loading voter...');
 	$.post("/", { 
 		c: 'survey', 
 		a: 'ajaxloadvoterval', 
@@ -33,11 +35,15 @@ function loadvalidation()
 			updateStatus('No voters to process');
 			$('#loadValidationButton').prop("disabled", false);
 		} else {
-			console.log(jData);
-			//updateStatus("SUCCESS: Voter "+jData.voterID+" validated")
+			//console.log(jData);
+			updateStatus('Voter '+jData.voterID+' loaded');
+			$('#checkoutTime').html(jData.checkoutTime);
 			$('#validationComparisonTableName').html(jData.voterName);
 			$('#validationComparisonTableAddress').html(jData.voterAddress);
 			$('#validationComparisonTableCSZ').html(jData.voterCSZ);
+			$('#validationComparisonTableBirthyear').html(jData.voterBirthyear);
+			$('#validationComparisonTableValidationStatus').html(jData.validationStatus);
+			$('#voterID').val(jData.voterID);
 			$('#voterVerifiedCount').html(jData.voterVerifiedCount);
 			$('#voterCount').html(jData.voterCount);
 			$('#validationImg').attr('src', 'https://cdn.filestackcontent.com/'+jData.cdnHandle);
@@ -59,16 +65,16 @@ function validatevoter(accept, reason)
 		accept: accept,
 		reason: reason,
 	}, function(data) {
-		console.log(data); // DEBUG ONLY!!!	
+		//console.log(data); // DEBUG ONLY!!!	
 		var jData = JSON.parse(data);
 		if (jData.error) {
 			updateStatus("ERROR: "+jData.error);
 		} else {
-			updateStatus("SUCCESS: Voter "+jData.voterID+" validated")
+			//updateStatus(jData.msg);
+			updateStatus(jData.msg+'<br />'+jData.query); // DEBUG ONLY!!!
 			$('#voterVerifiedCount').html(jData.voterVerifiedCount);
 			$('#voterCount').html(jData.voterCount);
+			$('#loadValidationButton').prop("disabled", false);
 		}
-		$('.validateVoterButtons').prop("disabled", false);
-		$('#voterID').select();
 	});
 }
