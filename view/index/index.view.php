@@ -14,6 +14,7 @@
 	<div class="bigContainerTitle">IPO 2020 Primary</div>
 	<div id="indexCreatePollContainer">
 		<?php //include('view/poll/pollinputform.view.php'); ?>
-		<a class="ui-btn ui-btn-inline ui-mini ui-corner-all" href="/ipo2020/">Vote!</a>
+		<!-- <a class="ui-btn ui-btn-inline ui-mini ui-corner-all" href="/ipo2020/">Vote!</a> -->
+		Please visit <a href="https://ipo.vote/">ipo.vote</a> to register.
 	</div>
 </div>

@@ -23,7 +23,7 @@ class SurveyController extends Controller
 	{
 		$this->title = 'Create Survey';
 	}
-	
+
 	public function results()
 	{
 		// Views single survey results
@@ -46,44 +46,53 @@ class SurveyController extends Controller
 						// Init voter
 						$this->voter = new VoterController();
 						$this->voter->model = new VoterModel();
-						$this->voter->initVoter(null);
-						// Determine whether user has voted
-						foreach ($this->survey->polls as $zPoll) {
-							$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
-							if (count($existingVote) > 0 && $existingVote[0]->answerID != '') {
-								$this->yourVotes[$zPoll->pollID] = $existingVote;
-								if (empty($this->yourVoteTime)) $this->yourVoteTime = $existingVote[0]->voteTime;
+						if ($_GET['voterID']) {
+							$this->voter->initVoter($_GET['voterID']);
+						} /*else {
+							$this->voter->initVoter(null);
+						}*/
+						if ($this->voter->voterID) {
+							$this->voter->voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
+							// Determine whether user has voted
+							foreach ($this->survey->polls as $zPoll) {
+								$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
+								if (count($existingVote) > 0 && $existingVote[0]->answerID != '') {
+									$this->yourVotes[$zPoll->pollID] = $existingVote;
+									if (empty($this->yourVoteTime)) $this->yourVoteTime = $existingVote[0]->voteTime;
+								}
 							}
-						}
-						if (!empty($this->yourVotes)) {
-							$this->hasVoted = true;
-						} else $this->hasVoted = false;
-						// Get ident image
-						$this->identImage = $this->model->getIdentImage($this->survey->surveyID, $this->voter->voterID);
-						// Timey wimey stuff
-						$this->setupTimes();
-						// Get answers and voter counts, then populate and copy
-						$mPoll = new PollModel();
-						foreach ($this->survey->polls as $tPoll) {
-							$tPoll->answers = $mPoll->getAnswersByPollIDScoreOrder($tPoll->pollID);
-							$tPoll->voterCount = $mPoll->getPollVoterCount($tPoll->pollID);
-							$this->processPoll($tPoll);
-							// Make a copy for alternate places
-							$this->survey->altPollClone[$tPoll->pollID] = clone $tPoll;
-						}
-						// Reprocess for multiple places winners
-						foreach ($this->survey->polls as $poll) {
-							if ($poll->numWinners > 1) {
-								for ($i = 2; $i <= $poll->numWinners; $i++) {
-									if ($i > 2) {
-										$this->survey->altPlacePolls[$poll->pollID][$i] = clone $this->survey->altPlacePolls[$poll->pollID][$i-1];
-										$this->reducePollByWinner($this->survey->altPlacePolls[$poll->pollID][$i], $this->survey->altPlacePolls[$poll->pollID][$i-1]->runoffResults['first']['answerID']);
-									} else {
-										$this->survey->altPlacePolls[$poll->pollID][$i] = clone $this->survey->altPollClone[$poll->pollID];
-										$this->reducePollByWinner($this->survey->altPlacePolls[$poll->pollID][$i], $poll->runoffResults['first']['answerID']);
+							if (!empty($this->yourVotes)) {
+								$this->hasVoted = true;
+							} else $this->hasVoted = false;
+							// Get ident image
+							$this->identImage = $this->model->getIdentImage($this->survey->surveyID, $this->voter->voterID);
+							// Timey wimey stuff
+							$this->setupTimes();
+							// Get answers and voter counts, then populate and copy
+							$mPoll = new PollModel();
+							foreach ($this->survey->polls as $tPoll) {
+								$tPoll->answers = $mPoll->getAnswersByPollIDScoreOrder($tPoll->pollID);
+								$tPoll->voterCount = $mPoll->getPollVoterCount($tPoll->pollID);
+								$this->processPoll($tPoll);
+								// Make a copy for alternate places
+								$this->survey->altPollClone[$tPoll->pollID] = clone $tPoll;
+							}
+							// Reprocess for multiple places winners
+							foreach ($this->survey->polls as $poll) {
+								if ($poll->numWinners > 1) {
+									for ($i = 2; $i <= $poll->numWinners; $i++) {
+										if ($i > 2) {
+											$this->survey->altPlacePolls[$poll->pollID][$i] = clone $this->survey->altPlacePolls[$poll->pollID][$i-1];
+											$this->reducePollByWinner($this->survey->altPlacePolls[$poll->pollID][$i], $this->survey->altPlacePolls[$poll->pollID][$i-1]->runoffResults['first']['answerID']);
+										} else {
+											$this->survey->altPlacePolls[$poll->pollID][$i] = clone $this->survey->altPollClone[$poll->pollID];
+											$this->reducePollByWinner($this->survey->altPlacePolls[$poll->pollID][$i], $poll->runoffResults['first']['answerID']);
+										}
 									}
 								}
 							}
+						} else {
+							$this->error = 'Invalid voter ID';
 						}
 					} else {
 						$this->error = "Survey does not exist";
@@ -891,6 +900,47 @@ class SurveyController extends Controller
 		$this->title = "Print Vote Record";
 		echo 'Will be printing the vote record here.';
 	}*/
+
+	public function getstarid()
+	{
+		$this->ajax = 1;
+		$this->doHeader = 0;
+		$this->doFooter = 0;
+		$statetx['new'] = 'existing';
+		$statetx['voted'] = 'pending';
+		$statetx['checkedOut'] = 'pending';
+		$statetx['acceptedOnce'] = 'pending';
+		$statetx['rejectedOnce'] = 'pending';
+		$statetx['acceptedTwice'] = 'accepted';
+		$statetx['rejectedTwice'] = 'rejected';
+		$voterIDs = $this->model->getVoterfileByStateID($this->URLdata);
+		$return['voterId'] = $voterIDs->stateVoterID;
+		if ($voterIDs->voterfileID) {
+			include_once('model/voter.model.php');
+			$mVoter = new VoterModel();
+			$existingVoter = $this->model->getVoterByVoterfileID($voterIDs->voterfileID);
+			if ($existingVoter) {
+				$starVoterID = $existingVoter->voterID;
+				$return['starId'] = $existingVoter->voterID;
+			} else {
+				$starVoterID = $this->generateUniqueID(10, "voters", "voterID");
+				$mVoter->insertVoter($starVoterID, $_SERVER['REMOTE_ADDR']);
+				$return['starId'] = $starVoterID;
+				$this->model->linkVoterfileToVoter($voterIDs->voterfileID, $starVoterID);
+			}
+			$voterIdent = $this->model->getVerificationStateByVoterID($starVoterID);
+			if ($voterIdent['verificationState']) {
+				$return['status'] = $statetx[$voterIdent['verificationState']];
+			} else {
+				if ($existingVoter) {
+					$return['status'] = 'existing';
+				} else {
+					$return['status'] = 'new';
+				}
+			}
+		}
+		echo json_encode($return);
+	}
 
 	public function votervalidation()
 	{

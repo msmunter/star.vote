@@ -21,11 +21,12 @@ class VoterController extends Controller
 		$cookieExpires = strtotime('+5 years');
 		// If they passed an ID check it
 		if (strlen($voterID) > 0) {
-			if ($this->model->voterExists($_COOKIE['voterID'])) {
+			if ($this->model->voterExists($voterID)) {
 				// Set voterID in class, cookie, and session
 				$this->voterID = $voterID;
 				setcookie("voterID", $this->voterID, $cookieExpires, '/');
 				$_SESSION['voterID'] = $this->voterID;
+				return true;
 			}
 		} else if (strlen($_COOKIE['voterID']) > 0) {
 			// Determine if valid voter ID exists in cookie
@@ -33,6 +34,7 @@ class VoterController extends Controller
 				$this->voterID = $_COOKIE['voterID'];
 				// Set session to cookie
 				$_SESSION['voterID'] = $_COOKIE['voterID'];
+				return true;
 			}
 		} else if (strlen($_SESSION['voterID']) > 0) {
 			// Determine if valid voter ID exists in session.
@@ -40,23 +42,24 @@ class VoterController extends Controller
 				$this->voterID = $_SESSION['voterID'];
 				// Set cookie to session
 				setcookie("voterID", $this->voterID, $cookieExpires, '/');
+				return true;
 			}
 		}
 		// Generate voter ID if necessary
-		if (strlen($this->voterID) < 1) {
-			$this->voterID = $this->generateUniqueID(10, "voters", "voterID");
-			// Save voter to DB
-			$this->model->insertVoter($this->voterID, $_SERVER['REMOTE_ADDR']);
-			// Save a cookie with their voter ID
-			setcookie("voterID", $this->voterID, $cookieExpires, '/');
-			// Save session variable
-			$_SESSION['voterID'] = $this->voterID;
-			return true;
-		} else {
-			// Didn't get an ID, something went awry
-			return false;
-		}
-		
+		// if (strlen($this->voterID) < 1) {
+		// 	$this->voterID = $this->generateUniqueID(10, "voters", "voterID");
+		// 	// Save voter to DB
+		// 	$this->model->insertVoter($this->voterID, $_SERVER['REMOTE_ADDR']);
+		// 	// Save a cookie with their voter ID
+		// 	setcookie("voterID", $this->voterID, $cookieExpires, '/');
+		// 	// Save session variable
+		// 	$_SESSION['voterID'] = $this->voterID;
+		// 	return true;
+		// } else {
+		// 	// Didn't get an ID, something went awry
+		// 	return false;
+		// }
+		return false;	
 	}
 	
 	private function verifyVoterKey($pollID, $voterKey)

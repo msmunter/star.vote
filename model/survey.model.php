@@ -316,6 +316,32 @@ class SurveyModel extends Model
 		}
 	}
 
+	public function getVoterByVoterfileID($voterfileID)
+	{
+		$this->query = "SELECT * FROM `voters`
+						WHERE `voterfileID` LIKE '$voterfileID'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results[0];
+		} else {
+			return false;
+		}
+	}
+
+	public function getVoterfileIDByVoterID($voterID)
+	{
+		$this->query = "SELECT `voterfileID` FROM `voters`
+						WHERE `voterID` LIKE '$voterID'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results[0]->voterfileID;
+		} else {
+			return false;
+		}
+	}
+
 	public function getVoterIdentByVoterID($voterID)
 	{
 		$this->query = "SELECT * FROM `voterident`
@@ -327,6 +353,37 @@ class SurveyModel extends Model
 		} else {
 			return false;
 		}
+	}
+
+	public function getVoterfileByStateID($stateID)
+	{
+		$this->query = "SELECT `voterfileID`, `stateVoterID` FROM `voterfile`
+						WHERE `stateVoterID` LIKE '".$this->escapeString($stateID)."'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results[0];
+		} else return false;
+	}
+
+	public function linkVoterfileToVoter($voterfileID, $voterID)
+	{
+		$this->query = "UPDATE `voters`
+						SET `voterfileID` = '$voterfileID'
+						WHERE `voterID` LIKE '$voterID'
+						LIMIT 1;";
+		$this->doUpdateQuery();
+	}
+
+	public function getVerificationStateByVoterID($voterID)
+	{
+		$this->query = "SELECT `verificationState` FROM `voterident`
+						WHERE `voterID` LIKE '".$voterID."'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results[0]->verificationState;
+		} else return false;
 	}
 
 	public function insertIdentImage($surveyID, $voterID, $cdnHandle)

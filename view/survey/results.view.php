@@ -66,28 +66,33 @@ if ($this->survey) {
 				<?php } ?>
 				<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
 				<div class="clear"></div>
-				<div id="voterInfoInput">
-					<?php include_once('view/survey/voterinfoinput.view.php'); ?>
-				</div>
-				<div id="statusMsg2" class="hidden"></div>
-				<div class="clear"></div>
-				<div id="voteInput">
-					<?php include_once('view/survey/voteinput.view.php'); ?>
-				</div>
-				<div class="clear"></div>
-				<div id="prevNextPollButtons">
-					<button id="prevPollButton" disabled="disabled" data-inline="inline" data-mini="mini" onclick="changePoll('d')">&larr;</button>Part <span id="pollIndex">1</span> of <?php echo count($this->survey->polls); ?><button id="nextPollButton" data-inline="inline" data-mini="mini" onclick="changePoll('u')">&rarr;</button>
-				</div>
-				<div id="voteShowResultsButtons">
-					<button disabled="disabled" id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
-					<!-- <button <?php //if ($this->survey->verifiedVoting || ($this->survey->verbage == 'el' && $this->survey->votingWindowDirection != 'after')) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button> -->
-				</div>
-				<?php if ($this->survey->kioskMode) { ?>
-					<button class="hidden" id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button>
-					
-				<?php } ?>
-				<?php if ($this->survey->printVote) { ?>
-					<button class="hidden" id="reprintVoteButton" data-inline="inline">Reprint Vote</button>
+				<?php if ($this->voter->voterfileID) { ?>
+					<div id="voterInfoInput">
+						<?php if (!$this->voter->voterfileID) include_once('view/survey/voterinfoinput.view.php'); ?>
+						<?php include_once('view/survey/votervalimginput.view.php'); ?>
+					</div>
+					<div id="statusMsg2" class="hidden"></div>
+					<div class="clear"></div>
+					<div id="voteInput">
+						<?php include_once('view/survey/voteinput.view.php'); ?>
+					</div>
+					<div class="clear"></div>
+					<div id="prevNextPollButtons">
+						<button id="prevPollButton" disabled="disabled" data-inline="inline" data-mini="mini" onclick="changePoll('d')">&larr;</button>Part <span id="pollIndex">1</span> of <?php echo count($this->survey->polls); ?><button id="nextPollButton" data-inline="inline" data-mini="mini" onclick="changePoll('u')">&rarr;</button>
+					</div>
+					<div id="voteShowResultsButtons">
+						<button disabled="disabled" id="voteButton" data-inline="inline" onclick="vote()">Vote!</button>
+						<!-- <button <?php //if ($this->survey->verifiedVoting || ($this->survey->verbage == 'el' && $this->survey->votingWindowDirection != 'after')) echo 'disabled="disabled" '; ?>id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button> -->
+					</div>
+					<?php if ($this->survey->kioskMode) { ?>
+						<button class="hidden" id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button>
+						
+					<?php } ?>
+					<?php if ($this->survey->printVote) { ?>
+						<button class="hidden" id="reprintVoteButton" data-inline="inline">Reprint Vote</button>
+					<?php } ?>
+				<?php } else { ?>
+					Invalid or missing voter ID; please visit <a href="https://ipo.vote/">ipo.vote</a> to register.<br />Once registered you will receive an email containing a link to your ballot.
 				<?php } ?>
 			</div>
 		</div>
