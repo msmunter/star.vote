@@ -54,6 +54,7 @@ class SurveyController extends Controller
 						if ($this->voter->voterID) {
 							$this->voter->voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
 							// Determine whether user has voted
+							$this->hasVoted = false;
 							foreach ($this->survey->polls as $zPoll) {
 								$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
 								if (count($existingVote) > 0 && $existingVote[0]->answerID != '') {
@@ -63,7 +64,11 @@ class SurveyController extends Controller
 							}
 							if (!empty($this->yourVotes)) {
 								$this->hasVoted = true;
-							} else $this->hasVoted = false;
+							} else {
+								// Check for a temp vote
+								$tempVote = $this->model->getTempVote($this->survey->surveyID, $this->voter->voterID);
+								if ($tempVote) $this->hasVoted = true;
+							}
 							// Get ident image
 							$this->identImage = $this->model->getIdentImage($this->survey->surveyID, $this->voter->voterID);
 							// Timey wimey stuff
@@ -585,22 +590,22 @@ class SurveyController extends Controller
 		}
 		//$voterKeyResult = $this->model->verifyVoterKey($_POST['voterKey'], $this->surveyID);
 		// Determine eligibility from voter file
-		$this->voterfileInfo = $this->model->getVoterFileMatch(
-			strtoupper($_POST['viFname']), 
-			strtoupper($_POST['viLname']), 
-			strtoupper($_POST['viStreet']), 
-			strtoupper($_POST['viCity']), 
-			strtoupper($_POST['viState']), 
-			$_POST['viZip'], 
-			$_POST['viBirthyear'],
-			$_POST['viPhone'],
-			$_POST['viEmail']
-		);
-		if (!$this->voterfileInfo) {
-			$return['error'] = 'Voter file did not match';
-		} else {
+		// $this->voterfileInfo = $this->model->getVoterFileMatch(
+		// 	strtoupper($_POST['viFname']), 
+		// 	strtoupper($_POST['viLname']), 
+		// 	strtoupper($_POST['viStreet']), 
+		// 	strtoupper($_POST['viCity']), 
+		// 	strtoupper($_POST['viState']), 
+		// 	$_POST['viZip'], 
+		// 	$_POST['viBirthyear'],
+		// 	$_POST['viPhone'],
+		// 	$_POST['viEmail']
+		// );
+		// if (!$this->voterfileInfo) {
+		// 	$return['error'] = 'Voter file did not match';
+		// } else {
 			//$return['associateVoterfile'] = $this->voter->voterID.', '.$this->voterfileInfo->voterfileID.', '.$_POST['viPhone'].', '.$_POST['viEmail']; // DEBUG ONLY!!!
-			$this->model->associateVoter($this->voter->voterID, $this->voterfileInfo->voterfileID, $_POST['viPhone'], $_POST['viEmail']);
+			//$this->model->associateVoter($this->voter->voterID, $this->voterfileInfo->voterfileID, $_POST['viPhone'], $_POST['viEmail']);
 			// Determine eligibility if necessary
 			if (($this->survey->verifiedVoting && $voterKeyResult->surveyID) || $this->survey->verifiedVoting == false) {
 				// Determine if within voting window
@@ -720,7 +725,7 @@ class SurveyController extends Controller
 				// Failed eligibility
 				$return['error'] .= 'Invalid voter key';
 			}
-		}
+		//}
 		echo json_encode($return);
 	}
 	
@@ -928,9 +933,9 @@ class SurveyController extends Controller
 				$return['starId'] = $starVoterID;
 				$this->model->linkVoterfileToVoter($voterIDs->voterfileID, $starVoterID);
 			}
-			$voterIdent = $this->model->getVerificationStateByVoterID($starVoterID);
-			if ($voterIdent['verificationState']) {
-				$return['status'] = $statetx[$voterIdent['verificationState']];
+			$vState = $this->model->getVerificationStateByVoterID($starVoterID);
+			if ($vState) {
+				$return['status'] = $statetx[$vState];
 			} else {
 				if ($existingVoter) {
 					$return['status'] = 'existing';

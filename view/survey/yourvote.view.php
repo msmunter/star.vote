@@ -16,4 +16,4 @@
 		?>
 	</table>
 <?php } ?>
-<img src="../web/images/qr_voterid/<?php echo $this->voter->voterID; ?>.png" alt="<?php echo $this->voter->voterID; ?>"/>
+<img src="/web/images/qr_voterid/<?php echo $this->voter->voterID; ?>.png" alt="<?php echo $this->voter->voterID; ?>"/>

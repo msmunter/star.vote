@@ -185,15 +185,15 @@ function voteActual()
 		surveyID: $('#surveyID').val(),
 		votes: $('.voteForm').serialize(),
 		voterKey: $('#voterKey').val(),
-		viFname: $('#fname').val(),
-		viLname: $('#lname').val(),
-		viStreet: $('#street').val(),
-		viCity: $('#city').val(),
-		viState: $('#state').val(),
-		viZip: $('#zip').val(),
-		viBirthyear: $('#birthyear').val(),
-		viPhone: $('#phone').val(),
-		viEmail: $('#email').val()
+		// viFname: $('#fname').val(),
+		// viLname: $('#lname').val(),
+		// viStreet: $('#street').val(),
+		// viCity: $('#city').val(),
+		// viState: $('#state').val(),
+		// viZip: $('#zip').val(),
+		// viBirthyear: $('#birthyear').val(),
+		// viPhone: $('#phone').val(),
+		// viEmail: $('#email').val()
 	}, function(data) {
 		var jData = JSON.parse(data);
 		if (jData.error) {
