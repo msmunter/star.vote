@@ -99,6 +99,36 @@ class UserController extends Controller
 		}
 		echo json_encode($return);
 	}
+
+	public function apilogin()
+	{
+		$this->ajax = 1;
+		$this->doHeader = 0;
+		$this->doFooter = 0;
+		if ($_POST['email'] && $_POST['pass']) {
+			$this->userID = $this->model->verifyPassword($_POST['email'], $_POST['pass']);
+			if ($this->userID) {
+				// Get user info
+				$this->info = $this->model->getUserInfoByID($this->userID);
+				if ($_POST['authLength'] > 0) {
+					$seObject = new DateTime();
+					$seObject->modify("+".$_POST['authLength']." days");
+				} else {
+					$seObject = new DateTime();
+					$seObject->modify("+24 hours");
+				}
+				// Add token to database
+				$authToken = $this->createToken($this->userID, $seObject->format('U'));
+				// Also add token to the return array
+				$return['authToken'] = $authToken;
+				$return['authID'] = $this->userID;
+				$return['html'] = 'Success';
+			} else {
+				$return['error'] = 'Invalid login or password';
+			}
+		}
+		echo json_encode($return);
+	}
 	
 	public function signup()
 	{
