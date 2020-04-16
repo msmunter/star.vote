@@ -706,7 +706,12 @@ class SurveyController extends Controller
 						$imgpath_create = 'web/images/qr_voterid/'.$this->voter->voterID.'.png';
 						if (!file_exists($imgpath_create)) {
 							include_once('utilities/phpqrcode/qrlib.php');
-							QRcode::png($this->voter->voterID, $imgpath_create);
+							if ($this->survey->customSlug != "") {
+								$qr_text = 'https://'.$_SERVER['HTTP_HOST'].'/'.$this->survey->customSlug.'/'.$this->voter->voterID.'/';
+							} else {
+								$qr_text = 'https://'.$_SERVER['HTTP_HOST'].'/survey/results/'.$this->survey->surveyID.'/'.$this->voter->voterID.'/';
+							}
+							QRcode::png($qr_text, $imgpath_create);
 						}
 						$return['html'] .= $this->ajaxInclude('view/survey/yourvote.view.php');
 					} else {
