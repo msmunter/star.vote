@@ -165,13 +165,21 @@ function vote()
 	resultsButtonHtml = $('#voteShowResultsButtons').html();
 	$('#voteShowResultsButtons').html('Recording Vote...').promise().done(function(){
 		// Need to validate key
-		checkVoterKey(function(){
-			if (voterKeyResult == true) {
-				voteActual();
-			} else {
-				enableButtons();
-			}
-		});
+		// checkVoterKey(function(){
+		// 	if (voterKeyResult == true) {
+		// 		voteActual();
+		// 	} else {
+		// 		enableButtons();
+		// 	}
+		// });
+		if ($('#cdnHandle').val() != '') {
+			voteActual();
+		} else {
+			msg = 'You must upload an identifying image';
+			$('#voteShowResultsButtons').html(resultsButtonHtml);
+			enableButtons();
+			updateStatus(msg);
+		}
 	});
 }
 
@@ -250,6 +258,7 @@ function uploadIdentImage()
 						enableUploadButton();
 					} else {
 						disableUploadButton();
+						$('#cdnHandle').val(res.filesUploaded[0].handle);
 						$('#identImagePreview').attr('src', res.filesUploaded[0].url);
 					}
 				});

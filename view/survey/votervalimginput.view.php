@@ -4,6 +4,7 @@
 	<div class="ui-field-contain">
 		<div>Upload your identifying image:</div>
 		<div id="identImageContainer">
+			<input type="hidden" id="cdnHandle" name="cdnHandle" value="<?php echo $this->identImage->cdnHandle; ?>" />
 			<?php if ($this->identImage) { ?>
 				<img id="identImagePreview" src="https://cdn.filestackcontent.com/<?php echo $this->identImage->cdnHandle; ?>" alt="Identifying Image Preview" />
 			<?php } else { ?>
