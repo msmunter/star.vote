@@ -1,0 +1,4 @@
+.htpasswd
+vendor/
+composer.*
+web/images/qr_voterid/

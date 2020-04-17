@@ -381,8 +381,8 @@ div#voteInstructions ul {
 
 img#identImagePreview {
 	/*cursor: pointer;*/
-	max-width: 100px;
-	max-height: 100px;
+	/*max-width: 100px;
+	max-height: 100px;*/
 }
 
 /* END Image Uploader */
