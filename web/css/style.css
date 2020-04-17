@@ -385,6 +385,14 @@ img#identImagePreview {
 	max-height: 100px;*/
 }
 
+img#identImagePreview.small {
+	width: 100px;
+}
+
+img#identImagePreview.large {
+	width: 200px;
+}
+
 /* END Image Uploader */
 
 table#validateVoterButtonTable {

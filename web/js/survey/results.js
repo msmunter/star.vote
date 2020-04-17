@@ -261,6 +261,7 @@ function uploadIdentImage()
 						clearStatus();
 						$('#cdnHandle').val(res.filesUploaded[0].handle);
 						$('#identImagePreview').attr('src', res.filesUploaded[0].url);
+						$('#identImagePreview').removeClass('small').addClass('large');
 					}
 				});
 			},

@@ -15,6 +15,6 @@
 	<div id="indexCreatePollContainer">
 		<?php //include('view/poll/pollinputform.view.php'); ?>
 		<!-- <a class="ui-btn ui-btn-inline ui-mini ui-corner-all" href="/ipo2020/">Vote!</a> -->
-		Please visit <a href="https://ipo.vote/">ipo.vote</a> to register.
+		Please visit <a href="https://register.ipo.vote/">register.ipo.vote</a> to acquire a ballot.
 	</div>
 </div>
