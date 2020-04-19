@@ -48,12 +48,14 @@ class SurveyController extends Controller
 						$this->voter->model = new VoterModel();
 						if ($_GET['voterID']) {
 							$this->voter->initVoter($_GET['voterID']);
+						} else if ($_POST['voterID']) {
+							$this->voter->initVoter($_POST['voterID']);
 						} /*else {
 							$this->voter->initVoter(null);
 						}*/
 						if ($this->voter->voterID) {
 							$this->voter->voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
-							// Determine whether user has voted
+							// Determine whether user has a temp vote, final vote, or has not voted
 							$this->hasVoted = false;
 							foreach ($this->survey->polls as $zPoll) {
 								$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
@@ -67,7 +69,17 @@ class SurveyController extends Controller
 							} else {
 								// Check for a temp vote
 								$tempVote = $this->model->getTempVote($this->survey->surveyID, $this->voter->voterID);
-								if ($tempVote) $this->hasVoted = true;
+								if ($tempVote) {
+									$dirtyVoteArray = json_decode($tempVote->voteJson);
+									// Convert object to array
+									foreach ($dirtyVoteArray as $answerID => $vote) {
+										$voteArray[$answerID] = $vote;
+									}
+									$this->voteArray = $voteArray;
+									$this->hasVoted = true;
+									$this->yourVoteTime = $tempVote->voteTime;
+									$this->survey->allAnswers = $this->model->getAllAnswersBySurveyID($this->survey->surveyID);
+								}
 							}
 							// Get ident image
 							$this->identImage = $this->model->getIdentImage($this->survey->surveyID, $this->voter->voterID);
