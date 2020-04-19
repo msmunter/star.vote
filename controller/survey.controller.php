@@ -646,7 +646,16 @@ class SurveyController extends Controller
 							$return['voteArray'] = json_encode($voteArray);
 							// Write temp vote
 							$this->model->insertTempVote($this->surveyID, $this->voter->voterID, json_encode($voteArray), $voteTime);
-							$this->model->updateVoterIdentState($this->surveyID, $this->voter->voterID, 'voted', false, false);
+							$this->model->updateVoterIdentState($this->surveyID, $this->voter->voterID, 'voted', false, false); 
+
+							// Queue message
+							$api = new ApiController();
+							$api->template = 'voteReceipt';
+							//$api->fields = $return['voteArray'];
+							$api->fields = json_encode(['voterId' => $this->voter->voterID]);
+							if ($api->addMsg()) {
+								unset($api);
+							} else $return['caution'] = 'Failed to send post-vote message';
 							
 							// vvv For IPO, skipping this part until voter is validated vvv
 							

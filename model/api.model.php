@@ -12,19 +12,19 @@ class ApiModel extends Model
 			$return = $this->results[0];
 			$this->query = "UPDATE `msgout`
 							SET `requestRetrieved` = NOW()
-							WHERE `msgID` = '".$return['msgID']."'
+							WHERE `msgID` = '".$return->msgID."'
 							LIMIT 1;";
 			$this->doUpdateQuery();
 			return $return;
 		} else return false;
 	}
 
-	// public function insertVoterKey($surveyID, $key)
-	// {
-	// 	$this->query = "INSERT INTO `surveyVoterKeys` (`surveyID`, `voterKey`, `createdTime`, `voteTime`, `voterID`, `invalid`)
-	// 				VALUES ('".$surveyID."', '".$key."', '".date('Y-m-d H:i:s')."', null, 0, 0)";
-	// 	$this->doInsertQuery();
-	// }
+	public function addMsg($template, $fields)
+	{
+		$this->query = "INSERT INTO `msgout` (`template`, `fields`)
+					VALUES ('".$template."', '".$fields."')";
+		$this->doInsertQuery();
+	}
 
 	// public function timeoutValidations($surveyID)
 	// {
