@@ -20,13 +20,16 @@ if ($_FILES['file']) {
 				$voter['last_name'] = $boom[3];
 				$voter['name_suffix'] = $boom[4];
 				$voter['birth_date'] = $boom[5];
+				if (!is_int($voter['birth_date']) || $voter['birth_date'] < 1900) {
+					$voter['birth_date'] = 0;
+				}
 				$voter['confidential'] = $boom[6];
-				if ($voter['confidential'] != 'Confidential' && $voter['voter_id'] != 'ACP' && $voter['voter_id'] != '') {
-					$voter['res_address_1'] = $boom[13];
-					$voter['res_address_2'] = $boom[14];
-					$voter['city'] = $boom[24];
-					$voter['state'] = $boom[25];
-					$voter['zip_code'] = $boom[26];
+				if ($voter['voter_id'] != 'ACP' && $voter['voter_id'] != '') {
+					$voter['res_address_1'] = $boom[9];
+					$voter['res_address_2'] = false;
+					$voter['city'] = $boom[16];
+					$voter['state'] = $boom[17];
+					$voter['zip_code'] = $boom[18];
 					if ($voter['zip_code'] == 'XXXXXXXX') {
 						$voter['zip_code'] = false;
 					} else if ($voter['zip_code'] == '') {

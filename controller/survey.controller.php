@@ -1160,7 +1160,9 @@ class SurveyController extends Controller
 	public function uploadvoterfile()
 	{
 		$this->title = "Upload Voter File";
-		$this->survey = $this->model->getSurveyByID($this->URLdata);
+		if ($this->user->userID == 1) {
+			$this->survey = $this->model->getSurveyByID($this->URLdata);
+		}
 	}
 
 	// public function ajaxuploadvoterfile()
