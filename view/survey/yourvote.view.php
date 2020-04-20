@@ -11,7 +11,7 @@
 		foreach ($poll->answers as $answer) {
 			$i++;
 			//echo '<tr><td class="orderCell">'.$i.'</td><td>'.$answer->text.'</td><td class="number">'.$answer->vote.'</td></tr>';
-			echo '<tr><td class="orderCell">'.$i.'</td><td>'.$answer->text.'</td><td class="number">'.$this->voteArray[$answer->answerID].'</td></tr>';
+			echo '<tr><td class="orderCell">'.$i.'</td><td>'.$answer->text.'<br /><div class="pollSubtext">'.$answer->subtext.'</div></td><td class="number">'.$this->voteArray[$answer->answerID].'</td></tr>';
 		} 
 		?>
 	</table>

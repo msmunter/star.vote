@@ -158,6 +158,10 @@ div#pollTitle {
 	font-size: 14pt;
 }
 
+.pollSubtext {
+	font-size: 10pt;
+}
+
 a.pollLink:link, a.pollLink:hover, a.pollLink:visited, a.surveyLink:link, a.surveyLink:hover, a.surveyLink:visited {
 	display: block;
 	float: left;

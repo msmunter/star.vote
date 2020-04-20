@@ -7,7 +7,10 @@
 	if ($this->survey->randomOrder > 0) shuffle($answerSet);
 	foreach ($answerSet as $answer) { ?>
 		<form class="voteForm">
-			<legend class="voteLegend"><?php echo $answer->text; ?></legend>
+			<legend class="voteLegend">
+				<?php echo $answer->text; ?>
+				<div class="pollSubtext"><?php echo $answer->subtext; ?></div>		
+			</legend>
 			<input checked="checked" type="radio" name="radioVote|<?php echo $answer->answerID; ?>" id="radioVote|<?php echo $answer->answerID; ?>|0" value="0" data-role="none" />
 			<label class="voteFormLabel emptystar" for="radioVote|<?php echo $answer->answerID; ?>|0">0</label>
 			

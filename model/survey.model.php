@@ -25,7 +25,7 @@ class SurveyModel extends Model
 	{
 		$polls = $this->getPollsBySurveyID($surveyID);
 		foreach ($polls as $poll) {
-			$this->query = "SELECT `answerID`, `text`, `votes`, `points`
+			$this->query = "SELECT *
 							FROM `answers`
 							WHERE `answers`.`pollID` LIKE '".$poll->pollID."'
 							ORDER BY `answerID` ASC;";

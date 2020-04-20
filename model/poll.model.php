@@ -23,7 +23,7 @@ class PollModel extends Model
 	
 	public function getAnswersByPollID($pollID)
 	{
-		$this->query = "SELECT `answerID`, `text`, `votes`, `points`, `imgur`
+		$this->query = "SELECT *
 						FROM `answers`
 						WHERE `answers`.`pollID` LIKE '$pollID'
 						ORDER BY `answerID` ASC;";
@@ -33,7 +33,7 @@ class PollModel extends Model
 	
 	public function getAnswersByPollIDScoreOrder($pollID)
 	{
-		$this->query = "SELECT `answerID`, `text`, `votes`, `points`, `imgur`
+		$this->query = "SELECT *
 						FROM `answers`
 						WHERE `answers`.`pollID` LIKE '$pollID'
 						ORDER BY `points` DESC, `votes` DESC;";
@@ -43,7 +43,7 @@ class PollModel extends Model
 	
 	public function getTopAnswersByPollID($pollID)
 	{
-		$this->query = "SELECT `answerID`, `text`, `votes`, `points`, `imgur`
+		$this->query = "SELECT *
 						FROM `answers`
 						WHERE `answers`.`pollID` LIKE '$pollID'
 						ORDER BY `points` DESC;";
