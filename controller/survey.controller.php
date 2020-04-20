@@ -660,12 +660,25 @@ class SurveyController extends Controller
 							$this->model->insertTempVote($this->surveyID, $this->voter->voterID, json_encode($voteArray), $voteTime);
 							$this->model->updateVoterIdentState($this->surveyID, $this->voter->voterID, 'voted', false, false); 
 
+							$ballotCsv = '';
+							$ballotHtml = "<table>";
+							foreach ($this->survey->polls as $poll) {
+								$ballotHtml .= '<tr><th colspan="2">'.$poll->title.'</th></tr>';
+								foreach ($poll->answers as $answer) {
+									$ballotCsv .= $poll->title.','.$answer->text.','.$voteArray[$answer->answerID]."\n";
+									$ballotHtml .= "<tr><td>".$answer->text."</td><td>".$voteArray[$answer->answerID]."</td></tr>";
+								}
+							}
+							$ballotHtml .= "</table>";
+
 							// Queue message
 							$api = new ApiController();
 							$api->template = 'voteReceipt';
 							$api->fields = json_encode([
 								'starId' => $this->voter->voterID,
-								'voteArray' => json_encode($voteArray)
+								'voteArray' => json_encode($voteArray),
+								'ballotCsv' => $ballotCsv,
+								'ballotHtml' => $ballotHtml
 							]);
 							if ($api->addMsg()) {
 								unset($api);
