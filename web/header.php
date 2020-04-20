@@ -7,10 +7,11 @@
 		<meta name="keywords" content="vote, voting" />
 		<meta name="robots" content="follow, index" />
 		<title>
-		<?php if ($_SERVER['SERVER_NAME'] == 'star.vote') { ?>
-			&#9733;.&#10003;
+		<?php if ($_SERVER['SERVER_NAME'] == 'star.ipo.vote') { ?>
+			<!-- &#9733;.&#10003; -->
+			&#9733; Elections
 		<?php } else { ?>
-			&#9733;.&#10003; [Dev]
+			&#9733; Elections [Dev]
 		<?php } ?>
 		<?php if (!empty($this->title)) echo ' - '.$this->title; ?>
 		</title>
@@ -69,7 +70,7 @@
 				<!-- Header -->
 				<div id="pageHeader">
 					<a href="https://<?php echo $_SERVER['SERVER_NAME']; ?>/">
-						<img id="headerLogo" src="https://<?php echo $_SERVER['SERVER_NAME']; ?>/web/images/starvote_logo.png" alt="Logo" />
+						<img id="headerLogo" src="https://<?php echo $_SERVER['SERVER_NAME']; ?>/web/images/star_logo.png" alt="Logo" />
 					</a>
 					<a id="headerTitle" href="https://<?php echo $_SERVER['SERVER_NAME']; ?>/">
 						<?php if ($_SERVER['SERVER_NAME'] != 'star.ipo.vote') { ?>

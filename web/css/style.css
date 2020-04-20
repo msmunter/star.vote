@@ -36,12 +36,15 @@ div#pageHeader {
 
 img#headerLogo {
 	float: left;
-	height: 48px;
-	margin: none;
+	height: 44px;
+	margin-top: 2px;
 	margin-right: 5px;
+	margin-left: 2px;
+	margin-bottom: 2px;
 	padding: none;
-	/*background-color: white;
-	border-radius: 10px;*/
+	background-color: black;
+	/*border-radius: 0px 10px 10px 0px;*/
+	border-radius: 10px;
 	border: dashed 0px purple;
 }
 
