@@ -316,10 +316,11 @@ class SurveyModel extends Model
 		}
 	}
 
-	public function getVoterByVoterfileID($voterfileID)
+	public function getVoterByVoterfileID($voterfileID, $email)
 	{
 		$this->query = "SELECT * FROM `voters`
 						WHERE `voterfileID` LIKE '$voterfileID'
+						AND `email` LIKE '$email'
 						LIMIT 0,1;";
 		$this->doSelectQuery();
 		if (count($this->results) > 0) {

@@ -20,6 +20,14 @@ class VoterModel extends Model
 		// Insert
 		$this->doInsertQuery();
 	}
+
+	public function insertVoterWithEmail($voterID, $ip, $email)
+	{
+		$this->query = "INSERT INTO `voters` (`voterID`, `ip`, `email`)
+							VALUES ('".$voterID."', '".$ip."', '".$email."')";
+		// Insert
+		$this->doInsertQuery();
+	}
 	
 	public function isGeneratedIDTaken($table, $column, $newID)
 	{

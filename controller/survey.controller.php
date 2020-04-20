@@ -663,45 +663,15 @@ class SurveyController extends Controller
 							// Queue message
 							$api = new ApiController();
 							$api->template = 'voteReceipt';
-							//$api->fields = $return['voteArray'];
-							$api->fields = json_encode(['voterId' => $this->voter->voterID]);
+							$api->fields = json_encode([
+								'starId' => $this->voter->voterID,
+								'voteArray' => json_encode($voteArray)
+							]);
 							if ($api->addMsg()) {
 								unset($api);
 							} else $return['caution'] = 'Failed to send post-vote message';
 							
-							// vvv For IPO, skipping this part until voter is validated vvv
-							
-							// Submit the votes and update matrices
-							/*foreach ($voteArray as $answerID => $vote) {
-								
-								$this->votes[] = $vote;
-								// Determine pollID
-								$pollID = $this->answerToPollArray[$answerID];
-								// Insert vote
-								$this->model->insertVote($pollID, $this->voter->voterID, $answerID, $vote, $voteTime);
-								// Update the matrix; maybe replace the windows with bricks?
-								foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
-									if ($answerID != $answerID2) {
-										if ($vote > $vote2) {
-											$this->model->updateVoteMatrix($pollID, $answerID, $answerID2);
-										} else if ($vote < $vote2) {
-											$this->model->updateVoteMatrix($pollID, $answerID2, $answerID);
-										} // and do nothing if they're equal
-									}
-								}
-								unset($voteArrayToDestroy[$answerID]);
-								
-							}
-							*/
-							//$this->model->incrementSurveyVoteCount($this->surveyID); // will do on validation
-							// vvv UNUSED IN IPO vvv
-							// If a verified vote, write extra db info
-							/*if ($this->survey->verifiedVoting) {
-								$this->model->updateVoterKeyEntry($_POST['voterKey'], $this->surveyID, $this->voter->voterID, $voteTime);
-							}*/
-							// ^^^ UNUSED IN IPO ^^^
-							
-							// ^^^ For IPO, skipping this part until voter is validated ^^^
+							// For IPO we're validating later as a manual function
 
 							unset($voteTime, $oDate);
 						} else {
@@ -944,31 +914,38 @@ class SurveyController extends Controller
 		$statetx['rejectedOnce'] = 'pending';
 		$statetx['acceptedTwice'] = 'accepted';
 		$statetx['rejectedTwice'] = 'rejected';
-		$voterIDs = $this->model->getVoterfileByStateID($this->URLdata);
-		$return['voterId'] = $voterIDs->stateVoterID;
-		if ($voterIDs->voterfileID) {
-			include_once('model/voter.model.php');
-			$mVoter = new VoterModel();
-			$existingVoter = $this->model->getVoterByVoterfileID($voterIDs->voterfileID);
-			if ($existingVoter) {
-				$starVoterID = $existingVoter->voterID;
-				$return['starId'] = $existingVoter->voterID;
-			} else {
-				$starVoterID = $this->generateUniqueID(10, "voters", "voterID");
-				$mVoter->insertVoter($starVoterID, $_SERVER['REMOTE_ADDR']);
-				$return['starId'] = $starVoterID;
-				$this->model->linkVoterfileToVoter($voterIDs->voterfileID, $starVoterID);
-			}
-			$vState = $this->model->getVerificationStateByVoterID($starVoterID);
-			if ($vState) {
-				$return['status'] = $statetx[$vState];
-			} else {
+		$email = $_GET['email'];
+		if ($email) {
+			$voterIDs = $this->model->getVoterfileByStateID($this->URLdata);
+			//echo '<pre>'; print_r($voterIDs); echo '</pre>'; // DEBUG ONLY!!!
+			$return['voterId'] = $voterIDs->stateVoterID;
+			if ($voterIDs->voterfileID) {
+				include_once('model/voter.model.php');
+				$mVoter = new VoterModel();
+				$existingVoter = $this->model->getVoterByVoterfileID($voterIDs->voterfileID, $email);
+				//echo '<pre>'; print_r($existingVoter); echo '</pre>'; // DEBUG ONLY!!!
 				if ($existingVoter) {
-					$return['status'] = 'existing';
+					$starVoterID = $existingVoter->voterID;
+					$return['starId'] = $existingVoter->voterID;
 				} else {
-					$return['status'] = 'new';
+					$starVoterID = $this->generateUniqueID(10, "voters", "voterID");
+					$mVoter->insertVoterWithEmail($starVoterID, $_SERVER['REMOTE_ADDR'], $email);
+					$return['starId'] = $starVoterID;
+					$this->model->linkVoterfileToVoter($voterIDs->voterfileID, $starVoterID);
+				}
+				$vState = $this->model->getVerificationStateByVoterID($starVoterID);
+				if ($vState) {
+					$return['status'] = $statetx[$vState];
+				} else {
+					if ($existingVoter) {
+						$return['status'] = 'existing';
+					} else {
+						$return['status'] = 'new';
+					}
 				}
 			}
+		} else {
+			$return['starId'] = false;
 		}
 		echo json_encode($return);
 	}
