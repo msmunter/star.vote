@@ -207,6 +207,11 @@ div#pollButtonContainer {
 	margin: 0px auto;
 }
 
+img#howDoesStarVotingWork {
+	max-width: 100%;
+	max-height: 100%;
+}
+
 /* Vote Selector */
 .voteForm {
 	float: left;

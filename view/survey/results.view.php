@@ -32,11 +32,12 @@ if ($this->survey) {
 	<?php } else { ?>
 		<div id="voteInstructions">
 			<ul>
-				<li>You may score as many candidates as you like from 0 (no support) to 5 (max support).</li>
-				<li>You may give the same score to multiple candidates.</li>
+				<li>You may score as many candidates as you like from 0 (worst) to 5 (best).</li>
+				<li>If you don't have a preference you may give the same score to multiple candidates.</li>
 				<li>The two highest-scoring candidates are finalists.</li>
-				<li>The finalist scored higher by more voters wins.</li>
+				<li>The finalist preferred by the majority wins.</li>
 			</ul>
+			<a href="/docs/how/" target="_blank">How Does STAR Voting Work?</a>
 		</div>
 		<?php if ($this->hasVoted) { ?>
 		<div class="bigContainer">

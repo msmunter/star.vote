@@ -1,0 +1,1 @@
+<img id="howDoesStarVotingWork" src="/web/images/how_does_star_voting_work.jpg" alt="How Does STAR Voting Work?" />
