@@ -16,9 +16,9 @@ class ApiController extends Controller
 		$this->return['apiVersion'] = 'v1';
 		if (strtolower($this->URLdata == 'getnextemail')) {
 			$this->getNextEmail();
-		} /*else if (strtolower($this->URLdata == 'getstarid')) {
-			$this->getStarID();
-		}*/ else {
+		} else if (strtolower($this->URLdata == 'completeemail')) {
+			$this->completeEmail();
+		} else {
 			print json_encode($this->return);
 		}
 	}
@@ -38,6 +38,34 @@ class ApiController extends Controller
 		echo json_encode($this->return);
 	}
 
+	private function completeEmail()
+	{
+		$msgID = $_GET['requestId'];
+		if ($msgID) {
+			$msg = $this->model->getMsgCompletedStatusByID($msgID);
+			if ($msg->requestCompleted) {
+				$this->return['requestId'] = $msgID;
+				$this->return['template'] = $msg->template;
+				$this->return['token'] = $msg->token;
+			} else if ($msg->msgID) {
+				$this->model->completeEmailByID($msgID);
+				$this->return['requestId'] = $msgID;
+				$this->return['template'] = $msg->template;
+				$this->return['token'] = $msg->token;
+			} else {
+				$this->return['requestId'] = $msgID;
+				$this->return['template'] = false;
+				$this->return['token'] = false;
+			}
+		} else {
+			$this->return['template'] = false;
+			$this->return['token'] = false;
+		}
+		$this->return['status'] = 200;
+		$this->return['statusText'] = "OK";
+		echo json_encode($this->return);
+	}
+
 	public function addMsg()
 	{
 		if ($this->template && $this->fields) {
@@ -46,15 +74,5 @@ class ApiController extends Controller
 			return true;
 		} else return false;
 	}
-
-	// private function getStarID()
-	// {
-	// 	$oSurvey = new SurveyController();
-	// 	$oSurvey->model = new SurveyModel();
-	// 	$res = $oSurvey->getstarid();
-	// 	$this->return['starId'] = $res['starId'];
-	// 	$this->return['status'] = $res['status'];
-	// 	echo json_encode($this->return);
-	// }
 }
 ?>
