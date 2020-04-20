@@ -51,9 +51,9 @@ if ($this->survey) {
 				<?php if ($this->survey->kioskMode) { ?>
 					<button id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button>
 				<?php } ?>
-				<?php if ($this->survey->printVote) { ?>
-					<button id="reprintVoteButton" data-inline="inline">Reprint Vote</button>
-				<?php } ?>	
+				<?php //if ($this->survey->printVote) { ?>
+					<button id="reprintVoteButton" data-inline="inline">Print Vote</button>
+				<?php //} ?>	
 			</div>
 		</div>
 		<?php } else { ?>
@@ -88,11 +88,11 @@ if ($this->survey) {
 						<button class="hidden" id="resetVoterButton" data-inline="inline" onclick="resetVoter()">Reset Voter</button>
 						
 					<?php } ?>
-					<?php if ($this->survey->printVote) { ?>
-						<button class="hidden" id="reprintVoteButton" data-inline="inline">Reprint Vote</button>
-					<?php } ?>
+					<?php //if ($this->survey->printVote) { ?>
+						<button class="hidden" id="reprintVoteButton" data-inline="inline">Print Vote</button>
+					<?php //} ?>
 				<?php } else { ?>
-					Invalid or missing voter ID; please visit <a href="https://ipo.vote/">ipo.vote</a> to register.<br />Once registered you will receive an email containing a link to your ballot.
+					Invalid or missing voter ID; please visit <a href="https://register.ipo.vote/">register.ipo.vote</a>.<br />Once registered you will receive an email containing a link to your ballot.
 				<?php } ?>
 			</div>
 		</div>

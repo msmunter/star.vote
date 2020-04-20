@@ -220,7 +220,7 @@ function voteActual()
 			showResults();
 			// Show reset voter button
 			if ($('#resetVoterButton').length > 0) $('#resetVoterButton').show();
-			//if ($('#reprintVoteButton').length > 0) $('#reprintVoteButton').show();
+			if ($('#reprintVoteButton').length > 0) $('#reprintVoteButton').show();
 			// Print results
 			//popMsg(ballotText, 1);
 		}

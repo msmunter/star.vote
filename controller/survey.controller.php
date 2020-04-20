@@ -669,8 +669,23 @@ class SurveyController extends Controller
 							]);
 							if ($api->addMsg()) {
 								unset($api);
-							} else $return['caution'] = 'Failed to send post-vote message';
+							} else $return['caution'] = 'Failed to send post-vote ballot message';
 							
+							// Detect multiple votes for same voter ID
+							$sameVoters = $this->model->getSameVoters($this->voter->voterfileID, $this->voter->voterID);
+							if ($sameVoters) {
+								// Queue message
+								$api = new ApiController();
+								$api->template = 'duplicateBallot';
+								$api->fields = json_encode([
+									'starId' => $this->voter->voterID,
+									'voterfileId' => $this->voter->voterfileID
+								]);
+								if ($api->addMsg()) {
+									unset($api);
+								} else $return['error'] = 'Failed to send duplicate ballot message';
+							}
+
 							// For IPO we're validating later as a manual function
 
 							unset($voteTime, $oDate);
@@ -929,7 +944,9 @@ class SurveyController extends Controller
 					$return['starId'] = $existingVoter->voterID;
 				} else {
 					$starVoterID = $this->generateUniqueID(10, "voters", "voterID");
-					$mVoter->insertVoterWithEmail($starVoterID, $_SERVER['REMOTE_ADDR'], $email);
+					$userAgent = $_SERVER['HTTP_USER_AGENT'];
+					$browser = get_browser(null, true);
+					$mVoter->insertVoterWithEmail($starVoterID, $_SERVER['REMOTE_ADDR'], $email, $browser['platform'], $browser['browser'], $browser['version']);
 					$return['starId'] = $starVoterID;
 					$this->model->linkVoterfileToVoter($voterIDs->voterfileID, $starVoterID);
 				}

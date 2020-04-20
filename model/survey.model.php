@@ -408,6 +408,20 @@ class SurveyModel extends Model
 		}
 	}
 
+	public function getSameVoters($voterfileID)
+	{
+		$this->query = "SELECT `voters`.`voterID` FROM `voters`, `tempvotes`
+						WHERE `voters`.`voterfileID` = '$voterfileID'
+						AND `voters`.`voterID` = `tempvotes`.`voterID`
+						AND `voters`.`voterID` NOT LIKE '$voterID'";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results;
+		} else {
+			return false;
+		}
+	}
+
 	public function getVoterToValidate($surveyID, $userID)
 	{
 		// See if you have one checked out
