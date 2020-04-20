@@ -61,19 +61,21 @@
 	</head>
 	<body>
 		<div id="page" data-role="page">
-			<div id="headerActual" data-role="header" class="ui-bar">
+			<?php if ($_SERVER['SERVER_NAME'] != 'star.ipo.vote') { ?>
+				<div id="headerActual" data-role="header" class="ui-bar dev">
+			<?php } else { ?>
+				<div id="headerActual" data-role="header" class="ui-bar">
+			<?php } ?>
 				<!-- Header -->
 				<div id="pageHeader">
 					<a href="https://<?php echo $_SERVER['SERVER_NAME']; ?>/">
 						<img id="headerLogo" src="https://<?php echo $_SERVER['SERVER_NAME']; ?>/web/images/starvote_logo.png" alt="Logo" />
 					</a>
 					<a id="headerTitle" href="https://<?php echo $_SERVER['SERVER_NAME']; ?>/">
-						<?php if ($_SERVER['SERVER_NAME'] == 'star.vote') { ?>
-							.vote
-						<?php } else { ?>
-							&raquo; Dev &laquo;
+						<?php if ($_SERVER['SERVER_NAME'] != 'star.ipo.vote') { ?>
+							&raquo; DEV &laquo;
 						<?php } ?>
-						 - IPO 2020 Primary
+						IPO 2020 Primary
 					</a>
 				</div>
 				<?php if ($this->kioskMode && empty($this->user->userID)) {

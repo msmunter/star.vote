@@ -25,6 +25,10 @@ div#headerActual.ui-bar {
 	background-color: black;
 }
 
+div#headerActual.ui-bar.dev {
+	background-color: darkred;
+}
+
 div#pageHeader {
 	float: left;
 	height: 48px;
