@@ -9,14 +9,14 @@
 		<title>
 		<?php if ($_SERVER['SERVER_NAME'] == 'star.ipo.vote') { ?>
 			<!-- &#9733;.&#10003; -->
-			&#9733; Elections
+			IPO Online Voting
 		<?php } else { ?>
-			&#9733; Elections [Dev]
+			IPO Online Voting [Dev]
 		<?php } ?>
 		<?php if (!empty($this->title)) echo ' - '.$this->title; ?>
 		</title>
 		<!-- Icon/Favicon -->
-		<link rel="apple-touch-icon" sizes="57x57" href="/web/images/ico/apple-icon-57x57.png">
+		<!-- <link rel="apple-touch-icon" sizes="57x57" href="/web/images/ico/apple-icon-57x57.png">
 		<link rel="apple-touch-icon" sizes="60x60" href="/web/images/ico/apple-icon-60x60.png">
 		<link rel="apple-touch-icon" sizes="72x72" href="/web/images/ico/apple-icon-72x72.png">
 		<link rel="apple-touch-icon" sizes="76x76" href="/web/images/ico/apple-icon-76x76.png">
@@ -32,7 +32,7 @@
 		<link rel="manifest" href="/manifest.json">
 		<meta name="msapplication-TileColor" content="#ffffff">
 		<meta name="msapplication-TileImage" content="/web/images/ico/ms-icon-144x144.png">
-		<meta name="theme-color" content="#ffffff">
+		<meta name="theme-color" content="#ffffff"> -->
 		<!-- jQuery CSS -->
 		<!--<link rel="stylesheet" href="/web/css/starvote.min.css" />-->
 		<!-- jQuery Mobile CSS -->
@@ -70,13 +70,14 @@
 				<!-- Header -->
 				<div id="pageHeader">
 					<a href="https://<?php echo $_SERVER['SERVER_NAME']; ?>/">
-						<img id="headerLogo" src="https://<?php echo $_SERVER['SERVER_NAME']; ?>/web/images/star_logo.png" alt="Logo" />
+						<img id="headerLogo" src="https://<?php echo $_SERVER['SERVER_NAME']; ?>/web/images/ipo_logo_notext.png" alt="Logo" />
+						<!-- <img id="headerSecondaryLogo" src="https://<?php //echo $_SERVER['SERVER_NAME']; ?>/web/images/ipo_logo_textonly.png" alt="IPO Title Image"/> -->
 					</a>
 					<a id="headerTitle" href="https://<?php echo $_SERVER['SERVER_NAME']; ?>/">
+						Independent Party of Oregon<br />Online Voting
 						<?php if ($_SERVER['SERVER_NAME'] != 'star.ipo.vote') { ?>
 							&raquo; DEV &laquo;
 						<?php } ?>
-						IPO 2020 Primary
 					</a>
 				</div>
 				<?php if ($this->kioskMode && empty($this->user->userID)) {
