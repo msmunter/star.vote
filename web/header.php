@@ -8,7 +8,6 @@
 		<meta name="robots" content="follow, index" />
 		<title>
 		<?php if ($_SERVER['SERVER_NAME'] == 'star.ipo.vote') { ?>
-			<!-- &#9733;.&#10003; -->
 			IPO Online Voting
 		<?php } else { ?>
 			IPO Online Voting [Dev]
