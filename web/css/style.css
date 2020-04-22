@@ -327,8 +327,13 @@ input#fsCustomSlugInput.highlightInputRed, input#voterKey.highlightInputRed {
 	border: solid 1px red;
 }
 
-table#resultsTable th, table#yourVoteTable th, table.yourVoteTable th, table#runoffResultsTable th {
+table#resultsTable th, table#yourVoteTable th {
 	font-size: 12px;
+	text-align: left;
+}
+
+table.yourVoteTable th, table#runoffResultsTable th {
+	font-size: 14px;
 	text-align: left;
 }
 
