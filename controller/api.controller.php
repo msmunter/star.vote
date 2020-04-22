@@ -30,7 +30,7 @@ class ApiController extends Controller
 			$this->return['requestId'] = $nextEmail->msgID;
 			$this->return['token'] = $nextEmail->token;
 			$this->return['template'] = $nextEmail->template;
-			$this->return['fields'] = $nextEmail->fields;
+			$this->return['fields'] = json_decode($nextEmail->fields);
 		} else {
 			$this->return['requestId'] = false;
 			$this->return['token'] = false;
@@ -70,7 +70,7 @@ class ApiController extends Controller
 	{
 		if ($this->template && $this->fields) {
 			if (!$this->model) $this->model = new ApiModel(); 
-			$this->model->addMsg($this->template, $this->fields);
+			$this->model->addMsg($this->template, json_encode($this->fields));
 			return true;
 		} else return false;
 	}

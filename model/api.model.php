@@ -31,10 +31,10 @@ class ApiModel extends Model
 		} else return false;
 	}
 
-	public function addMsg($template, $fields)
+	public function addMsg($template, $fieldsJson)
 	{
 		$this->query = "INSERT INTO `msgout` (`template`, `fields`)
-					VALUES ('".$template."', '".$fields."')";
+					VALUES ('".$template."', '".$fieldsJson."')";
 		$this->doInsertQuery();
 	}
 

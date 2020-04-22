@@ -644,6 +644,7 @@ class SurveyController extends Controller
 						if (!empty($this->yourVotes)) {
 							$this->hasVoted = true;
 						} else $this->hasVoted = false;
+						$sendVotedMessage = false;
 						if (!$this->hasVoted) {
 							// No vote, get the answers to make sure we have a score for each
 							$this->survey->allAnswers = $this->model->getAllAnswersBySurveyID($this->surveyID);
@@ -671,33 +672,7 @@ class SurveyController extends Controller
 							}
 							$ballotHtml .= "</table>";
 
-							// Queue message
-							$api = new ApiController();
-							$api->template = 'voteReceipt';
-							$api->fields = json_encode([
-								'starId' => $this->voter->voterID,
-								'voteArray' => json_encode($voteArray),
-								'ballotCsv' => $ballotCsv,
-								'ballotHtml' => $ballotHtml
-							]);
-							if ($api->addMsg()) {
-								unset($api);
-							} else $return['caution'] = 'Failed to send post-vote ballot message';
-							
-							// Detect multiple votes for same voter ID
-							$sameVoters = $this->model->getSameVoters($this->voter->voterfileID, $this->voter->voterID);
-							if ($sameVoters) {
-								// Queue message
-								$api = new ApiController();
-								$api->template = 'duplicateBallot';
-								$api->fields = json_encode([
-									'starId' => $this->voter->voterID,
-									'voterfileId' => $this->voter->voterfileID
-								]);
-								if ($api->addMsg()) {
-									unset($api);
-								} else $return['error'] = 'Failed to send duplicate ballot message';
-							}
+							$sendVotedMessage = true;
 
 							// For IPO we're validating later as a manual function
 
@@ -733,6 +708,34 @@ class SurveyController extends Controller
 							QRcode::png($qr_text, $imgpath_create);
 						}
 						$return['html'] .= $this->ajaxInclude('view/survey/yourvote.view.php');
+						// Send outgoing voted message and, if appropriate, duplicate vote message
+						if ($sendVotedMessage) {
+							// Queue message
+							$api = new ApiController();
+							$api->template = 'voteReceipt';
+							$api->fields = (object) [
+								'starId' => $this->voter->voterID,
+								'ballotHtml' => base64_encode($return['html'])
+							];
+							if ($api->addMsg()) {
+								unset($api);
+							} else $return['caution'] = 'Failed to send post-vote ballot message';
+
+							// Detect multiple votes for same voter ID
+							$sameVoters = $this->model->getSameVoters($this->voter->voterfileID, $this->voter->voterID);
+							if ($sameVoters) {
+								// Queue message
+								$api = new ApiController();
+								$api->template = 'duplicateBallot';
+								$api->fields = (object) [
+									'starId' => $this->voter->voterID,
+									'voterfileId' => $this->voter->voterfileID
+								];
+								if ($api->addMsg()) {
+									unset($api);
+								} else $return['error'] = 'Failed to send duplicate ballot message';
+							}
+						}
 					} else {
 						$return['caution'] = 'This key has already been used to record a vote on this poll';
 					}
