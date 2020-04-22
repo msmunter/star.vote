@@ -312,6 +312,7 @@ div#voteInput {
 
 div#yourVoteTime {
 	font-size: 12px;
+	margin-bottom: 12px;
 }
 
 div#customSlugInputContainer, div#verifiedVotingSelectContainer, div#startEndInputContainer {
@@ -351,12 +352,25 @@ div.startEndString {
 	background-color: #e7e7e7;
 	border-radius: 7px;
 	padding: 5px;
+	margin-bottom: 12px;
 }
 
-table.yourVoteTable th.pollHeader {
+table.yourVoteTable {
+	border-collapse: collapse;
+}
+
+table.yourVoteTable td {
+	/*padding: 4px;*/
+}
+
+th.pollHeader {
 	text-align: center;
 	background-color: #e7e7e7;
 	border: solid 1px #e7e7e7;
+}
+
+td.voterResultsTableSpacer {
+	height: 12px;
 }
 
 table#resultsTable td.number, table#yourVoteTable td.number, table.yourVoteTable td.number, table#runoffResultsTable td.number {
