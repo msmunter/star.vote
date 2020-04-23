@@ -30,7 +30,7 @@ if ($_FILES['file']) {
 					$voter['city'] = $boom[16];
 					$voter['state'] = $boom[17];
 					$voter['zip_code'] = $boom[18];
-					if (!is_numeric($voter['zip_code'])) {
+					if (($voter['zip_code'] + 0) < 10000 || ($voter['zip_code'] + 0) > 99999) {
 						$voter['zip_code'] = 0;
 					}
 					$query = 'INSERT INTO `voterfile` (`surveyID`, `stateVoterID`, `fname`, `lname`, `street`, `street2`, `city`, `state`, `zip`, `birthyear`) VALUES ("'.$survey->surveyID.'", "'.$voter['voter_id'].'", "'.$voter['first_name'].'", "'.$voter['last_name'].'", "'.$voter['res_address_1'].'", "'.$voter['res_address_2'].'", "'.$voter['city'].'", "'.$voter['state'].'", "'.$voter['zip_code'].'", "'.$voter['birth_date'].'");';
