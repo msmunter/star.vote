@@ -71,13 +71,12 @@ function showButtons()
 
 function disableButtons()
 {
-	$('#voteButton').prop("disabled", true);
-	$('#showResultsButton').prop("disabled", true);
+	$('#voteButton, .uploadIdentImageButton, #showResultsButton').prop("disabled", true);
 }
 
 function enableButtons()
 {
-	$('#voteButton, #showResultsButton, #prevNextPollButtons').prop("disabled", false);
+	$('#voteButton, .uploadIdentImageButton, #showResultsButton, #prevNextPollButtons').prop("disabled", false);
 }
 
 function changePoll(direction)
@@ -172,10 +171,10 @@ function vote()
 		// 		enableButtons();
 		// 	}
 		// });
-		if ($('#cdnHandle').val() != '') {
+		if ($('#cdnHandle1').val() != '' || $('#cdnHandle2').val() != '') {
 			voteActual();
 		} else {
-			msg = 'You must upload an identifying image';
+			msg = 'You must upload at least one identifying image';
 			$('#voteShowResultsButtons').html(resultsButtonHtml);
 			enableButtons();
 			updateStatus(msg);

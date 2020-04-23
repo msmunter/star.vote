@@ -916,7 +916,7 @@ class SurveyController extends Controller
 		$this->doPrintFooter = 1;
 		$this->customCSS = "receipt";
 		if ($_POST['print']) $return['html'] = '<script type="text/javascript">setTimeout(function () { window.print(); }, 500);window.onfocus = function () { setTimeout(function () { window.close(); }, 500); }</script>';
-		$return['html'] .= '<div class="receiptTitle">'.$_POST['title'].'</div><div class="receiptPageTitle inverted">Mail In Copy</div>';
+		$return['html'] .= '<div class="receiptTitle">'.$_POST['title'].'</div><div class="receiptPageTitle">Voter Receipt</div>';
 		$return['html'] .= '<div class="receiptPage">'.$_POST['html'].'</div><div class="addBottomSpace" />';
 		echo $return['html'];
 	}
