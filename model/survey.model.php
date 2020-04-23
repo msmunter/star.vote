@@ -387,11 +387,32 @@ class SurveyModel extends Model
 		} else return false;
 	}
 
-	public function insertIdentImage($surveyID, $voterID, $cdnHandle)
+	public function insertIdentImage($surveyID, $voterID, $cdnHandle, $index)
 	{
-		$this->query = "INSERT INTO `voterident` (`surveyID`, `voterID`, `cdnHandle`, `verificationState`)
+		if ($index == 2) {
+			$cdnField = 'cdnHandle2';
+		} else {
+			$cdnField = 'cdnHandle1';
+		}
+		// See if one exists
+		$this->query = "SELECT * FROM `voterident`
+						WHERE `surveyID` LIKE '$surveyID'
+						AND `voterID` LIKE '$voterID' 
+						LIMIT 0,1";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			// Exists, update
+			$this->query = "UPDATE `voterident`
+							SET `$cdnField` = '$cdnHandle'
+							WHERE `voteridentID` = '".$this->results[0]->voteridentID."'
+							LIMIT 1;";
+			$this->doUpdateQuery();
+		} else {
+			// Does not exist, create
+			$this->query = "INSERT INTO `voterident` (`surveyID`, `voterID`, `$cdnField`, `verificationState`)
 							VALUES ('".$surveyID."', '".$voterID."', '".$cdnHandle."', 'new')";
-		$this->doInsertQuery();
+			$this->doInsertQuery();
+		}
 	}
 
 	public function getIdentImage($surveyID, $voterID)

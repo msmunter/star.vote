@@ -237,7 +237,7 @@ function enableUploadButton()
 	$('#uploadIdentImageButton').prop("disabled", false);
 }
 
-function uploadIdentImage()
+function uploadIdentImage(imageIndex)
 {
 	$.getScript('https://static.filestackapi.com/filestack-js/3.x.x/filestack.min.js', function() {
 		var voterID = getCookie('voterID');
@@ -251,6 +251,7 @@ function uploadIdentImage()
 					voterID: voterID,
 					surveyID: $('#surveyID').val(),
 					cdnHandle: res.filesUploaded[0].handle,
+					imageIndex: imageIndex,
 				}, function(data) {
 					var jData = JSON.parse(data);
 					if (jData.error) {
@@ -259,8 +260,10 @@ function uploadIdentImage()
 					} else {
 						disableUploadButton();
 						clearStatus();
-						$('#cdnHandle').val(res.filesUploaded[0].handle);
-						$('#identImagePreview').attr('src', res.filesUploaded[0].url);
+						$('#cdnHandle'+imageIndex).val(res.filesUploaded[0].handle);
+						$('#identImagePreview'+imageIndex).attr('src', res.filesUploaded[0].url);
+						$('#identImageLink'+imageIndex).attr('href', res.filesUploaded[0].url);
+						$('#uploadButtonCell'+imageIndex).html('Image '+imageIndex+' Saved');
 						$('#identImagePreview').removeClass('small').addClass('large');
 					}
 				});

@@ -421,18 +421,27 @@ div#voteInstructions ul {
 
 /* Image Uploader */
 
-img#identImagePreview {
+img.identImagePreview {
 	/*cursor: pointer;*/
 	/*max-width: 100px;
 	max-height: 100px;*/
 }
 
-img#identImagePreview.small {
+img.identImagePreview.small {
 	width: 100px;
 }
 
-img#identImagePreview.large {
+img.identImagePreview.large {
 	width: 200px;
+}
+
+.uploadIdentImageButton {
+	margin: 2px;
+}
+
+td.identImageCell {
+	min-width: 200px;
+	text-align: center;
 }
 
 /* END Image Uploader */

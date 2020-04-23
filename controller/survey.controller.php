@@ -573,8 +573,8 @@ class SurveyController extends Controller
 	public function ajaxuploadidentimage()
 	{
 		$return['error'] = false;
-		if ($_POST['surveyID'] && $_POST['voterID'] && $_POST['cdnHandle']) {
-			$this->model->insertIdentImage($_POST['surveyID'], $_POST['voterID'], $_POST['cdnHandle']);
+		if ($_POST['surveyID'] && $_POST['voterID'] && $_POST['cdnHandle'] && $_POST['imageIndex']) {
+			$this->model->insertIdentImage($_POST['surveyID'], $_POST['voterID'], $_POST['cdnHandle'], $_POST['imageIndex']);
 		} else {
 			$return['error'] = 'Missing metadata';
 		}

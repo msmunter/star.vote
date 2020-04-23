@@ -12,5 +12,10 @@ class DocsController extends Controller
 	{
 		
 	}
+
+	public function identifyingimages()
+	{
+		
+	}
 }
 ?>
