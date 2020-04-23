@@ -61,22 +61,22 @@ function enableInputs()
 
 function hideButtons()
 {
-	$('#voteButton, #showResultsButton, #prevNextPollButtons').hide();
+	$('#voteButton, .uploadIdentImageButton, #showResultsButton, #prevNextPollButtons').hide();
 }
 
 function showButtons()
 {
-	$('#voteButton, #showResultsButton, #prevNextPollButtons').show();
+	$('#voteButton, .uploadIdentImageButton, #showResultsButton, #prevNextPollButtons').show();
 }
 
 function disableButtons()
 {
-	$('#voteButton, .uploadIdentImageButton, #showResultsButton').prop("disabled", true);
+	$('#voteButton, #showResultsButton').prop("disabled", true);
 }
 
 function enableButtons()
 {
-	$('#voteButton, .uploadIdentImageButton, #showResultsButton, #prevNextPollButtons').prop("disabled", false);
+	$('#voteButton, #showResultsButton, #prevNextPollButtons').prop("disabled", false);
 }
 
 function changePoll(direction)
