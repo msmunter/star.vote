@@ -20,7 +20,7 @@ if ($_FILES['file']) {
 				$voter['last_name'] = $boom[3];
 				$voter['name_suffix'] = $boom[4];
 				$voter['birth_date'] = $boom[5];
-				if (!is_int($voter['birth_date']) || $voter['birth_date'] < 1900) {
+				if (!is_numeric($voter['birth_date'])) {
 					$voter['birth_date'] = 0;
 				}
 				$voter['confidential'] = $boom[6];
@@ -30,10 +30,8 @@ if ($_FILES['file']) {
 					$voter['city'] = $boom[16];
 					$voter['state'] = $boom[17];
 					$voter['zip_code'] = $boom[18];
-					if ($voter['zip_code'] == 'XXXXXXXX') {
-						$voter['zip_code'] = false;
-					} else if ($voter['zip_code'] == '') {
-						$voter['zip_code'] = false;
+					if (!is_numeric($voter['zip_code'])) {
+						$voter['zip_code'] = 0;
 					}
 					$query = 'INSERT INTO `voterfile` (`surveyID`, `stateVoterID`, `fname`, `lname`, `street`, `street2`, `city`, `state`, `zip`, `birthyear`) VALUES ("'.$survey->surveyID.'", "'.$voter['voter_id'].'", "'.$voter['first_name'].'", "'.$voter['last_name'].'", "'.$voter['res_address_1'].'", "'.$voter['res_address_2'].'", "'.$voter['city'].'", "'.$voter['state'].'", "'.$voter['zip_code'].'", "'.$voter['birth_date'].'");';
 					if ($queryCount == 0) {
