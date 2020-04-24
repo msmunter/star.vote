@@ -286,6 +286,15 @@ class SurveyModel extends Model
 		return $this->results[0]->count;
 	}
 
+	public function getFinalizedVoterCount($surveyID)
+	{
+		$this->query = "SELECT COUNT(*) AS `count` FROM `voterident`
+						WHERE `surveyID` = '$surveyID'
+						AND `verificationState` IN ('rejectedTwice', 'verifiedTwice', 'inResults');";
+		$this->doSelectQuery();
+		return $this->results[0]->count;
+	}
+
 	// public function getYourVote($voterID, $pollID)
 	// {
 	// 	$this->query = "SELECT `votes`.`answerID`, `votes`.`vote`, `answers`.`text`, `votes`.`voteTime`

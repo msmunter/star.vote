@@ -735,7 +735,6 @@ class SurveyController extends Controller
 								$api->template = 'duplicateBallot';
 								$api->fields = (object) [
 									'starId' => $this->voter->voterID,
-									//'voterfileId' => $voterfileID,
 									'voterId' => $voterfile->stateVoterID,
 									'cdnHandle1' => $voterIdent->cdnHandle1,
 									'cdnHandle2' => $voterIdent->cdnHandle2,
@@ -1019,6 +1018,10 @@ class SurveyController extends Controller
 			}
 			if ($this->userCanValidate > 1) {
 				$this->voter = $this->model->getVoterByID($_GET['starId']);
+				$this->voterfile = $this->model->getVoterfileByID($this->voter->voterfileID);
+				$this->voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
+				$this->voterFinalizedCount = $this->model->getFinalizedVoterCount($this->survey->surveyID);
+				$this->voterCount = $this->model->getTempVoterCount($this->survey->surveyID);
 			}
 		}
 	}
