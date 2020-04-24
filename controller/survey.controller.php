@@ -711,11 +711,18 @@ class SurveyController extends Controller
 						$return['html'] .= $this->ajaxInclude('view/survey/yourvote.view.php');
 						// Send outgoing voted message and, if appropriate, duplicate vote message
 						if ($sendVotedMessage) {
+							//$voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
+							$voter = $this->model->getvoterbyid($this->voter->voterID);
+							$voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
+							$voterfile = $this->model->getVoterfileByID($voterfileID);
 							// Queue message
 							$api = new ApiController();
 							$api->template = 'voteReceipt';
 							$api->fields = (object) [
 								'starId' => $this->voter->voterID,
+								'email' => $voter->email,
+								'firstName' => $voterfile->fname,
+								'lastName' => $voterfile->lname,
 								'ballotHtml' => base64_encode($return['html'])
 							];
 							if ($api->addMsg()) {
