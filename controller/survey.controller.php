@@ -1048,7 +1048,8 @@ class SurveyController extends Controller
 					$voter = $this->model->getVoterByID($voterToValidate->voterID);
 					$voterfileInfo = $this->model->getVoterfileByID($voter->voterfileID);
 					$return['checkoutTime'] = $voterToValidate->checkoutTime;
-					$return['cdnHandle'] = $voterToValidate->cdnHandle;
+					$return['cdnHandle1'] = $voterToValidate->cdnHandle1;
+					$return['cdnHandle2'] = $voterToValidate->cdnHandle2;
 					$return['voterName'] = $voterfileInfo->fname.' '.$voterfileInfo->lname;
 					$return['voterAddress'] = $voterfileInfo->street;
 					if ($voterfileInfo->street2) $return['voterAddress'] .= $voterfileInfo->street2;

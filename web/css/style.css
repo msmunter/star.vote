@@ -463,8 +463,8 @@ td.verticalSpacer.border {
 	border-right: dashed 1px darkgray;
 }
 
-table#validationComparisonTable {
-
+table#validationComparisonTable, table#validationComparisonTable td {
+	/*border-collapse: collapse;*/
 }
 
 td#validationInfo {
@@ -472,9 +472,10 @@ td#validationInfo {
     white-space:nowrap;
 }
 
-img#validationImg {
-	max-width: 800px;
-	max-height: 800px;
+img#validationImg1, img#validationImg2 {
+	/*max-width: 400px;
+	max-height: 400px;*/
+	max-width: 49%;
 	object-fit: contain;
 }
 

@@ -36,7 +36,7 @@
 						</td></tr>
 					</table>
 					<table id="validateVoterTable">
-						<tr><th>Voter</th><th>Validation Image</th></tr>
+						<tr><th>Voter</th><th>Validation Images</th></tr>
 						<tr><td id="validationInfo">
 							<table id="validationComparisonTable">
 								<tr><td>Checkout: </td><td id="checkoutTime">--:--:--</td></tr>
@@ -46,7 +46,10 @@
 								<tr><td>Address: </td><td id="validationComparisonTableAddress">--</td></tr>
 								<tr><td></td><td id="validationComparisonTableCSZ"></td></tr>
 							</table>
-						</td><td id="validationComparisonImageCell"><a id="validationImgHref" href="/web/images/img_placeholder.svg" target="_blank"><img id="validationImg" src="/web/images/img_placeholder.svg" /></a></td></tr>
+						</td><td id="validationComparisonImageCell">
+							<a id="validationImgHref1" href="/web/images/img_placeholder.svg" target="_blank"><img id="validationImg1" src="/web/images/img_placeholder.svg" /></a>
+							<a id="validationImgHref2" href="/web/images/img_placeholder.svg" target="_blank"><img id="validationImg2" src="/web/images/img_placeholder.svg" /></a>
+						</td></tr>
 					</table>
 					<table id="validateVoterButtonTable">
 						<tr><td>

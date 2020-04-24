@@ -31,7 +31,7 @@ function loadvalidation()
 		var jData = JSON.parse(data);
 		if (jData.error) {
 			updateStatus("ERROR: "+jData.error);
-		} else if (!jData.cdnHandle) {
+		} else if (!jData.checkoutTime) {
 			updateStatus('No voters to process');
 			$('#loadValidationButton').prop("disabled", false);
 		} else {
@@ -46,8 +46,10 @@ function loadvalidation()
 			$('#voterID').val(jData.voterID);
 			$('#voterVerifiedCount').html(jData.voterVerifiedCount);
 			$('#voterCount').html(jData.voterCount);
-			$('#validationImg').attr('src', 'https://cdn.filestackcontent.com/'+jData.cdnHandle);
-			$('#validationImgHref').attr('href', 'https://cdn.filestackcontent.com/'+jData.cdnHandle);
+			$('#validationImg1').attr('src', 'https://cdn.filestackcontent.com/'+jData.cdnHandle1);
+			$('#validationImgHref1').attr('href', 'https://cdn.filestackcontent.com/'+jData.cdnHandle1);
+			$('#validationImg2').attr('src', 'https://cdn.filestackcontent.com/'+jData.cdnHandle2);
+			$('#validationImgHref2').attr('href', 'https://cdn.filestackcontent.com/'+jData.cdnHandle2);
 			$('.validateVoterButtons').prop("disabled", false);
 		}
 	});
