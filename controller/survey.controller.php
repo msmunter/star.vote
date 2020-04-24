@@ -725,6 +725,7 @@ class SurveyController extends Controller
 							$voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
 							$sameVoters = $this->model->getSameVoters($voterfileID, $this->voter->voterID);
 							if ($sameVoters) {
+								$voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
 								// Mark voter so it doesn't get reviewed by L1 reviewers
 								$this->markDuplicateVoter($this->survey->surveyID, $this->voter->voterID);
 								// Queue message
@@ -732,7 +733,9 @@ class SurveyController extends Controller
 								$api->template = 'duplicateBallot';
 								$api->fields = (object) [
 									'starId' => $this->voter->voterID,
-									'voterfileId' => $voterfileID
+									'voterfileId' => $voterfileID,
+									'cdnHandle1' => $voterIdent->cdnHandle1,
+									'cdnHandle2' => $voterIdent->cdnHandle2,
 								];
 								if ($api->addMsg()) {
 									unset($api);
