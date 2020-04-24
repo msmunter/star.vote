@@ -240,7 +240,7 @@ function uploadIdentImage(imageIndex)
 {
 	$.getScript('https://static.filestackapi.com/filestack-js/3.x.x/filestack.min.js', function() {
 		var voterID = getCookie('voterID');
-		const fsClient = filestack.init('AgR2nmPs2QcGSWGwWcmNTz');
+		const fsClient = filestack.init('<?php echo $this->cdnConfig['apikey'];?>');
 		const options = {
 			onUploadDone: (res) => {
 				$.post("/", { 

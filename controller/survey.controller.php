@@ -26,6 +26,7 @@ class SurveyController extends Controller
 
 	public function results()
 	{
+		$this->cdnConfig = parse_ini_file('/srv/www/cdnconfig/cdn.ini');
 		// Views single survey results
 		if ($this->URLdata != '') {
 			if (strlen($this->URLdata) < 8 || strlen($this->URLdata) > 8) {
@@ -1001,6 +1002,22 @@ class SurveyController extends Controller
 			}
 			$this->voterVerifiedCount = $this->model->getVerifiedVoterCount($this->survey->surveyID);
 			$this->voterCount = $this->model->getTempVoterCount($this->survey->surveyID);
+		}
+	}
+
+	public function votervalfinal()
+	{
+		$this->title = 'Voter Final Validation';
+		if ($this->URLdata) {
+			$this->survey = $this->model->getSurveyByID($this->URLdata);
+			if ($this->user->userID == 1) {
+				$this->userCanValidate = 2;
+			} else {
+				$this->userCanValidate = $this->model->userCanValidate($this->user->userID, $this->survey->surveyID);
+			}
+			if ($this->userCanValidate > 1) {
+				$this->voter = $this->model->getVoterByID($_GET['starId']);
+			}
 		}
 	}
 
