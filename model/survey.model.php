@@ -459,10 +459,12 @@ class SurveyModel extends Model
 	public function getVoterToValidate($surveyID, $userID)
 	{
 		// See if you have one checked out
-		$this->query = "SELECT * FROM `voterident`
-						WHERE `surveyID` LIKE '$surveyID'
-						AND `verificationState` LIKE 'checkedOut' 
-						AND `checkoutID` = '$userID'
+		$this->query = "SELECT * FROM `voterident`, `tempvotes`
+						WHERE `voterident`.`surveyID` LIKE '$surveyID'
+						AND `voterident`.`verificationState` LIKE 'checkedOut' 
+						AND `voterident`.`checkoutID` = '$userID'
+						AND `voterident`.`voterID` = `tempvotes`.`voterID`
+						ORDER BY `tempvotes`.`voteTime` ASC
 						LIMIT 0,1";
 		$this->doSelectQuery();
 		if (count($this->results) > 0) {
