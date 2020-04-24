@@ -722,14 +722,15 @@ class SurveyController extends Controller
 							} else $return['caution'] = 'Failed to send post-vote ballot message';
 
 							// Detect multiple votes for same voter ID
-							$sameVoters = $this->model->getSameVoters($this->voter->voterfileID, $this->voter->voterID);
+							$voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
+							$sameVoters = $this->model->getSameVoters($voterfileID, $this->voter->voterID);
 							if ($sameVoters) {
 								// Queue message
 								$api = new ApiController();
 								$api->template = 'duplicateBallot';
 								$api->fields = (object) [
 									'starId' => $this->voter->voterID,
-									'voterfileId' => $this->voter->voterfileID
+									'voterfileId' => $voterfileID
 								];
 								if ($api->addMsg()) {
 									unset($api);
@@ -1036,6 +1037,11 @@ class SurveyController extends Controller
 			$return['error'] = 'Survey not found';
 		}
 		echo json_encode($return);
+	}
+
+	public function markDuplicateVoter($surveyID, $voterID)
+	{
+		$this->model->updateVoterIdentState($surveyID, $voterID, 'rejectedOnce', 0, 'Duplicate voter credentials');
 	}
 
 	public function ajaxvalidatevoter()

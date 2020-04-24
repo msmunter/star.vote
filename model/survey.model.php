@@ -429,12 +429,16 @@ class SurveyModel extends Model
 		}
 	}
 
-	public function getSameVoters($voterfileID)
+	public function getSameVoters($voterfileID, $voterID)
 	{
-		$this->query = "SELECT `voters`.`voterID` FROM `voters`, `tempvotes`
-						WHERE `voters`.`voterfileID` = '$voterfileID'
-						AND `voters`.`voterID` = `tempvotes`.`voterID`
-						AND `voters`.`voterID` NOT LIKE '$voterID'";
+		$this->query = "SELECT * FROM `voters`
+						WHERE `voterfileID` = '$voterfileID'
+						AND `voterID` NOT LIKE '$voterID';";
+
+		// $this->query = "SELECT `voters`.`voterID` FROM `voters`, `tempvotes`
+		// 				WHERE `voters`.`voterfileID` = '$voterfileID'
+		// 				AND `voters`.`voterID` = `tempvotes`.`voterID`
+		// 				AND `voters`.`voterID` NOT LIKE '$voterID';";
 		$this->doSelectQuery();
 		if (count($this->results) > 0) {
 			return $this->results;
