@@ -54,11 +54,11 @@
 							</td><td class="verticalSpacer border" rowspan="2"></td><td class="verticalSpacer" rowspan="2">
 
 							</td><td>
-								<button id="rejectVoterButton1" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(0, 'unreadable')" style="background-color: darkred; color: white;">Reject - Unreadable</button><br />
+								<button id="rejectVoterButton1" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(0, 'unreadable')" style="background-color: darkred; color: white;">Flag - Unreadable</button><br />
 							</td></tr><tr><td>
 								<button id="loadValidationButton" data-inline="inline" onclick="loadvalidation()">Load</button>
 							</td><td>
-								<button id="rejectVoterButton2" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(0, 'mismatch')" style="background-color: darkred; color: white;">Reject - Data Mismatch</button>
+								<button id="rejectVoterButton2" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(0, 'mismatch')" style="background-color: darkred; color: white;">Flag - Data Mismatch</button>
 							</td></tr>
 						</table>
 				</p>
