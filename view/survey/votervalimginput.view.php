@@ -2,7 +2,7 @@
 	<?php // Nothing here if it's your poll ?>
 <?php } else { ?>
 	<div class="ui-field-contain">
-		<div>Upload identifying images (<a href="/docs/identifyingimages/" target="_blank">help</a>):</div>
+		<div>Upload identifying images (<a href="/docs/identifyingimages/" target="_blank">identification needed</a>):</div>
 		<div id="identImageContainer">
 			<input type="hidden" id="cdnHandle1" name="cdnHandle1" value="<?php echo $this->identImage->cdnHandle1; ?>" />
 			<input type="hidden" id="cdnHandle2" name="cdnHandle2" value="<?php echo $this->identImage->cdnHandle2; ?>" />
