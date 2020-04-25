@@ -21,10 +21,10 @@ class VoterModel extends Model
 		$this->doInsertQuery();
 	}
 
-	public function insertVoterWithEmail($voterID, $ip, $email, $platform, $browser, $browserVersion)
+	public function insertVoterWithEmail($voterID, $phone, $ipoOptIn, $starOptIn, $ip, $email, $platform, $browser, $browserVersion)
 	{
-		$this->query = "INSERT INTO `voters` (`voterID`, `ip`, `email`, `platform`, `browser`, `browserVersion`)
-							VALUES ('".$voterID."', '".$ip."', '".$email."', '".$this->escapeString($platform)."', '".$this->escapeString($browser)."', '".$this->escapeString($browserVersion)."')";
+		$this->query = "INSERT INTO `voters` (`voterID`, `phone`, `ipoOptIn`, `starOptIn`, `ip`, `email`, `platform`, `browser`, `browserVersion`)
+							VALUES ('".$this->escapeString($voterID)."', '".$this->escapeString($phone)."', '".$this->escapeString($ipoOptIn)."', '".$this->escapeString($starOptIn)."', '".$ip."', '".$this->escapeString($email)."', '".$this->escapeString($platform)."', '".$this->escapeString($browser)."', '".$this->escapeString($browserVersion)."')";
 		// Insert
 		$this->doInsertQuery();
 	}
