@@ -1014,7 +1014,7 @@ class SurveyController extends Controller
 			} else {
 				$this->userCanValidate = $this->model->userCanValidate($this->user->userID, $this->survey->surveyID);
 			}
-			$this->voterVerifiedCount = $this->model->getVerifiedVoterCount($this->survey->surveyID);
+			$this->verifiedVoterCount = $this->model->getVerifiedVoterCount($this->survey->surveyID);
 			$this->voterCount = $this->model->getTempVoterCount($this->survey->surveyID);
 		}
 	}

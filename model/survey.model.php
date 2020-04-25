@@ -232,8 +232,7 @@ class SurveyModel extends Model
 	public function getVerifiedVoterCount($surveyID)
 	{
 		$this->query = "SELECT COUNT(*) AS `count` FROM `voterIdent`
-						WHERE `verificationState` LIKE 'verifiedTwice'
-						OR `verificationState` LIKE 'rejectedTwice'
+						WHERE `verificationState` IN ('verifiedOnce', 'rejectedOnce', 'verifedTwice', 'rejectedTwice')
 						AND `surveyID` LIKE '$surveyID';";
 		$this->doSelectQuery();
 		return $this->results[0]->count;

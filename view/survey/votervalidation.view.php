@@ -32,7 +32,7 @@
 							</td>
 							<td>&nbsp;--&nbsp;</td>
 							<td id="verifiedVoterStatCell">
-							Verified: <span id="voterVerifiedCount"><?php echo $this->voterVerifiedCount; ?></span> out of <span id="voterCount"><?php echo $this->voterCount; ?></span> voters total
+							Verified: <span id="voterVerifiedCount"><?php echo $this->verifiedVoterCount; ?></span> out of <span id="voterCount"><?php echo $this->voterCount; ?></span> voters total
 						</td></tr>
 					</table>
 					<table id="validateVoterTable">
