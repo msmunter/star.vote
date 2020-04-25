@@ -53,15 +53,18 @@
 					</table>
 					<table id="validateVoterButtonTable">
 						<tr><td>
-							<button id="validateVoterButton" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(1, false)" style="background-color: green; color: white;">Accept</button>
-						</td><td class="verticalSpacer border" rowspan="2"></td><td class="verticalSpacer" rowspan="2">
-
-						</td><td>
-							<button id="rejectVoterButton1" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(0, 'unreadable')" style="background-color: darkred; color: white;">Flag - Unreadable</button><br />
-						</td></tr><tr><td>
 							<button id="loadValidationButton" data-inline="inline" onclick="loadvalidation()">Load</button>
+						</td><td class="verticalSpacer border" rowspan="2"></td><td class="verticalSpacer" rowspan="2">
 						</td><td>
-							<button id="rejectVoterButton2" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(0, 'mismatch')" style="background-color: darkred; color: white;">Flag - Data Mismatch</button>
+							<button id="rejectVoterButton4" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(0, 'notFound')" style="background-color: darkred; color: white;">Voter Not Found</button>
+						</td><td>
+							<button id="rejectVoterButton1" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(0, 'illegible')" style="background-color: darkred; color: white;">Illegible</button><br />
+						</td><td>
+							<button id="rejectVoterButton2" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(0, 'mismatch')" style="background-color: darkred; color: white;">Data Mismatch</button>
+						</td><td>
+							<button id="rejectVoterButton3" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(0, 'provisional')" style="background-color: darkred; color: white;">Provisional</button>
+						</td><td>
+							<button id="validateVoterButton" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(1, false)" style="background-color: green; color: white;">Accept</button>
 						</td></tr>
 					</table>
 				</p>

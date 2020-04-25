@@ -1111,22 +1111,22 @@ class SurveyController extends Controller
 					if ($this->voterIdent->verificationState == 'checkedOut') {
 						// Not yet verified, verify it
 						if ($this->user->userID == 1 || $this->userCanValidate == 2) {
-							$return['msg'] = 'Second verification complete';
+							$return['msg'] = 'Finalized voter '.$this->voter->voterID;
 							if ($this->accept == 1) {
 								$newState = 'verifiedTwice';
-								$return['msg'] .= ' (Verified)';
-							} else {
-								$newState = 'rejectedTwice';
-								$return['msg'] .= ' (Rejected)';
-							}
-						} else {
-							$return['msg'] = 'First verification complete';
-							if ($this->accept == 1) {
-								$newState = 'verifiedOnce';
-								$return['msg'] .= ' (Verified)';
+								$return['msg'] .= ' (Accepted)';
 							} else {
 								$newState = 'rejectedOnce';
-								$return['msg'] .= ' (Rejected)';
+								$return['msg'] .= ' (Flagged for review)';
+							}
+						} else {
+							$return['msg'] = 'Processed voter '.$this->voter->voterID;
+							if ($this->accept == 1) {
+								$newState = 'verifiedOnce';
+								$return['msg'] .= ' (Accepted)';
+							} else {
+								$newState = 'rejectedOnce';
+								$return['msg'] .= ' (Flagged for review)';
 							}
 						}
 						$this->model->updateVoterIdentState($this->survey->surveyID, $this->voter->voterID, $newState, $this->user->userID, $this->reason);
@@ -1150,7 +1150,7 @@ class SurveyController extends Controller
 								unset($api);
 							} else $return['caution'] = 'Failed to send post-vote ballot message';
 						}
-					} else if ($this->voterIdent->verificationState == 'verifiedOnce' || $this->voterIdent->verificationState == 'rejectedOnce') {
+					} /*else if ($this->voterIdent->verificationState == 'verifiedOnce' || $this->voterIdent->verificationState == 'rejectedOnce') {
 						// Verified once, finalize if L2 or admin
 						if ($this->user->userID == 1 || $this->userCanValidate == 2) {
 							$return['msg'] = 'Second verification complete';
@@ -1165,7 +1165,7 @@ class SurveyController extends Controller
 						} else {
 							$return['error'] = 'Must be L2 or admin to do L2 approvals';
 						}
-					} else {
+					}*/ else {
 						// No other conditions should come up
 						$return['error'] = 'Invalid verification state change';
 					}
