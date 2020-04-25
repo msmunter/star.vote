@@ -33,10 +33,23 @@ function loadvalidation()
 			updateStatus("ERROR: "+jData.error);
 		} else if (!jData.checkoutTime) {
 			updateStatus('No voters to process');
+			$('#voterVerifiedCount').html(jData.voterVerifiedCount);
+			$('#voterCount').html(jData.voterCount);
+			$('#checkoutTime').html('--');
+			$('#validationComparisonTableName').html('--');
+			$('#validationComparisonTableAddress').html('--');
+			$('#validationComparisonTableCSZ').html('--');
+			$('#validationComparisonTableBirthyear').html('--');
+			$('#validationComparisonTableValidationStatus').html('--');
+			$('#voterID').val('');
+			$('#validationImg1, #validationImg2').attr('src', '/web/images/img_placeholder.svg');
+			$('#validationImgHref1, #validationImgHref2').attr('href', '/web/images/img_placeholder.svg');
 			$('#loadValidationButton').prop("disabled", false);
 		} else {
 			//console.log(jData);
 			updateStatus('Voter '+jData.voterID+' loaded');
+			$('#voterVerifiedCount').html(jData.voterVerifiedCount);
+			$('#voterCount').html(jData.voterCount);
 			$('#checkoutTime').html(jData.checkoutTime);
 			$('#validationComparisonTableName').html(jData.voterName);
 			$('#validationComparisonTableAddress').html(jData.voterAddress);
@@ -44,8 +57,6 @@ function loadvalidation()
 			$('#validationComparisonTableBirthyear').html(jData.voterBirthyear);
 			$('#validationComparisonTableValidationStatus').html(jData.validationStatus);
 			$('#voterID').val(jData.voterID);
-			$('#voterVerifiedCount').html(jData.voterVerifiedCount);
-			$('#voterCount').html(jData.voterCount);
 			$('#validationImg1').attr('src', 'https://cdn.filestackcontent.com/'+jData.cdnHandle1);
 			$('#validationImgHref1').attr('href', 'https://cdn.filestackcontent.com/'+jData.cdnHandle1);
 			$('#validationImg2').attr('src', 'https://cdn.filestackcontent.com/'+jData.cdnHandle2);

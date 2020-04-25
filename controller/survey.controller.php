@@ -1070,9 +1070,9 @@ class SurveyController extends Controller
 					$return['voterBirthyear'] = $voterfileInfo->birthyear;
 					$return['voterID'] = $voter->voterID;
 					$return['validationStatus'] = $this->validationStatePrettyNames[$voterToValidate->verificationState];
-					$return['voterVerifiedCount'] = $this->model->getVerifiedVoterCount($this->survey->surveyID);
-					$return['voterCount'] = $this->model->getTempVoterCount($this->survey->surveyID);
 				}
+				$return['voterVerifiedCount'] = $this->model->getVerifiedVoterCount($this->survey->surveyID);
+				$return['voterCount'] = $this->model->getTempVoterCount($this->survey->surveyID);
 			}
 		} else {
 			$return['error'] = 'Survey not found';
