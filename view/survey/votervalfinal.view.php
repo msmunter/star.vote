@@ -38,7 +38,10 @@
 							<tr><td>Address: </td><td id="validationComparisonTableAddress"><?php echo $this->voterfile->street; ?><br /><?php echo $this->voterfile->city; ?>, <?php echo $this->voterfile->state; ?> <?php echo $this->voterfile->zip; ?></td></tr>
 							<tr><td></td><td id="validationComparisonTableCSZ"></td></tr>
 						</table>
-					</td><td id="validationComparisonImageCell"><a id="validationImgHref" href="/web/images/img_placeholder.svg" target="_blank"><img id="validationImg" src="/web/images/img_placeholder.svg" /></a></td></tr>
+					</td><td id="validationComparisonImageCell">
+						<a id="validationImgHref1" href="/web/images/img_placeholder.svg" target="_blank"><img id="validationImg1" src="https://cdn.filestackcontent.com/<?php echo $this->voterIdent->cdnHandle1; ?>" /></a>
+						<a id="validationImgHref2" href="/web/images/img_placeholder.svg" target="_blank"><img id="validationImg2" src="https://cdn.filestackcontent.com/<?php echo $this->voterIdent->cdnHandle2; ?>" /></a>
+					</td></tr>
 				</table>
 				<div class="ui-field-contain">
 					<label for="ticketID">Support Ticket ID:</label>
