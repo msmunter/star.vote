@@ -746,6 +746,7 @@ class SurveyController extends Controller
 									'email' => $voter->email,
 									'firstName' => $voterfile->fname,
 									'lastName' => $voterfile->lname,
+									'phone' => $voter->phone,
 									//'voterId' => $voterfile->stateVoterID,
 									'cdnHandle1' => $voterIdent->cdnHandle1,
 									'cdnHandle2' => $voterIdent->cdnHandle2,
@@ -1150,6 +1151,7 @@ class SurveyController extends Controller
 								'email' => $voter->email,
 								'firstName' => $voterfile->fname,
 								'lastName' => $voterfile->lname,
+								'phone' => $voter->phone,
 								'returnLink' => 'https://'.$_SERVER['HTTP_HOST'].'/survey/votervalfinal/'.$this->survey->surveyID.'/?starId='.$this->voter->voterID,
 								// 'ballotHtml' => base64_encode($return['html'])
 							];
