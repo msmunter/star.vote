@@ -2,10 +2,11 @@
 	<?php // Nothing here if it's your poll ?>
 <?php } else { ?>
 	<div class="ui-field-contain">
-		<div>Upload identifying images (<a href="/docs/identifyingimages/" target="_blank">identification needed</a>):</div>
+		<div id="identifyingImagesHeader">&nbsp;Upload Identifying Images (<a href="/docs/identifyingimages/" target="_blank">help</a>):</div>
 		<div id="identImageContainer">
 			<input type="hidden" id="cdnHandle1" name="cdnHandle1" value="<?php echo $this->identImage->cdnHandle1; ?>" />
 			<input type="hidden" id="cdnHandle2" name="cdnHandle2" value="<?php echo $this->identImage->cdnHandle2; ?>" />
+			<div class="uploadImgTip">1. A government-issued photo ID, such as a driver's license, a passport, or an ID card from any state.</div>
 			<table>
 				<tr>
 					<td class="identImageCell">
@@ -29,6 +30,7 @@
 					</td>
 				</tr>
 			</table>
+			<div class="uploadImgTip">2. A recent photo with a clear view of your face that we can match to the face on your photo ID.</div>
 			<table>
 				<tr>
 					<td class="identImageCell">

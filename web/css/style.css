@@ -444,6 +444,18 @@ td.identImageCell {
 	text-align: center;
 }
 
+div.uploadImgTip {
+	font-size: 14px;
+	max-width: 350px;
+}
+
+div#identifyingImagesHeader {
+	font-weight: bold;
+	border-bottom: solid 1px #cccccc;
+	max-width: 350px;
+	margin-bottom: 12px;
+}
+
 /* END Image Uploader */
 
 table#validateVoterButtonTable {
@@ -529,7 +541,7 @@ table#voterKeyTable td.voterKeyCell {
 	font-family: monospace;
 }
 
-div.surveyPollContainer {
+div.surveyPollContainer, div.genericContainer {
 	float: left;
 	border: solid 1px #cccccc;
 	background-color: #e7e7e7;
