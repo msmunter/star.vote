@@ -42,7 +42,8 @@
 								<tr><td>Checkout: </td><td id="checkoutTime">--:--:--</td></tr>
 								<tr><td>Status: </td><td id="validationComparisonTableValidationStatus">--</td></tr>
 								<tr><td>Name: </td><td id="validationComparisonTableName">--</td></tr>
-								<tr><td>Born: </td><td id="validationComparisonTableBirthyear">--</td></tr>
+								<tr><td>Birth Year: </td><td id="validationComparisonTableBirthyear">--</td></tr>
+								<tr><td>Birth Date: </td><td id="validationComparisonTableBirthdate">--</td></tr>
 								<tr><td>Address: </td><td id="validationComparisonTableAddress">--</td></tr>
 								<tr><td></td><td id="validationComparisonTableCSZ"></td></tr>
 							</table>
@@ -54,7 +55,8 @@
 					<table id="validateVoterButtonTable">
 						<tr><td>
 							<button id="loadValidationButton" data-inline="inline" onclick="loadvalidation()">Load</button>
-						</td><td class="verticalSpacer border" rowspan="2"></td><td class="verticalSpacer" rowspan="2">
+						</td><td class="verticalSpacer border" rowspan="2"></td><td class="verticalSpacer"></td><td>
+							<button id="lookupVoterButton" class="validateVoterButtons" data-inline="inline" onclick="lookupvoter(1, false)">Lookup</button>
 						</td><td>
 							<button id="rejectVoterButton4" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(0, 'notFound')" style="background-color: darkred; color: white;">Voter Not Found</button>
 						</td><td>
@@ -67,6 +69,7 @@
 							<button id="validateVoterButton" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(1, false)" style="background-color: green; color: white;">Accept</button>
 						</td></tr>
 					</table>
+					<a id="orestarLink" href="https://secure.sos.state.or.us/orestar/vr/showVoterSearch.do?lang=eng&source=SOS&identifier2=John&identifier3=Public&identifier8=01/01/1990">Lookup Voter</a>
 				</p>
 			</div>
 		</div>

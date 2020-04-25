@@ -739,12 +739,17 @@ class SurveyController extends Controller
 								$this->markDuplicateVoter($this->survey->surveyID, $this->voter->voterID);
 								// Queue message
 								$api = new ApiController();
-								$api->template = 'duplicateBallot';
+								$api->template = 'ballotFlagged';
 								$api->fields = (object) [
 									'starId' => $this->voter->voterID,
-									'voterId' => $voterfile->stateVoterID,
+									'reason' => 'duplicate',
+									'email' => $voter->email,
+									'firstName' => $voterfile->fname,
+									'lastName' => $voterfile->lname,
+									//'voterId' => $voterfile->stateVoterID,
 									'cdnHandle1' => $voterIdent->cdnHandle1,
 									'cdnHandle2' => $voterIdent->cdnHandle2,
+									'returnLink' => 'https://'.$_SERVER['HTTP_HOST'].'/survey/votervalfinal/'.$this->survey->surveyID.'/?starId='.$this->voter->voterID,
 								];
 								if ($api->addMsg()) {
 									unset($api);
@@ -983,7 +988,7 @@ class SurveyController extends Controller
 					if (strtolower($_GET['starOptIn']) == 'true') {
 						$starOptIn = 1;
 					} else $starOptIn = 0;
-					$mVoter->insertVoterWithEmail($starVoterID, $_GET['phone'], $ipoOptIn, $starOptIn, $_SERVER['REMOTE_ADDR'], $email, $browser['platform'], $browser['browser'], $browser['version']);
+					$mVoter->insertVoterWithEmail($starVoterID, $_GET['phone'], $ipoOptIn, $starOptIn, $_GET['birthDate'], $_SERVER['REMOTE_ADDR'], $email, $browser['platform'], $browser['browser'], $browser['version']);
 					$return['starId'] = $starVoterID;
 					$this->model->linkVoterfileToVoter($voterIDs->voterfileID, $starVoterID);
 				}
@@ -1068,8 +1073,10 @@ class SurveyController extends Controller
 					if ($voterfileInfo->street2) $return['voterAddress'] .= $voterfileInfo->street2;
 					$return['voterCSZ'] = $voterfileInfo->city.', '.$voterfileInfo->state.' '.$voterfileInfo->zip;
 					$return['voterBirthyear'] = $voterfileInfo->birthyear;
+					$return['voterBirthdate'] = $voter->birthdate;
 					$return['voterID'] = $voter->voterID;
 					$return['validationStatus'] = $this->validationStatePrettyNames[$voterToValidate->verificationState];
+					$return['orestarLink'] = 'https://secure.sos.state.or.us/orestar/vr/showVoterSearch.do?lang=eng&source=SOS&identifier2='.$voterfileInfo->fname.'&identifier3='.$voterfileInfo->lname.'&identifier8='.$voter->birthdate;
 				}
 				$return['voterVerifiedCount'] = $this->model->getVerifiedVoterCount($this->survey->surveyID);
 				$return['voterCount'] = $this->model->getTempVoterCount($this->survey->surveyID);

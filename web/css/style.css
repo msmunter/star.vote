@@ -510,6 +510,10 @@ table#validateVoterTable td {
 	vertical-align: top;
 }
 
+a#orestarLink {
+	visibility: hidden;
+}
+
 td#verifiedVoterStatCell {
 	text-align: center;
 	margin-bottom: 20px;

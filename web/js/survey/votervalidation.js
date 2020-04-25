@@ -40,6 +40,7 @@ function loadvalidation()
 			$('#validationComparisonTableAddress').html('--');
 			$('#validationComparisonTableCSZ').html('--');
 			$('#validationComparisonTableBirthyear').html('--');
+			$('#validationComparisonTableBirthdate').html('--');
 			$('#validationComparisonTableValidationStatus').html('--');
 			$('#voterID').val('');
 			$('#validationImg1, #validationImg2').attr('src', '/web/images/img_placeholder.svg');
@@ -55,7 +56,9 @@ function loadvalidation()
 			$('#validationComparisonTableAddress').html(jData.voterAddress);
 			$('#validationComparisonTableCSZ').html(jData.voterCSZ);
 			$('#validationComparisonTableBirthyear').html(jData.voterBirthyear);
+			$('#validationComparisonTableBirthdate').html(jData.voterBirthdate);
 			$('#validationComparisonTableValidationStatus').html(jData.validationStatus);
+			$('#orestarLink').attr('href', jData.orestarLink);
 			$('#voterID').val(jData.voterID);
 			$('#validationImg1').attr('src', 'https://cdn.filestackcontent.com/'+jData.cdnHandle1);
 			$('#validationImgHref1').attr('href', 'https://cdn.filestackcontent.com/'+jData.cdnHandle1);
@@ -90,4 +93,9 @@ function validatevoter(accept, reason)
 			$('#loadValidationButton').prop("disabled", false);
 		}
 	});
+}
+
+function lookupvoter()
+{
+	window.open($('#orestarLink').attr('href'), "_blank");
 }
