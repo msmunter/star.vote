@@ -69,10 +69,18 @@
 							<button id="validateVoterButton" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(1, false)" style="background-color: green; color: white;">Accept</button>
 						</td></tr>
 					</table>
-					<a id="orestarLink" href="https://secure.sos.state.or.us/orestar/vr/showVoterSearch.do?lang=eng&source=SOS&identifier2=John&identifier3=Public&identifier8=01/01/1990">Lookup Voter</a>
+					<p>
+						<div class="bold">STEP 1:  Look up voter’s full date of birth on “My Vote”</div>
+						<div class="bold">STEP 2:  Review ID and photo, then click the appropriate button to validate or flag.</div>
+						Accept: Government issued ID and photo match.<br />
+						Illegible: Can’t read name, date of birth, or address.<br />
+						Data Mismatch: Name, date of birth, or address don’t match voter file info listed.<br />
+						Provisional: Does not contain required ID or photo.
+					</p>
 				</p>
 			</div>
 		</div>
+		<a id="orestarLink" href="https://secure.sos.state.or.us/orestar/vr/showVoterSearch.do?lang=eng&source=SOS&identifier2=John&identifier3=Public&identifier8=01/01/1990">Lookup Voter</a>
 	<?php } else { ?>
 		No survey specified
 	<?php } ?>
