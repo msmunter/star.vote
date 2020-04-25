@@ -1124,6 +1124,26 @@ class SurveyController extends Controller
 							}
 						}
 						$this->model->updateVoterIdentState($this->survey->surveyID, $this->voter->voterID, $newState, $this->user->userID, $this->reason);
+						// Queue 'flagged' message
+						$voter = $this->model->getvoterbyid($this->voter->voterID);
+						$voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
+						$voterfile = $this->model->getVoterfileByID($voterfileID);
+						if ($newState == 'rejectedOnce') {
+							$api = new ApiController();
+							$api->template = 'ballotFlagged';
+							$api->fields = (object) [
+								'starId' => $this->voter->voterID,
+								'reason' => $this->reason,
+								'email' => $voter->email,
+								'firstName' => $voterfile->fname,
+								'lastName' => $voterfile->lname,
+								'returnLink' => 'https://'.$_SERVER['HTTP_HOST'].'/survey/votervalfinal/'.$this->survey->surveyID.'/?starId='.$this->voter->voterID,
+								// 'ballotHtml' => base64_encode($return['html'])
+							];
+							if ($api->addMsg()) {
+								unset($api);
+							} else $return['caution'] = 'Failed to send post-vote ballot message';
+						}
 					} else if ($this->voterIdent->verificationState == 'verifiedOnce' || $this->voterIdent->verificationState == 'rejectedOnce') {
 						// Verified once, finalize if L2 or admin
 						if ($this->user->userID == 1 || $this->userCanValidate == 2) {
