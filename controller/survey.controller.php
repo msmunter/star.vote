@@ -977,7 +977,13 @@ class SurveyController extends Controller
 					$starVoterID = $this->generateUniqueID(10, "voters", "voterID");
 					$userAgent = $_SERVER['HTTP_USER_AGENT'];
 					$browser = get_browser(null, true);
-					$mVoter->insertVoterWithEmail($starVoterID, $_GET['phone'], (int)$_GET['ipoOptIn'], (int)$_GET['starOptIn'], $_SERVER['REMOTE_ADDR'], $email, $browser['platform'], $browser['browser'], $browser['version']);
+					if (strtolower($_GET['ipoOptIn']) == 'true') {
+						$ipoOptIn = 1;
+					} else $ipoOptIn = 0;
+					if (strtolower($_GET['starOptIn']) == 'true') {
+						$starOptIn = 1;
+					} else $starOptIn = 0;
+					$mVoter->insertVoterWithEmail($starVoterID, $_GET['phone'], $ipoOptIn, $starOptIn, $_SERVER['REMOTE_ADDR'], $email, $browser['platform'], $browser['browser'], $browser['version']);
 					$return['starId'] = $starVoterID;
 					$this->model->linkVoterfileToVoter($voterIDs->voterfileID, $starVoterID);
 				}
