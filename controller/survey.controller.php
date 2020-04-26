@@ -665,84 +665,85 @@ class SurveyController extends Controller
 									// For IPO we're validating later as a manual function
 
 									unset($voteTime, $oDate);
-								} else {
-									$return['caution'] = 'Your vote had already been recorded for this poll';
-								}
-								// Load the survey fresh
-								$this->survey = $this->model->getSurveyByID($this->surveyID);
-								$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
-								$mPoll = new PollModel();
-								foreach ($this->survey->polls as $poll) {
-									$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
-								}
-								unset($mPoll);
 
-								// foreach ($this->survey->polls as $zPoll) {
-								// 	$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
-								// 	if (count($existingVote) > 0 && $existingVote[0]->answerID != '') {
-								// 		$this->yourVotes[$zPoll->pollID] = $existingVote;
-								// 	}
-								// }
-								$this->yourVoteTime = $voteTime;
-								$this->voteArray = $voteArray;
-								$imgpath_create = 'web/images/qr_voterid/'.$this->voter->voterID.'.png';
-								if (!file_exists($imgpath_create)) {
-									include_once('utilities/phpqrcode/qrlib.php');
-									if ($this->survey->customSlug != "") {
-										$qr_text = 'https://'.$_SERVER['HTTP_HOST'].'/'.$this->survey->customSlug.'/'.$this->voter->voterID.'/';
-									} else {
-										$qr_text = 'https://'.$_SERVER['HTTP_HOST'].'/survey/results/'.$this->survey->surveyID.'/'.$this->voter->voterID.'/';
+									// Load the survey fresh
+									$this->survey = $this->model->getSurveyByID($this->surveyID);
+									$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
+									$mPoll = new PollModel();
+									foreach ($this->survey->polls as $poll) {
+										$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
 									}
-									QRcode::png($qr_text, $imgpath_create);
-								}
-								$return['html'] .= $this->ajaxInclude('view/survey/yourvote.view.php');
-								// Send outgoing voted message and, if appropriate, duplicate vote message
-								if ($sendVotedMessage) {
-									//$voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
-									$voter = $this->model->getvoterbyid($this->voter->voterID);
-									$voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
-									$voterfile = $this->model->getVoterfileByID($voterfileID);
-									// Queue message
-									$api = new ApiController();
-									$api->template = 'voteReceipt';
-									$api->fields = (object) [
-										'starId' => $this->voter->voterID,
-										'email' => $voter->email,
-										'firstName' => $voterfile->fname,
-										'lastName' => $voterfile->lname,
-										'ballotHtml' => base64_encode($return['html'])
-									];
-									if ($api->addMsg()) {
-										unset($api);
-									} else $return['caution'] = 'Failed to send post-vote ballot message';
+									unset($mPoll);
 
-									// Detect multiple votes for same voter ID
-									$voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
-									$sameVoters = $this->model->getSameVoters($voterfileID, $this->voter->voterID);
-									if ($sameVoters) {
-										$voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
+									// foreach ($this->survey->polls as $zPoll) {
+									// 	$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
+									// 	if (count($existingVote) > 0 && $existingVote[0]->answerID != '') {
+									// 		$this->yourVotes[$zPoll->pollID] = $existingVote;
+									// 	}
+									// }
+									$this->yourVoteTime = $voteTime;
+									$this->voteArray = $voteArray;
+									$imgpath_create = 'web/images/qr_voterid/'.$this->voter->voterID.'.png';
+									if (!file_exists($imgpath_create)) {
+										include_once('utilities/phpqrcode/qrlib.php');
+										if ($this->survey->customSlug != "") {
+											$qr_text = 'https://'.$_SERVER['HTTP_HOST'].'/'.$this->survey->customSlug.'/'.$this->voter->voterID.'/';
+										} else {
+											$qr_text = 'https://'.$_SERVER['HTTP_HOST'].'/survey/results/'.$this->survey->surveyID.'/'.$this->voter->voterID.'/';
+										}
+										QRcode::png($qr_text, $imgpath_create);
+									}
+									$return['html'] .= $this->ajaxInclude('view/survey/yourvote.view.php');
+									// Send outgoing voted message and, if appropriate, duplicate vote message
+									if ($sendVotedMessage) {
+										//$voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
+										$voter = $this->model->getvoterbyid($this->voter->voterID);
+										$voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
 										$voterfile = $this->model->getVoterfileByID($voterfileID);
-										// Mark voter so it doesn't get reviewed by L1 reviewers
-										$this->markDuplicateVoter($this->survey->surveyID, $this->voter->voterID);
 										// Queue message
 										$api = new ApiController();
-										$api->template = 'ballotFlagged';
+										$api->template = 'voteReceipt';
 										$api->fields = (object) [
 											'starId' => $this->voter->voterID,
-											'reason' => 'duplicate',
 											'email' => $voter->email,
 											'firstName' => $voterfile->fname,
 											'lastName' => $voterfile->lname,
-											'phone' => $voter->phone,
-											//'voterId' => $voterfile->stateVoterID,
-											//'cdnHandle1' => $voterIdent->cdnHandle1,
-											//'cdnHandle2' => $voterIdent->cdnHandle2,
-											'returnLink' => 'https://'.$_SERVER['HTTP_HOST'].'/survey/votervalfinal/'.$this->survey->surveyID.'/?starId='.$this->voter->voterID,
+											'ballotHtml' => base64_encode($return['html'])
 										];
 										if ($api->addMsg()) {
 											unset($api);
-										} else $return['error'] = 'Failed to send duplicate ballot message';
+										} else $return['caution'] = 'Failed to send post-vote ballot message';
+
+										// Detect multiple votes for same voter ID
+										$voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
+										$sameVoters = $this->model->getSameVoters($voterfileID, $this->voter->voterID);
+										if ($sameVoters) {
+											$voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
+											$voterfile = $this->model->getVoterfileByID($voterfileID);
+											// Mark voter so it doesn't get reviewed by L1 reviewers
+											$this->markDuplicateVoter($this->survey->surveyID, $this->voter->voterID);
+											// Queue message
+											$api = new ApiController();
+											$api->template = 'ballotFlagged';
+											$api->fields = (object) [
+												'starId' => $this->voter->voterID,
+												'reason' => 'duplicate',
+												'email' => $voter->email,
+												'firstName' => $voterfile->fname,
+												'lastName' => $voterfile->lname,
+												'phone' => $voter->phone,
+												//'voterId' => $voterfile->stateVoterID,
+												//'cdnHandle1' => $voterIdent->cdnHandle1,
+												//'cdnHandle2' => $voterIdent->cdnHandle2,
+												'returnLink' => 'https://'.$_SERVER['HTTP_HOST'].'/survey/votervalfinal/'.$this->survey->surveyID.'/?starId='.$this->voter->voterID,
+											];
+											if ($api->addMsg()) {
+												unset($api);
+											} else $return['error'] = 'Failed to send duplicate ballot message';
+										}
 									}
+								} else {
+									$return['error'] = 'Your vote had already been recorded for this poll';
 								}
 							} else {
 								$return['caution'] = 'This key has already been used to record a vote on this poll';
