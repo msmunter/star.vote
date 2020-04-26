@@ -281,7 +281,8 @@ class SurveyModel extends Model
 	{
 		$this->query = "SELECT COUNT(*) AS `count` FROM `tempvotes`
 						WHERE `surveyID` LIKE '$surveyID'
-						AND `voterID` IS NOT NULL;";
+						AND `voterID` IS NOT NULL
+						AND `voterID` != '';";
 		$this->doSelectQuery();
 		return $this->results[0]->count;
 	}
