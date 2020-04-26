@@ -748,8 +748,8 @@ class SurveyController extends Controller
 									'lastName' => $voterfile->lname,
 									'phone' => $voter->phone,
 									//'voterId' => $voterfile->stateVoterID,
-									'cdnHandle1' => $voterIdent->cdnHandle1,
-									'cdnHandle2' => $voterIdent->cdnHandle2,
+									//'cdnHandle1' => $voterIdent->cdnHandle1,
+									//'cdnHandle2' => $voterIdent->cdnHandle2,
 									'returnLink' => 'https://'.$_SERVER['HTTP_HOST'].'/survey/votervalfinal/'.$this->survey->surveyID.'/?starId='.$this->voter->voterID,
 								];
 								if ($api->addMsg()) {

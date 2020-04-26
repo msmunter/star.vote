@@ -40,7 +40,7 @@ class SurveyModel extends Model
 		$this->query = "SELECT *
 						FROM `polls`
 						WHERE `surveyID` LIKE '".$this->escapeString($surveyID)."'
-						ORDER BY `created` ASC;";
+						ORDER BY `surveyOrder`, `created` ASC;";
 		$this->doSelectQuery();
 		return $this->results;
 	}
