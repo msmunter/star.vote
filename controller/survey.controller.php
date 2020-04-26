@@ -955,53 +955,57 @@ class SurveyController extends Controller
 		$this->ajax = 1;
 		$this->doHeader = 0;
 		$this->doFooter = 0;
-		$statetx['new'] = 'existing';
-		$statetx['voted'] = 'pending';
-		$statetx['checkedOut'] = 'pending';
-		$statetx['acceptedOnce'] = 'pending';
-		$statetx['rejectedOnce'] = 'pending';
-		$statetx['acceptedTwice'] = 'accepted';
-		$statetx['rejectedTwice'] = 'rejected';
-		$email = $_GET['email'];
-		if ($email) {
-			$voterIDs = $this->model->getVoterfileByStateID($this->URLdata);
-			//echo '<pre>'; print_r($voterIDs); echo '</pre>'; // DEBUG ONLY!!!
-			$return['voterId'] = $voterIDs->stateVoterID;
-			if ($voterIDs->voterfileID) {
-				include_once('model/voter.model.php');
-				$mVoter = new VoterModel();
-				$existingVoter = $this->model->getVoterByVoterfileID($voterIDs->voterfileID, $email);
-				//echo '<pre>'; print_r($existingVoter); echo '</pre>'; // DEBUG ONLY!!!
-				if ($existingVoter) {
-					$starVoterID = $existingVoter->voterID;
-					$return['starId'] = $existingVoter->voterID;
-				} else {
-					$starVoterID = $this->generateUniqueID(10, "voters", "voterID");
-					$userAgent = $_SERVER['HTTP_USER_AGENT'];
-					$browser = get_browser(null, true);
-					if (strtolower($_GET['ipoOptIn']) == 'true') {
-						$ipoOptIn = 1;
-					} else $ipoOptIn = 0;
-					if (strtolower($_GET['starOptIn']) == 'true') {
-						$starOptIn = 1;
-					} else $starOptIn = 0;
-					$mVoter->insertVoterWithEmail($starVoterID, $_GET['phone'], $ipoOptIn, $starOptIn, $_GET['birthDate'], $_SERVER['REMOTE_ADDR'], $email, $browser['platform'], $browser['browser'], $browser['version']);
-					$return['starId'] = $starVoterID;
-					$this->model->linkVoterfileToVoter($voterIDs->voterfileID, $starVoterID);
-				}
-				$vState = $this->model->getVerificationStateByVoterID($starVoterID);
-				if ($vState) {
-					$return['status'] = $statetx[$vState];
-				} else {
+		if ($this->user->userID && $this->user->info->email == 'api') {
+			$statetx['new'] = 'existing';
+			$statetx['voted'] = 'pending';
+			$statetx['checkedOut'] = 'pending';
+			$statetx['acceptedOnce'] = 'pending';
+			$statetx['rejectedOnce'] = 'pending';
+			$statetx['acceptedTwice'] = 'accepted';
+			$statetx['rejectedTwice'] = 'rejected';
+			$email = $_GET['email'];
+			if ($email) {
+				$voterIDs = $this->model->getVoterfileByStateID($this->URLdata);
+				//echo '<pre>'; print_r($voterIDs); echo '</pre>'; // DEBUG ONLY!!!
+				$return['voterId'] = $voterIDs->stateVoterID;
+				if ($voterIDs->voterfileID) {
+					include_once('model/voter.model.php');
+					$mVoter = new VoterModel();
+					$existingVoter = $this->model->getVoterByVoterfileID($voterIDs->voterfileID, $email);
+					//echo '<pre>'; print_r($existingVoter); echo '</pre>'; // DEBUG ONLY!!!
 					if ($existingVoter) {
-						$return['status'] = 'existing';
+						$starVoterID = $existingVoter->voterID;
+						$return['starId'] = $existingVoter->voterID;
 					} else {
-						$return['status'] = 'new';
+						$starVoterID = $this->generateUniqueID(10, "voters", "voterID");
+						$userAgent = $_SERVER['HTTP_USER_AGENT'];
+						$browser = get_browser(null, true);
+						if (strtolower($_GET['ipoOptIn']) == 'true') {
+							$ipoOptIn = 1;
+						} else $ipoOptIn = 0;
+						if (strtolower($_GET['starOptIn']) == 'true') {
+							$starOptIn = 1;
+						} else $starOptIn = 0;
+						$mVoter->insertVoterWithEmail($starVoterID, $_GET['phone'], $ipoOptIn, $starOptIn, $_GET['birthDate'], $_SERVER['REMOTE_ADDR'], $email, $browser['platform'], $browser['browser'], $browser['version']);
+						$return['starId'] = $starVoterID;
+						$this->model->linkVoterfileToVoter($voterIDs->voterfileID, $starVoterID);
+					}
+					$vState = $this->model->getVerificationStateByVoterID($starVoterID);
+					if ($vState) {
+						$return['status'] = $statetx[$vState];
+					} else {
+						if ($existingVoter) {
+							$return['status'] = 'existing';
+						} else {
+							$return['status'] = 'new';
+						}
 					}
 				}
+			} else {
+				$return['starId'] = false;
 			}
 		} else {
-			$return['starId'] = false;
+			$return['error'] = 'Not authorized';
 		}
 		echo json_encode($return);
 	}
