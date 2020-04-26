@@ -584,196 +584,189 @@ class SurveyController extends Controller
 	
 	public function ajaxvote()
 	{
-		// Initialize voter (will provide $this->voterID)
-		$this->voter = new VoterController();
-		$this->voter->model = new VoterModel();
-		$this->voter->initVoter($_POST['voterID']);
-		$this->surveyID = $_POST['surveyID'];
-		$this->survey = $this->model->getSurveyByID($this->surveyID);
-		$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
-		$mPoll = new PollModel();
-		foreach ($this->survey->polls as $poll) {
-			$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
-		}
-		unset($mPoll);
-		foreach ($this->survey->polls as $xPoll) {
-			foreach ($xPoll->answers as $xAnswer) {
-				$this->answerToPollArray[$xAnswer->answerID] = $xPoll->pollID;
-			}
-		}
-		//$voterKeyResult = $this->model->verifyVoterKey($_POST['voterKey'], $this->surveyID);
-		// Determine eligibility from voter file
-		// $this->voterfileInfo = $this->model->getVoterFileMatch(
-		// 	strtoupper($_POST['viFname']), 
-		// 	strtoupper($_POST['viLname']), 
-		// 	strtoupper($_POST['viStreet']), 
-		// 	strtoupper($_POST['viCity']), 
-		// 	strtoupper($_POST['viState']), 
-		// 	$_POST['viZip'], 
-		// 	$_POST['viBirthyear'],
-		// 	$_POST['viPhone'],
-		// 	$_POST['viEmail']
-		// );
-		// if (!$this->voterfileInfo) {
-		// 	$return['error'] = 'Voter file did not match';
-		// } else {
-			//$return['associateVoterfile'] = $this->voter->voterID.', '.$this->voterfileInfo->voterfileID.', '.$_POST['viPhone'].', '.$_POST['viEmail']; // DEBUG ONLY!!!
-			//$this->model->associateVoter($this->voter->voterID, $this->voterfileInfo->voterfileID, $_POST['viPhone'], $_POST['viEmail']);
-			// Determine eligibility if necessary
-			if (($this->survey->verifiedVoting && $voterKeyResult->surveyID) || $this->survey->verifiedVoting == false) {
-				// Determine if within voting window
-				$oStart = new DateTime($this->survey->startTime);
-				if ($this->survey->endTime != null) $oEnd = new DateTime($this->survey->endTime);
-				$oNow = new DateTime();
-				if ($oNow >= $oStart && ($oNow < $oEnd || empty($oEnd))) {
-					// Determine whether this key has voted
-					if (empty($voterKeyResult->voteTime)) {
-						parse_str($_POST['votes'], $dirtyVoteArray);
-						// Cleanup array
-						foreach ($dirtyVoteArray as $index => $vote) {
-							$indexBoom = explode('|', $index);
-							$answerID = $indexBoom[1];
-							unset($indexBoom);
-							$voteArray[$answerID] = $vote;
+		if ($_POST['voterID']) {
+			// Initialize voter (will provide $this->voterID)
+			$this->voter = new VoterController();
+			$this->voter->model = new VoterModel();
+			$this->voter->initVoter($_POST['voterID']);
+			if ($this->voter->voterID) {
+				$this->surveyID = $_POST['surveyID'];
+				$this->survey = $this->model->getSurveyByID($this->surveyID);
+				if ($this->survey->surveyID) {
+					$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
+					$mPoll = new PollModel();
+					foreach ($this->survey->polls as $poll) {
+						$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
+					}
+					unset($mPoll);
+					foreach ($this->survey->polls as $xPoll) {
+						foreach ($xPoll->answers as $xAnswer) {
+							$this->answerToPollArray[$xAnswer->answerID] = $xPoll->pollID;
 						}
-						$voteArrayToDestroy = $voteArray;
-						// Verify no vote has been entered for this voter on this poll
-						foreach ($this->survey->polls as $zPoll) {
-							$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
-							if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
-						}
-						if (!empty($this->yourVotes)) {
-							$this->hasVoted = true;
-						} else $this->hasVoted = false;
-						$sendVotedMessage = false;
-						if (!$this->hasVoted) {
-							// No vote, get the answers to make sure we have a score for each
-							$this->survey->allAnswers = $this->model->getAllAnswersBySurveyID($this->surveyID);
-							foreach ($this->survey->allAnswers as $answer) {
-								if (!array_key_exists($answer->answerID, $voteArray) || $voteArray[$answer->answerID] == '') {
-									$voteArray[$answer->answerID] = 0;
+					}
+					//$voterKeyResult = $this->model->verifyVoterKey($_POST['voterKey'], $this->surveyID);
+					if (($this->survey->verifiedVoting && $voterKeyResult->surveyID) || $this->survey->verifiedVoting == false) {
+						// Determine if within voting window
+						$oStart = new DateTime($this->survey->startTime);
+						if ($this->survey->endTime != null) $oEnd = new DateTime($this->survey->endTime);
+						$oNow = new DateTime();
+						if ($oNow >= $oStart && ($oNow < $oEnd || empty($oEnd))) {
+							// Determine whether this key has voted
+							if (empty($voterKeyResult->voteTime)) {
+								parse_str($_POST['votes'], $dirtyVoteArray);
+								// Cleanup array
+								foreach ($dirtyVoteArray as $index => $vote) {
+									$indexBoom = explode('|', $index);
+									$answerID = $indexBoom[1];
+									unset($indexBoom);
+									$voteArray[$answerID] = $vote;
 								}
-							}
-							$oDate = new DateTime();	
-							$voteTime = $oDate->format("Y-m-d H:i:s");
-							// IPO changes
-							$return['voteArray'] = json_encode($voteArray);
-							// Write temp vote
-							$this->model->insertTempVote($this->surveyID, $this->voter->voterID, json_encode($voteArray), $voteTime);
-							$this->model->updateVoterIdentState($this->surveyID, $this->voter->voterID, 'voted', false, false); 
-
-							$ballotCsv = '';
-							$ballotHtml = "<table>";
-							foreach ($this->survey->polls as $poll) {
-								$ballotHtml .= '<tr><th colspan="2">'.$poll->title.'</th></tr>';
-								foreach ($poll->answers as $answer) {
-									$ballotCsv .= $poll->title.','.$answer->text.','.$voteArray[$answer->answerID]."\n";
-									$ballotHtml .= "<tr><td>".$answer->text."</td><td>".$voteArray[$answer->answerID]."</td></tr>";
+								$voteArrayToDestroy = $voteArray;
+								// Verify no vote has been entered for this voter on this poll
+								foreach ($this->survey->polls as $zPoll) {
+									$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
+									if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
 								}
-							}
-							$ballotHtml .= "</table>";
+								if (!empty($this->yourVotes)) {
+									$this->hasVoted = true;
+								} else $this->hasVoted = false;
+								$sendVotedMessage = false;
+								if (!$this->hasVoted) {
+									// No vote, get the answers to make sure we have a score for each
+									$this->survey->allAnswers = $this->model->getAllAnswersBySurveyID($this->surveyID);
+									foreach ($this->survey->allAnswers as $answer) {
+										if (!array_key_exists($answer->answerID, $voteArray) || $voteArray[$answer->answerID] == '') {
+											$voteArray[$answer->answerID] = 0;
+										}
+									}
+									$oDate = new DateTime();	
+									$voteTime = $oDate->format("Y-m-d H:i:s");
+									// IPO changes
+									$return['voteArray'] = json_encode($voteArray);
+									// Write temp vote
+									$this->model->insertTempVote($this->surveyID, $this->voter->voterID, json_encode($voteArray), $voteTime);
+									$this->model->updateVoterIdentState($this->surveyID, $this->voter->voterID, 'voted', false, false); 
 
-							$sendVotedMessage = true;
+									$ballotCsv = '';
+									$ballotHtml = "<table>";
+									foreach ($this->survey->polls as $poll) {
+										$ballotHtml .= '<tr><th colspan="2">'.$poll->title.'</th></tr>';
+										foreach ($poll->answers as $answer) {
+											$ballotCsv .= $poll->title.','.$answer->text.','.$voteArray[$answer->answerID]."\n";
+											$ballotHtml .= "<tr><td>".$answer->text."</td><td>".$voteArray[$answer->answerID]."</td></tr>";
+										}
+									}
+									$ballotHtml .= "</table>";
 
-							// For IPO we're validating later as a manual function
+									$sendVotedMessage = true;
 
-							unset($voteTime, $oDate);
-						} else {
-							$return['caution'] = 'Your vote had already been recorded for this poll';
-						}
-						// Load the survey fresh
-						$this->survey = $this->model->getSurveyByID($this->surveyID);
-						$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
-						$mPoll = new PollModel();
-						foreach ($this->survey->polls as $poll) {
-							$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
-						}
-						unset($mPoll);
+									// For IPO we're validating later as a manual function
 
-						// foreach ($this->survey->polls as $zPoll) {
-						// 	$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
-						// 	if (count($existingVote) > 0 && $existingVote[0]->answerID != '') {
-						// 		$this->yourVotes[$zPoll->pollID] = $existingVote;
-						// 	}
-						// }
-						$this->yourVoteTime = $voteTime;
-						$this->voteArray = $voteArray;
-						$imgpath_create = 'web/images/qr_voterid/'.$this->voter->voterID.'.png';
-						if (!file_exists($imgpath_create)) {
-							include_once('utilities/phpqrcode/qrlib.php');
-							if ($this->survey->customSlug != "") {
-								$qr_text = 'https://'.$_SERVER['HTTP_HOST'].'/'.$this->survey->customSlug.'/'.$this->voter->voterID.'/';
+									unset($voteTime, $oDate);
+								} else {
+									$return['caution'] = 'Your vote had already been recorded for this poll';
+								}
+								// Load the survey fresh
+								$this->survey = $this->model->getSurveyByID($this->surveyID);
+								$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
+								$mPoll = new PollModel();
+								foreach ($this->survey->polls as $poll) {
+									$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
+								}
+								unset($mPoll);
+
+								// foreach ($this->survey->polls as $zPoll) {
+								// 	$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
+								// 	if (count($existingVote) > 0 && $existingVote[0]->answerID != '') {
+								// 		$this->yourVotes[$zPoll->pollID] = $existingVote;
+								// 	}
+								// }
+								$this->yourVoteTime = $voteTime;
+								$this->voteArray = $voteArray;
+								$imgpath_create = 'web/images/qr_voterid/'.$this->voter->voterID.'.png';
+								if (!file_exists($imgpath_create)) {
+									include_once('utilities/phpqrcode/qrlib.php');
+									if ($this->survey->customSlug != "") {
+										$qr_text = 'https://'.$_SERVER['HTTP_HOST'].'/'.$this->survey->customSlug.'/'.$this->voter->voterID.'/';
+									} else {
+										$qr_text = 'https://'.$_SERVER['HTTP_HOST'].'/survey/results/'.$this->survey->surveyID.'/'.$this->voter->voterID.'/';
+									}
+									QRcode::png($qr_text, $imgpath_create);
+								}
+								$return['html'] .= $this->ajaxInclude('view/survey/yourvote.view.php');
+								// Send outgoing voted message and, if appropriate, duplicate vote message
+								if ($sendVotedMessage) {
+									//$voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
+									$voter = $this->model->getvoterbyid($this->voter->voterID);
+									$voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
+									$voterfile = $this->model->getVoterfileByID($voterfileID);
+									// Queue message
+									$api = new ApiController();
+									$api->template = 'voteReceipt';
+									$api->fields = (object) [
+										'starId' => $this->voter->voterID,
+										'email' => $voter->email,
+										'firstName' => $voterfile->fname,
+										'lastName' => $voterfile->lname,
+										'ballotHtml' => base64_encode($return['html'])
+									];
+									if ($api->addMsg()) {
+										unset($api);
+									} else $return['caution'] = 'Failed to send post-vote ballot message';
+
+									// Detect multiple votes for same voter ID
+									$voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
+									$sameVoters = $this->model->getSameVoters($voterfileID, $this->voter->voterID);
+									if ($sameVoters) {
+										$voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
+										$voterfile = $this->model->getVoterfileByID($voterfileID);
+										// Mark voter so it doesn't get reviewed by L1 reviewers
+										$this->markDuplicateVoter($this->survey->surveyID, $this->voter->voterID);
+										// Queue message
+										$api = new ApiController();
+										$api->template = 'ballotFlagged';
+										$api->fields = (object) [
+											'starId' => $this->voter->voterID,
+											'reason' => 'duplicate',
+											'email' => $voter->email,
+											'firstName' => $voterfile->fname,
+											'lastName' => $voterfile->lname,
+											'phone' => $voter->phone,
+											//'voterId' => $voterfile->stateVoterID,
+											//'cdnHandle1' => $voterIdent->cdnHandle1,
+											//'cdnHandle2' => $voterIdent->cdnHandle2,
+											'returnLink' => 'https://'.$_SERVER['HTTP_HOST'].'/survey/votervalfinal/'.$this->survey->surveyID.'/?starId='.$this->voter->voterID,
+										];
+										if ($api->addMsg()) {
+											unset($api);
+										} else $return['error'] = 'Failed to send duplicate ballot message';
+									}
+								}
 							} else {
-								$qr_text = 'https://'.$_SERVER['HTTP_HOST'].'/survey/results/'.$this->survey->surveyID.'/'.$this->voter->voterID.'/';
+								$return['caution'] = 'This key has already been used to record a vote on this poll';
 							}
-							QRcode::png($qr_text, $imgpath_create);
-						}
-						$return['html'] .= $this->ajaxInclude('view/survey/yourvote.view.php');
-						// Send outgoing voted message and, if appropriate, duplicate vote message
-						if ($sendVotedMessage) {
-							//$voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
-							$voter = $this->model->getvoterbyid($this->voter->voterID);
-							$voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
-							$voterfile = $this->model->getVoterfileByID($voterfileID);
-							// Queue message
-							$api = new ApiController();
-							$api->template = 'voteReceipt';
-							$api->fields = (object) [
-								'starId' => $this->voter->voterID,
-								'email' => $voter->email,
-								'firstName' => $voterfile->fname,
-								'lastName' => $voterfile->lname,
-								'ballotHtml' => base64_encode($return['html'])
-							];
-							if ($api->addMsg()) {
-								unset($api);
-							} else $return['caution'] = 'Failed to send post-vote ballot message';
-
-							// Detect multiple votes for same voter ID
-							$voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
-							$sameVoters = $this->model->getSameVoters($voterfileID, $this->voter->voterID);
-							if ($sameVoters) {
-								$voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
-								$voterfile = $this->model->getVoterfileByID($voterfileID);
-								// Mark voter so it doesn't get reviewed by L1 reviewers
-								$this->markDuplicateVoter($this->survey->surveyID, $this->voter->voterID);
-								// Queue message
-								$api = new ApiController();
-								$api->template = 'ballotFlagged';
-								$api->fields = (object) [
-									'starId' => $this->voter->voterID,
-									'reason' => 'duplicate',
-									'email' => $voter->email,
-									'firstName' => $voterfile->fname,
-									'lastName' => $voterfile->lname,
-									'phone' => $voter->phone,
-									//'voterId' => $voterfile->stateVoterID,
-									//'cdnHandle1' => $voterIdent->cdnHandle1,
-									//'cdnHandle2' => $voterIdent->cdnHandle2,
-									'returnLink' => 'https://'.$_SERVER['HTTP_HOST'].'/survey/votervalfinal/'.$this->survey->surveyID.'/?starId='.$this->voter->voterID,
-								];
-								if ($api->addMsg()) {
-									unset($api);
-								} else $return['error'] = 'Failed to send duplicate ballot message';
+						} else {
+							// Too early or too late
+							if ($oNow >= $oEnd && !empty($oEnd)) {
+								// Oh, you outta time, baby!
+								$return['error'] .= 'Voting window has closed';
+							} else {
+								$return['error'] .= 'Voting window has not yet opened';
 							}
 						}
 					} else {
-						$return['caution'] = 'This key has already been used to record a vote on this poll';
+						// Failed eligibility
+						$return['error'] .= 'Invalid voter key';
 					}
 				} else {
-					// Too early or too late
-					if ($oNow >= $oEnd && !empty($oEnd)) {
-						// Oh, you outta time, baby!
-						$return['error'] .= 'Voting window has closed';
-					} else {
-						$return['error'] .= 'Voting window has not yet opened';
-					}
+					$return['error'] .= 'Survey/Election not found';
 				}
 			} else {
-				// Failed eligibility
-				$return['error'] .= 'Invalid voter key';
+				$return['error'] .= 'Voter not found';
 			}
-		//}
+		} else {
+			$return['error'] .= 'Voter not found';
+		}
 		echo json_encode($return);
 	}
 	
