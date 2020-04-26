@@ -97,5 +97,5 @@ function validatevoter(accept, reason)
 
 function lookupvoter()
 {
-	window.open($('#orestarLink').attr('href'), "_blank");
+	window.open($('#orestarLink').attr('href'), "orestar");
 }
