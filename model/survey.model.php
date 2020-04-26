@@ -526,15 +526,15 @@ class SurveyModel extends Model
 
 	public function updateVoterIdentState($surveyID, $voterID, $verificationState, $userID, $reason)
 	{
-		$set = "SET `verificationState` = '$verificationState'";
+		$set = "SET `verificationState` = '$verificationState', `checkoutID` = NULL, `checkoutTime` = NULL";
 		if ($verificationState == 'rejectedOnce') {
-			$set .= ", `firstVerifierID` = '$userID', `firstVerifierTime` = NOW(), `rejectedReason` = '$reason' ";
+			$set .= ", `firstVerifierID` = '$userID', `firstVerifierTime` = NOW(), `rejectedReason` = '$reason'";
 		} else if ($verificationState == 'rejectedTwice') {
-			$set .= ", `secondVerifierID` = '$userID', `secondVerifierTime` = NOW(), `rejectedReason` = '$reason' ";
+			$set .= ", `secondVerifierID` = '$userID', `secondVerifierTime` = NOW(), `rejectedReason` = '$reason'";
 		} else if ($verificationState == 'verifiedOnce') {
-			$set .= ", `firstVerifierID` = '$userID', `firstVerifierTime` = NOW() ";
+			$set .= ", `firstVerifierID` = '$userID', `firstVerifierTime` = NOW()";
 		} else if ($verificationState == 'verifiedTwice') {
-			$set .= ", `secondVerifierID` = '$userID', `secondVerifierTime` = NOW() ";
+			$set .= ", `secondVerifierID` = '$userID', `secondVerifierTime` = NOW()";
 		}
 		$this->query = "UPDATE `voterident`
 						$set
