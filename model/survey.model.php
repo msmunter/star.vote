@@ -280,7 +280,8 @@ class SurveyModel extends Model
 	public function getTempVoterCount($surveyID)
 	{
 		$this->query = "SELECT COUNT(*) AS `count` FROM `tempvotes`
-						WHERE `surveyID` LIKE '$surveyID';";
+						WHERE `surveyID` LIKE '$surveyID'
+						AND `voterID` NOT NULL;";
 		$this->doSelectQuery();
 		return $this->results[0]->count;
 	}
