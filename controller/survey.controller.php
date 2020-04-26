@@ -627,7 +627,8 @@ class SurveyController extends Controller
 									$existingVote = $this->voter->model->getYourVote($this->voter->voterID, $zPoll->pollID);
 									if (count($existingVote) > 0 && $existingVote[0]->answerID != '') $this->yourVotes[$zPoll->pollID] = $existingVote;
 								}
-								if (!empty($this->yourVotes)) {
+								$tempVote = $this->voter->model->getSurveyTempVote($this->survey->surveyID, $this->voter->voterID);
+								if (!empty($this->yourVotes) || $tempVote) {
 									$this->hasVoted = true;
 								} else $this->hasVoted = false;
 								$sendVotedMessage = false;

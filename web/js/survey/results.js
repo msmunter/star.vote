@@ -3,6 +3,8 @@ var pollIndex = 0;
 var pollCount = <?php echo count($this->survey->polls); ?>;
 var pollsLeftToView = [<?php for ($i = 1; $i <= (count($this->survey->polls)-1); $i++) {if ($i > 1) echo ', '; echo $i;} ?>];
 var ballotText = '';
+var voterID;
+var newVoterError = 'ERROR: Another voter has logged in using this browser. Please close all other voting tabs/windows and refresh this page to enable voting.';
 
 $(document).ready(function() {
 	$('#shareURLInput').focus(function(){
@@ -24,6 +26,8 @@ $(document).ready(function() {
 		} else */
 		popMsg($('#voteInput').html(), 1);
 	});
+
+	voterID="<?php if ($this->voter->voterID) echo $this->voter->voterID; ?>";
 });
 
 function updateStatus(msg)
@@ -159,6 +163,14 @@ function checkVoterKey(callbackFunction)
 	});
 }
 
+function idMatch()
+{
+	cookieVoterID = getCookie('voterID');
+	if (voterID == cookieVoterID) {
+		return true;
+	} else return false;
+}
+
 function vote()
 {
 	resultsButtonHtml = $('#voteShowResultsButtons').html();
@@ -184,46 +196,50 @@ function vote()
 
 function voteActual()
 {
-	$.post("/", { 
-		c: 'survey', 
-		a: 'ajaxvote', 
-		ajax: '1',
-		voterID: getCookie('voterID'),
-		surveyID: $('#surveyID').val(),
-		votes: $('.voteForm').serialize(),
-		voterKey: $('#voterKey').val(),
-		// viFname: $('#fname').val(),
-		// viLname: $('#lname').val(),
-		// viStreet: $('#street').val(),
-		// viCity: $('#city').val(),
-		// viState: $('#state').val(),
-		// viZip: $('#zip').val(),
-		// viBirthyear: $('#birthyear').val(),
-		// viPhone: $('#phone').val(),
-		// viEmail: $('#email').val()
-	}, function(data) {
-		var jData = JSON.parse(data);
-		if (jData.error) {
-			updateStatus("ERROR: "+jData.error);
-			$('#voteShowResultsButtons').html(resultsButtonHtml);
-			enableButtons();
-		} else {
-			ballotText = jData.html;
-			// Replace voting mechanism with personal results
-			$('#voteInput').html(jData.html);
-			// Hide buttons
-			hideButtons();
-			$('#voteShowResultsButtons').html('');
-			// View results
-			clearStatus();
-			showResults();
-			// Show reset voter button
-			if ($('#resetVoterButton').length > 0) $('#resetVoterButton').show();
-			if ($('#reprintVoteButton').length > 0) $('#reprintVoteButton').show();
-			// Print results
-			//popMsg(ballotText, 1);
-		}
-	});
+	if (idMatch()) {
+		$.post("/", { 
+			c: 'survey', 
+			a: 'ajaxvote', 
+			ajax: '1',
+			voterID: getCookie('voterID'),
+			surveyID: $('#surveyID').val(),
+			votes: $('.voteForm').serialize(),
+			voterKey: $('#voterKey').val(),
+			// viFname: $('#fname').val(),
+			// viLname: $('#lname').val(),
+			// viStreet: $('#street').val(),
+			// viCity: $('#city').val(),
+			// viState: $('#state').val(),
+			// viZip: $('#zip').val(),
+			// viBirthyear: $('#birthyear').val(),
+			// viPhone: $('#phone').val(),
+			// viEmail: $('#email').val()
+		}, function(data) {
+			var jData = JSON.parse(data);
+			if (jData.error) {
+				updateStatus("ERROR: "+jData.error);
+				$('#voteShowResultsButtons').html(resultsButtonHtml);
+				enableButtons();
+			} else {
+				ballotText = jData.html;
+				// Replace voting mechanism with personal results
+				$('#voteInput').html(jData.html);
+				// Hide buttons
+				hideButtons();
+				$('#voteShowResultsButtons').html('');
+				// View results
+				clearStatus();
+				showResults();
+				// Show reset voter button
+				if ($('#resetVoterButton').length > 0) $('#resetVoterButton').show();
+				if ($('#reprintVoteButton').length > 0) $('#reprintVoteButton').show();
+				// Print results
+				//popMsg(ballotText, 1);
+			}
+		});
+	} else {
+		updateStatus(newVoterError);
+	}
 }
 
 function disableUploadButton()
@@ -238,40 +254,44 @@ function enableUploadButton()
 
 function uploadIdentImage(imageIndex)
 {
-	$.getScript('https://static.filestackapi.com/filestack-js/3.x.x/filestack.min.js', function() {
-		var voterID = getCookie('voterID');
-		const fsClient = filestack.init('<?php echo $this->cdnConfig['apikey'];?>');
-		const options = {
-			onUploadDone: (res) => {
-				$.post("/", { 
-					c: 'survey', 
-					a: 'ajaxuploadidentimage', 
-					ajax: '1',
-					voterID: voterID,
-					surveyID: $('#surveyID').val(),
-					cdnHandle: res.filesUploaded[0].handle,
-					imageIndex: imageIndex,
-				}, function(data) {
-					var jData = JSON.parse(data);
-					if (jData.error) {
-						updateStatus("ERROR: "+jData.error);
-						enableUploadButton();
-					} else {
-						disableUploadButton();
-						clearStatus();
-						$('#cdnHandle'+imageIndex).val(res.filesUploaded[0].handle);
-						$('#identImagePreview'+imageIndex).attr('src', res.filesUploaded[0].url);
-						$('#identImageLink'+imageIndex).attr('href', res.filesUploaded[0].url);
-						$('#uploadButtonCell'+imageIndex).html('Image '+imageIndex+' Saved');
-						$('#identImagePreview').removeClass('small').addClass('large');
-					}
-				});
-			},
-			accept: ["image/*"],
-			// imageMin: [600, 800],
-		};
-		fsClient.picker(options).open();
-	});
+	if (idMatch()) {
+		$.getScript('https://static.filestackapi.com/filestack-js/3.x.x/filestack.min.js', function() {
+			var voterID = getCookie('voterID');
+			const fsClient = filestack.init('<?php echo $this->cdnConfig['apikey'];?>');
+			const options = {
+				onUploadDone: (res) => {
+					$.post("/", { 
+						c: 'survey', 
+						a: 'ajaxuploadidentimage', 
+						ajax: '1',
+						voterID: voterID,
+						surveyID: $('#surveyID').val(),
+						cdnHandle: res.filesUploaded[0].handle,
+						imageIndex: imageIndex,
+					}, function(data) {
+						var jData = JSON.parse(data);
+						if (jData.error) {
+							updateStatus("ERROR: "+jData.error);
+							enableUploadButton();
+						} else {
+							disableUploadButton();
+							clearStatus();
+							$('#cdnHandle'+imageIndex).val(res.filesUploaded[0].handle);
+							$('#identImagePreview'+imageIndex).attr('src', res.filesUploaded[0].url);
+							$('#identImageLink'+imageIndex).attr('href', res.filesUploaded[0].url);
+							$('#uploadButtonCell'+imageIndex).html('Image '+imageIndex+' Saved');
+							$('#identImagePreview').removeClass('small').addClass('large');
+						}
+					});
+				},
+				accept: ["image/*"],
+				// imageMin: [600, 800],
+			};
+			fsClient.picker(options).open();
+		});
+	} else {
+		updateStatus(newVoterError);
+	}
 }
 
 function popMsg(html, print)

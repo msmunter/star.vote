@@ -52,6 +52,18 @@ class VoterModel extends Model
 		$this->doSelectQuery();
 		return $this->results;
 	}
+
+	public function getSurveyTempVote($voterID, $surveyID)
+	{
+		$this->query = "SELECT * FROM `tempvotes`
+						WHERE `surveyID` LIKE '$surveyID'
+						AND `voterID` LIKE '$voterID'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results[0];
+		} else return false;
+	}
 	
 	/*public function getPollByIDExampleUsingEscapeString($pollID)
 	{
