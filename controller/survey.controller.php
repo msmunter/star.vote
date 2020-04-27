@@ -1119,7 +1119,7 @@ class SurveyController extends Controller
 					if ($this->voterIdent->verificationState == 'checkedOut') {
 						// Not yet verified, verify it
 						if ($this->user->userID == 1 || $this->userCanValidate == 2) {
-							$return['msg'] = 'Finalized voter '.$this->voter->voterID;
+							$return['msg'] = 'Processed voter '.$this->voter->voterID;
 							if ($this->accept == 1) {
 								$newState = 'verifiedTwice';
 								$return['msg'] .= ' (Accepted)';
@@ -1180,6 +1180,45 @@ class SurveyController extends Controller
 					}
 				} else {
 					$return['error'] = 'Checkout timed out, please refresh your page and click the "Load" button.';
+				}
+			} else {
+				$return['error'] = 'Not authorized to validate votes';
+			}
+		} else {
+			$return['error'] = 'Election not found';
+		}
+		echo json_encode($return);
+	}
+
+	public function ajaxfinalizevoter()
+	{
+		$this->ajax = 1;
+		$this->doHeader = 0;
+		$this->doFooter = 0;
+		$this->survey = $this->model->getSurveyByID($_POST['surveyID']);
+		if ($this->survey) {
+			if ($this->user->userID == 1) {
+				$this->userCanValidate = 2;
+			} else {
+				$this->userCanValidate = $this->model->userCanValidate($this->user->userID, $this->survey->surveyID);
+			}
+			if ($this->userCanValidate == 2) {
+				$this->voterID = $_POST['voterID'];
+				$voterIdent = $this->model->getVoterIdentByVoterID($this->voterID);
+				if (!in_array($voterIdent->verificationState, ['acceptedTwice', 'rejectedTwice'])) {
+					$this->accept = $_POST['accept'];
+					$this->ticketID = $_POST['ticketID'];
+					$return['msg'] = 'Finalized voter '.$this->voter->voterID;
+					if ($this->accept == 1) {
+						$newState = 'verifiedTwice';
+						$return['msg'] .= ' (Accepted)';
+					} else {
+						$newState = 'rejectedTwice';
+						$return['msg'] .= ' (Rejected)';
+					}
+					$this->model->finalizeVoter($this->survey->surveyID, $this->voterID, $newState, $this->user->userID, $this->ticketID);
+				} else {
+					$return['error'] = '';
 				}
 			} else {
 				$return['error'] = 'Not authorized to validate votes';

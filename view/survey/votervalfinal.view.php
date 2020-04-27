@@ -1,4 +1,6 @@
 <?php if ($this->user->userID == 1 || $this->userCanValidate == 2) { ?>
+	<input type="hidden" name="surveyID" id="surveyID" value="<?php echo $this->survey->surveyID; ?>"/>
+	<input type="hidden" name="voterID" id="voterID" value="<?php echo $this->voter->voterID; ?>"/>
 	<div class="bigContainer">
 			<div class="bigContainerTitle">
 				Finalize Voter <?php echo $_POST['starId']; ?>
@@ -43,22 +45,28 @@
 						<a id="validationImgHref2" href="/web/images/img_placeholder.svg" target="_blank"><img id="validationImg2" src="https://cdn.filestackcontent.com/<?php echo $this->voterIdent->cdnHandle2; ?>" /></a>
 					</td></tr>
 				</table>
-				<div class="ui-field-contain">
-					<label for="ticketID">Support Ticket ID:</label>
-					<input type="text" data-clear-btn="true" id="ticketID" name="ticketID" required="1"></input>
-				</div>
-				<table id="validateVoterButtonTable">
-					<tr><td>
-						<button id="validateVoterButton" class="validateVoterButtons" data-inline="inline" onclick="finalvalidatevoter(1, false)" style="background-color: green; color: white;">Validate</button>
-					</td><td class="verticalSpacer border" rowspan="2"></td><td class="verticalSpacer" rowspan="2">
-					</td><td>
-						<button id="rejectVoterButton1" class="validateVoterButtons" data-inline="inline" onclick="finalvalidatevoter(0, 'unreadable')" style="background-color: darkred; color: white;">Reject - Unreadable</button><br />
-					</td></tr><tr><td>
-						<!-- <button id="loadValidationButton" data-inline="inline" onclick="loadvalidation()">Load</button> -->
-					</td><td>
-						<button id="rejectVoterButton2" class="validateVoterButtons" data-inline="inline" onclick="finalvalidatevoter(0, 'mismatch')" style="background-color: darkred; color: white;">Reject - Data Mismatch</button>
-					</td></tr>
-				</table>
+				<?php if (in_array($this->voterIdent->verificationState, ['voted', 'rejectedOnce', 'acceptedOnce'])) { ?>
+					<div class="ui-field-contain">
+						<label for="ticketID">Support Ticket ID:</label>
+						<input type="text" data-clear-btn="true" id="ticketID" name="ticketID" required="1"></input>
+					</div>
+					<table id="validateVoterButtonTable">
+						<tr><td>
+							<button id="rejectVoterButton1" class="validateVoterButtons" data-inline="inline" onclick="finalvalidatevoter(0, 'unreadable')" style="background-color: darkred; color: white;">Reject</button>
+						</td><td class="verticalSpacer border" rowspan="2"></td><td class="verticalSpacer" rowspan="2">
+						</td><td>
+							<button id="validateVoterButton" class="validateVoterButtons" data-inline="inline" onclick="finalvalidatevoter(1, false)" style="background-color: green; color: white;">Accept</button>
+						</td></tr>
+					</table>
+				<?php } else if (in_array($this->voterIdent->verificationState, ['rejectedTwice', 'acceptedTwice'])) { ?>
+					<div>
+						Voter has already been finalized.
+					</div>
+				<?php } else { ?>
+					<div>
+						Voter cannot currently be finalized.
+					</div>
+				<?php } ?>
 			</div>
 		</div>
 <?php } else { ?>

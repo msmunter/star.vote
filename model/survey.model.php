@@ -544,6 +544,18 @@ class SurveyModel extends Model
 		$this->doUpdateQuery();
 	}
 
+	public function finalizeVoter($surveyID, $voterID, $verificationState, $userID, $ticketID)
+	{
+		$set = "SET `verificationState` = '$verificationState', `checkoutID` = NULL, `checkoutTime` = NULL, `secondVerifierID` = '$userID', `secondVerifierTime` = NOW()";
+		if ($ticketID) $set .= ", `ticketID` = '".$ticketID."'";
+		$this->query = "UPDATE `voterident`
+						$set
+						WHERE `voterID` LIKE '$voterID'
+						AND `surveyID` LIKE '$surveyID'
+						LIMIT 1;";
+		$this->doUpdateQuery();
+	}
+
 	// public function deleteTempVote($surveyID, $voterID)
 	// {
 	// 	$this->query = "DELETE FROM `tempvotes`
