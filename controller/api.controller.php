@@ -14,30 +14,31 @@ class ApiController extends Controller
 		$this->doHeader = 0;
 		$this->doFooter = 0;
 		$this->return['apiVersion'] = 'v1';
-		if (strtolower($this->URLdata == 'getnextemail')) {
-			$this->getNextEmail();
-		} else if (strtolower($this->URLdata == 'completeemail')) {
-			$this->completeEmail();
+		if ($this->user->userID && $this->user->info->email == 'api') {
+			if (strtolower($this->URLdata == 'getnextemail')) {
+				$this->getNextEmail();
+			} else if (strtolower($this->URLdata == 'completeemail')) {
+				$this->completeEmail();
+			} else {
+				print json_encode($this->return);
+			}
 		} else {
-			print json_encode($this->return);
+			$this->return['error'] = 'Not authorized';
+			echo json_encode($this->return);
 		}
 	}
 
 	private function getNextEmail()
 	{
-		if ($this->user->userID && $this->user->info->email == 'api') {
 		$nextEmail = $this->model->getNextEmail();
-			if (!empty($nextEmail)) {
-				$this->return['requestId'] = $nextEmail->msgID;
-				$this->return['token'] = $nextEmail->token;
-				$this->return['template'] = $nextEmail->template;
-				$this->return['fields'] = json_decode($nextEmail->fields);
-			} else {
-				$this->return['requestId'] = false;
-				$this->return['token'] = false;
-			}
+		if (!empty($nextEmail)) {
+			$this->return['requestId'] = $nextEmail->msgID;
+			$this->return['token'] = $nextEmail->token;
+			$this->return['template'] = $nextEmail->template;
+			$this->return['fields'] = json_decode($nextEmail->fields);
 		} else {
-			$return['error'] = 'Not authorized';
+			$this->return['requestId'] = false;
+			$this->return['token'] = false;
 		}
 		echo json_encode($this->return);
 	}
