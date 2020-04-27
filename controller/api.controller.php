@@ -25,15 +25,19 @@ class ApiController extends Controller
 
 	private function getNextEmail()
 	{
+		if ($this->user->userID && $this->user->info->email == 'api') {
 		$nextEmail = $this->model->getNextEmail();
-		if (!empty($nextEmail)) {
-			$this->return['requestId'] = $nextEmail->msgID;
-			$this->return['token'] = $nextEmail->token;
-			$this->return['template'] = $nextEmail->template;
-			$this->return['fields'] = json_decode($nextEmail->fields);
+			if (!empty($nextEmail)) {
+				$this->return['requestId'] = $nextEmail->msgID;
+				$this->return['token'] = $nextEmail->token;
+				$this->return['template'] = $nextEmail->template;
+				$this->return['fields'] = json_decode($nextEmail->fields);
+			} else {
+				$this->return['requestId'] = false;
+				$this->return['token'] = false;
+			}
 		} else {
-			$this->return['requestId'] = false;
-			$this->return['token'] = false;
+			$return['error'] = 'Not authorized';
 		}
 		echo json_encode($this->return);
 	}
