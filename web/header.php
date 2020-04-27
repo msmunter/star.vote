@@ -99,9 +99,9 @@
 						<a href="/poll/create/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-plus">New</a>
 						<a href="/user/logout/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-delete">Logout</a>
 					<?php } else { ?>
-						<!-- <a href="/poll/history/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-bullets">More</a>
-						<a href="https://www.starvoting.us/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-info">Learn</a>
-						<a href="/user/login/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-user">Login</a> -->
+						<a href="https://support.ipo.vote/en/support/home" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left" target="_blank">Help</a>
+						<!-- <a href="https://support.ipo.vote/" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left ui-icon-info">Learn</a> -->
+						<a href="https://support.ipo.vote/es/support/home" class="ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all ui-btn-icon-left" target="_blank">Ayuda</a>
 					<?php } ?>
 					</div>
 				<?php } ?>
