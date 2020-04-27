@@ -60,10 +60,21 @@ function loadvalidation()
 			$('#validationComparisonTableValidationStatus').html(jData.validationStatus);
 			$('#orestarLink').attr('href', jData.orestarLink);
 			$('#voterID').val(jData.voterID);
-			$('#validationImg1').attr('src', 'https://cdn.filestackcontent.com/'+jData.cdnHandle1);
-			$('#validationImgHref1').attr('href', 'https://cdn.filestackcontent.com/'+jData.cdnHandle1);
-			$('#validationImg2').attr('src', 'https://cdn.filestackcontent.com/'+jData.cdnHandle2);
-			$('#validationImgHref2').attr('href', 'https://cdn.filestackcontent.com/'+jData.cdnHandle2);
+			if (jData.cdnHandle1) {
+				$('#validationImg1').attr('src', 'https://cdn.filestackcontent.com/'+jData.cdnHandle1);
+				$('#validationImgHref1').attr('href', 'https://cdn.filestackcontent.com/'+jData.cdnHandle1);
+			} else {
+				$('#validationImg1').attr('src', '/web/images/img_placeholder.svg');
+				$('#validationImgHref1').attr('href', '/web/images/img_placeholder.svg');
+			}
+			
+			if (jData.cdnHande2) {
+				$('#validationImg2').attr('src', 'https://cdn.filestackcontent.com/'+jData.cdnHandle2);
+				$('#validationImgHref2').attr('href', 'https://cdn.filestackcontent.com/'+jData.cdnHandle2);
+			} else {
+				$('#validationImg2').attr('src', '/web/images/img_placeholder.svg');
+				$('#validationImgHref2').attr('href', '/web/images/img_placeholder.svg');
+			}
 			$('.validateVoterButtons').prop("disabled", false);
 		}
 	});
@@ -90,6 +101,16 @@ function validatevoter(accept, reason)
 			//updateStatus(jData.msg+'<br />'+jData.query); // DEBUG ONLY!!!
 			$('#voterVerifiedCount').html(jData.voterVerifiedCount);
 			$('#voterCount').html(jData.voterCount);
+			$('#checkoutTime').html('--');
+			$('#validationComparisonTableName').html('--');
+			$('#validationComparisonTableAddress').html('--');
+			$('#validationComparisonTableCSZ').html('--');
+			$('#validationComparisonTableBirthyear').html('--');
+			$('#validationComparisonTableBirthdate').html('--');
+			$('#validationComparisonTableValidationStatus').html('--');
+			$('#voterID').val('');
+			$('#validationImg1, #validationImg2').attr('src', '/web/images/img_placeholder.svg');
+			$('#validationImgHref1, #validationImgHref2').attr('href', '/web/images/img_placeholder.svg');
 			$('#loadValidationButton').prop("disabled", false);
 		}
 	});
