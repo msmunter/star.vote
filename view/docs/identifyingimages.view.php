@@ -3,7 +3,7 @@
 		At the time you cast your vote, you will be asked to upload two supporting documents:
 		<ul>
 			<li>A government-issued photo ID, such as a driver's license, a passport, or an ID card from any state.</li>
-			<li>A recent photo with a clear view of your face that we can match to the face on your photo ID.</li>
+			<li>An identifying document with your address such as a utility bill.</li>
 		</ul>
 	</p>
 	<p>
@@ -11,7 +11,7 @@
 	</p>
 	<p>
 		NOTES ON ADDITIONAL VOTER IDENTITY DOCUMENTATION:
-		If you do not have a valid photo ID or can’t upload a recent photo of yourself, you can still vote, but your ballot will be considered provisional pending verification.
+		If you do not have a valid photo ID you can still vote but your ballot will be considered provisional pending verification.
 		To vote with a provisional ballot please submit the following documentation when you cast your ballot:
 		<ul>
 			<li>Any photo ID which includes your date of birth. (This does not need to be government-issued or from Oregon.)</li>
@@ -22,6 +22,6 @@
 		Thank you in advance for your cooperation. We take election security very seriously.
 		In most cases, it's easiest to take these photos with your phone and to then vote with your phone by clicking the ballot link below. A webcam or digital camera can also be used. Images must be high resolution and taken with good lighting so that images are legible.
 		If the credentialing team cannot verify your identity from the information you provide, you will be contacted by email for additional documentation.
-		If you have any problems voting, you may contact our voter support team by emailing us at support@equal.vote
+		If you have any problems voting you may contact our voter support team by emailing us at <a href="mailto:support@equal.vote">support@equal.vote</a>.
 	</p>
 </div>

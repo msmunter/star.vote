@@ -33,7 +33,7 @@
 					</td>
 				</tr>
 			</table>
-			<div class="uploadImgTip">2. A recent photo with a clear view of your face that we can match to the face on your photo ID.</div>
+			<div class="uploadImgTip">2. An identifying document with your address such as a utility bill.</div>
 			<table>
 				<tr>
 					<td class="identImageCell">
