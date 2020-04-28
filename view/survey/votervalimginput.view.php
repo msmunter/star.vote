@@ -33,7 +33,7 @@
 					</td>
 				</tr>
 			</table>
-			<div class="uploadImgTip">2. An identifying document with your address such as a utility bill.</div>
+			<div class="uploadImgTip">2. Additional documentation, if needed.</div>
 			<table>
 				<tr>
 					<td class="identImageCell">
