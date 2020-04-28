@@ -234,6 +234,7 @@ function voteActual()
 				if ($('#resetVoterButton').length > 0) $('#resetVoterButton').show();
 				if ($('#reprintVoteButton').length > 0) $('#reprintVoteButton').show();
 				$('#youVoted').show();
+				updateStatus('Thank you for voting! A confirmation email has been sent to you.');
 				// Print results
 				//popMsg(ballotText, 1);
 			}

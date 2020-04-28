@@ -340,6 +340,7 @@ table.yourVoteTable th, table#runoffResultsTable th {
 div#youVoted {
 	display: none;
 	max-width: 400px;
+	font-weight: bold;
 }
 
 span#identifyingImagesLinkContainer {
