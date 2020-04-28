@@ -647,7 +647,7 @@ class SurveyController extends Controller
 									$return['voteArray'] = json_encode($voteArray);
 									// Write temp vote
 									$this->model->insertTempVote($this->surveyID, $this->voter->voterID, json_encode($voteArray), $voteTime);
-									$this->model->updateVoterIdentState($this->surveyID, $this->voter->voterID, 'voted', false, false); 
+									$this->model->updateVoterIdentState($this->surveyID, $this->voter->voterID, 'voted', false, false);
 
 									$ballotCsv = '';
 									$ballotHtml = "<table>";
@@ -662,9 +662,7 @@ class SurveyController extends Controller
 
 									$sendVotedMessage = true;
 
-									// For IPO we're validating later as a manual function
-
-									unset($voteTime, $oDate);
+									unset($oDate);
 
 									// Load the survey fresh
 									$this->survey = $this->model->getSurveyByID($this->surveyID);
