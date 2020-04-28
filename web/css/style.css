@@ -337,6 +337,15 @@ table.yourVoteTable th, table#runoffResultsTable th {
 	text-align: left;
 }
 
+div#youVoted {
+	display: none;
+	max-width: 400px;
+}
+
+span#identifyingImagesLinkContainer {
+	font-size: 14px;
+}
+
 div#startEndInputContainer div.ui-input-text {
 	width: 150px;
 }

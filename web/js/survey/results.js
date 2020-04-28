@@ -233,6 +233,7 @@ function voteActual()
 				// Show reset voter button
 				if ($('#resetVoterButton').length > 0) $('#resetVoterButton').show();
 				if ($('#reprintVoteButton').length > 0) $('#reprintVoteButton').show();
+				$('#youVoted').show();
 				// Print results
 				//popMsg(ballotText, 1);
 			}
