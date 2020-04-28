@@ -69,13 +69,17 @@
 							<button id="validateVoterButton" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(1, false)" style="background-color: green; color: white;">Accept</button>
 						</td></tr>
 					</table>
+					<ol>
+						<li class="bold">Look photo ID. If ID is illegible, if data doesn't match, or if ID is missing, flag using the corresponding red button.</li>
+						<li class="bold">If above is good, look up voter’s full date of birth on “My Vote” using lookup button.</li>
+						<li class="bold">Click load when you are ready for the next credential.</li>
+					</ol>
 					<p>
-						<div class="bold">STEP 1:  Look up voter’s full date of birth on “My Vote”</div>
-						<div class="bold">STEP 2:  Review ID and photo, then click the appropriate button to validate or flag.</div>
-						Accept: Government issued ID and photo match.<br />
+						Accept: Government issued photo ID present. Date of Birth verified on My Vote using "Lookup." Name and address match.<br />
 						Illegible: Can’t read name, date of birth, or address.<br />
 						Data Mismatch: Name, date of birth, or address don’t match voter file info listed.<br />
-						Provisional: Does not contain required ID or photo.
+						Provisional: Does not contain government issued photo ID.<br />
+						Voter Not Found: Voter can not be found in My Vote.
 					</p>
 				</p>
 			</div>
