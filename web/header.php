@@ -49,13 +49,13 @@
 		<script src="/web/js/jquery.mobile-1.4.5.min.js"></script>
 		<?php if ($_SERVER['SERVER_NAME'] == 'star.vote') { ?>
 		<!-- Global site tag (gtag.js) - Google Analytics -->
-		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113220345-1"></script>
+		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113220345-3"></script>
 		<script>
 			window.dataLayer = window.dataLayer || [];
 			function gtag(){dataLayer.push(arguments);}
 			gtag('js', new Date());
 
-			gtag('config', 'UA-113220345-1');
+			gtag('config', 'UA-113220345-3');
 		</script>
 		<?php } ?>
 	</head>
