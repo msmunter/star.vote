@@ -47,7 +47,7 @@
 		</script>
 		<!-- jQuery Mobile -->
 		<script src="/web/js/jquery.mobile-1.4.5.min.js"></script>
-		<?php if ($_SERVER['SERVER_NAME'] == 'star.vote') { ?>
+		<?php if ($_SERVER['SERVER_NAME'] == 'star.ipo.vote') { ?>
 		<!-- Global site tag (gtag.js) - Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113220345-3"></script>
 		<script>
