@@ -55,7 +55,7 @@ if ($this->survey) {
 				<?php //if ($this->survey->printVote) { ?>
 					<button id="reprintVoteButton" data-inline="inline">Print/Save Vote</button>
 				<?php //} ?>
-				<div>
+				<div style="font-weight: bold;">
 					Thank you for voting!
 				</div>
 			</div>
