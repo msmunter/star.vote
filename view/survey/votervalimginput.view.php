@@ -56,6 +56,9 @@
 					</td>
 				</tr>
 			</table>
+			<div>
+				<a href="https://support.ipo.vote/a/solutions/articles/63000001976?lang=en" target="_blank">Privacy Policy</a>
+			</div>
 		</div>
 	</div>
 	
