@@ -66,19 +66,19 @@
 						</td><td>
 							<button id="rejectVoterButton3" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(0, 'provisional')" style="background-color: darkred; color: white;">Provisional</button>
 						</td><td>
-							<button id="validateVoterButton" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(1, false)" style="background-color: green; color: white;">Accept</button>
+							<button id="validateVoterButton" class="validateVoterButtons" data-inline="inline" onclick="validatevoter(1, false)" style="background-color: green; color: white;">Validate</button>
 						</td></tr>
 					</table>
 					<ol>
-						<li class="bold">Look photo ID. If ID is illegible, if data doesn't match, or if ID is missing, flag using the corresponding red button.</li>
-						<li class="bold">If above is good, look up voter’s full date of birth on “My Vote” using lookup button.</li>
+						<li class="bold">Does credential document include name and address? If not flag with corresponding red button.</li>
+						<li class="bold">Look up voter’s full date of birth on “My Vote” using lookup button. Click Validate once voter is verified.</li>
 						<li class="bold">Click load when you are ready for the next credential.</li>
 					</ol>
 					<p>
-						Accept: Government issued photo ID present. Date of Birth verified on My Vote using "Lookup." Name and address match.<br />
-						Illegible: Can’t read name, date of birth, or address.<br />
-						Data Mismatch: Name, date of birth, or address don’t match voter file info listed.<br />
-						Provisional: Does not contain government issued photo ID.<br />
+						Validate: Document contains name and address. Date of Birth verified on My Vote using "Lookup."<br />
+						Illegible: Can’t read data points.<br />
+						Data Mismatch: Name or address don’t match voter file info listed.<br />
+						Provisional: Does not contain a valid document.<br />
 						Voter Not Found: Voter can not be found in My Vote.
 					</p>
 				</p>
