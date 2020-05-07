@@ -1039,6 +1039,7 @@ class SurveyController extends Controller
 				$this->voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
 				$this->voterFinalizedCount = $this->model->getFinalizedVoterCount($this->survey->surveyID);
 				$this->voterCount = $this->model->getTempVoterCount($this->survey->surveyID);
+				$this->orestarLink = 'https://secure.sos.state.or.us/orestar/vr/showVoterSearch.do?lang=eng&source=SOS&identifier2='.$this->voterfile->fname.'&identifier3='.$this->voterfile->lname.'&identifier8='.$this->voter->birthdate;
 			}
 		}
 	}

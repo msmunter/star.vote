@@ -44,3 +44,8 @@ function finalvalidatevoter(accept, reason)
 		}
 	});
 }
+
+function lookupvoter()
+{
+	window.open($('#orestarLink').attr('href'), "orestar");
+}

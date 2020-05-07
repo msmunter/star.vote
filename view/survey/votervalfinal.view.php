@@ -53,6 +53,9 @@
 					</div>
 					<table id="validateVoterButtonTable">
 						<tr><td>
+							<button id="lookupVoterButton" class="validateVoterButtons" data-inline="inline" onclick="lookupvoter(1, false)">Lookup</button>
+						</td><td class="verticalSpacer border" rowspan="2"></td><td class="verticalSpacer" rowspan="2">
+						</td><td>
 							<button id="rejectVoterButton1" class="validateVoterButtons" data-inline="inline" onclick="finalvalidatevoter(0, 'unreadable')" style="background-color: darkred; color: white;">Reject</button>
 						</td><td class="verticalSpacer border" rowspan="2"></td><td class="verticalSpacer" rowspan="2">
 						</td><td>
@@ -70,6 +73,7 @@
 				<?php } ?>
 			</div>
 		</div>
+		<a id="orestarLink" href="<?php echo $this->orestarLink; ?>">Lookup Voter</a>
 <?php } else { ?>
 	User not authorized to validate
 <?php } ?>
