@@ -714,7 +714,7 @@ class SurveyController extends Controller
 
 										// Detect multiple votes for same voter ID
 										$voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
-										$sameVoters = $this->model->getSameVoters($voterfileID, $this->voter->voterID);
+										$sameVoters = $this->model->getSameVoters($voterfileID, $this->voter->voterID, $this->survey->surveyID);
 										if ($sameVoters) {
 											$voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
 											$voterfile = $this->model->getVoterfileByID($voterfileID);
