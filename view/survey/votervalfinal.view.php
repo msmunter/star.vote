@@ -36,7 +36,8 @@
 							<tr><td>Email: </td><td><?php echo $this->voter->email; ?></td></tr>
 							<tr><td>IP Address: </td><td><?php echo $this->voter->ip; ?></td></tr>
 							<tr><td>Name: </td><td id="validationComparisonTableName"><?php echo $this->voterfile->fname.' '.$this->voterfile->lname; ?></td></tr>
-							<tr><td>Born: </td><td id="validationComparisonTableBirthyear"><?php echo $this->voterfile->birthyear; ?></td></tr>
+							<tr><td>Voterfile Birth Year: </td><td id="validationComparisonTableBirthyear"><?php echo $this->voterfile->birthyear; ?></td></tr>
+							<tr><td>Voter Birth Date: </td><td id="validationComparisonTableBirthdate"><?php echo $this->voter->birthdate; ?></td></tr>
 							<tr><td>Address: </td><td id="validationComparisonTableAddress"><?php echo $this->voterfile->street; ?><br /><?php echo $this->voterfile->city; ?>, <?php echo $this->voterfile->state; ?> <?php echo $this->voterfile->zip; ?></td></tr>
 							<tr><td></td><td id="validationComparisonTableCSZ"></td></tr>
 						</table>
