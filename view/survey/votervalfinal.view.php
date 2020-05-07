@@ -42,8 +42,16 @@
 							<tr><td></td><td id="validationComparisonTableCSZ"></td></tr>
 						</table>
 					</td><td id="validationComparisonImageCell">
-						<a id="validationImgHref1" href="https://cdn.filestackcontent.com/<?php echo $this->voterIdent->cdnHandle1; ?>" target="_blank"><img id="validationImg1" src="https://cdn.filestackcontent.com/<?php echo $this->voterIdent->cdnHandle1; ?>" alt="Validation Image 1" /></a>
-						<a id="validationImgHref2" href="https://cdn.filestackcontent.com/<?php echo $this->voterIdent->cdnHandle1; ?>" target="_blank"><img id="validationImg2" src="https://cdn.filestackcontent.com/<?php echo $this->voterIdent->cdnHandle2; ?>" alt="Validation Image 2" /></a>
+						<?php if (!empty($this->voterIdent->cdnHandle1)) { ?>
+							<a id="validationImgHref1" href="https://cdn.filestackcontent.com/<?php echo $this->voterIdent->cdnHandle1; ?>" target="_blank"><img id="validationImg1" src="https://cdn.filestackcontent.com/<?php echo $this->voterIdent->cdnHandle1; ?>" alt="Validation Image 1" /></a>
+						<?php } else { ?>
+							<a id="validationImgHref1" href="/web/images/img_placeholder.svg" target="_blank"><img id="validationImg1" src="/web/images/img_placeholder.svg" alt="Validation Image 1" /></a>
+						<?php } ?>
+						<?php if (!empty($this->voterIdent->cdnHandle2)) { ?>
+							<a id="validationImgHref2" href="https://cdn.filestackcontent.com/<?php echo $this->voterIdent->cdnHandle1; ?>" target="_blank"><img id="validationImg2" src="https://cdn.filestackcontent.com/<?php echo $this->voterIdent->cdnHandle2; ?>" alt="Validation Image 2" /></a>
+						<?php } else { ?>
+							<a id="validationImgHref2" href="/web/images/img_placeholder.svg" target="_blank"><img id="validationImg2" src="/web/images/img_placeholder.svg" alt="Validation Image 2" /></a>
+						<?php } ?>
 					</td></tr>
 				</table>
 				<?php if (in_array($this->voterIdent->verificationState, ['voted', 'rejectedOnce', 'acceptedOnce'])) { ?>
