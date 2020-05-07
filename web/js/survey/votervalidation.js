@@ -68,7 +68,7 @@ function loadvalidation()
 				$('#validationImgHref1').attr('href', '/web/images/img_placeholder.svg');
 			}
 			
-			if (jData.cdnHande2) {
+			if (jData.cdnHandle2) {
 				$('#validationImg2').attr('src', 'https://cdn.filestackcontent.com/'+jData.cdnHandle2);
 				$('#validationImgHref2').attr('href', 'https://cdn.filestackcontent.com/'+jData.cdnHandle2);
 			} else {
