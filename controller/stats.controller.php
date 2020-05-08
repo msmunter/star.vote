@@ -29,30 +29,30 @@ class StatsController extends Controller
 		echo 'N/A';
 	}
 
-	public function starusage()
-	{
-		$this->ajax = 1;
-		$this->doHeader = 0;
-		$this->doFooter = 0;
-		if ($this->URLdata) {
-			if ($this->user->userID) {
-				$tempvotes = $this->model->getTempvotes($this->URLdata);
-				$this->return['voteCount'] = count($tempvotes);
-				foreach ($tempvotes as $vote) {
-					//echo '<pre>';print_r($vote);echo '</pre>'; // DEBUG ONLY!!!
-					foreach (json_decode($vote->voteJson) as $id => $starNumber) {
-						$this->return['votes'][$id][$starNumber] += 1;
-					}
-				}
-			} else {
-				$this->return['error'] = 'Not authorized';
-			}
-		} else {
-			$this->return['error'] = 'Invalid survey/election';
-		}
-		header('Content-Type: application/json');
-		echo json_encode($this->return);
-	}
+	// public function starusage()
+	// {
+	// 	$this->ajax = 1;
+	// 	$this->doHeader = 0;
+	// 	$this->doFooter = 0;
+	// 	if ($this->URLdata) {
+	// 		if ($this->user->userID) {
+	// 			$tempvotes = $this->model->getTempvotes($this->URLdata);
+	// 			$this->return['voteCount'] = count($tempvotes);
+	// 			foreach ($tempvotes as $vote) {
+	// 				//echo '<pre>';print_r($vote);echo '</pre>'; // DEBUG ONLY!!!
+	// 				foreach (json_decode($vote->voteJson) as $id => $starNumber) {
+	// 					$this->return['votes'][$id][$starNumber] += 1;
+	// 				}
+	// 			}
+	// 		} else {
+	// 			$this->return['error'] = 'Not authorized';
+	// 		}
+	// 	} else {
+	// 		$this->return['error'] = 'Invalid survey/election';
+	// 	}
+	// 	header('Content-Type: application/json');
+	// 	echo json_encode($this->return);
+	// }
 
 	public function anonymouscvr()
 	{
@@ -71,7 +71,9 @@ class StatsController extends Controller
 			$this->return['error'] = 'Invalid survey/election';
 		}
 		if ($cvr) {
-			header('Content-Type: text/plain');
+			header('Content-Type: text/csv');
+			$filename = 'star_cvr_'.date('Ymd-His').'.csv';
+			header('Content-disposition: attachment;filename="'.$filename.'"');
 			$cvrHeader = 'Voter';
 			foreach ($answers as $answer) {
 				$cvrHeader .= ','.$answer;
