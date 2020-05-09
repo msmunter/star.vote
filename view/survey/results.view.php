@@ -30,15 +30,6 @@ if ($this->survey) {
 			</div>
 		</div>
 	<?php } else { ?>
-		<div id="voteInstructions">
-			<ul>
-				<li>You may score as many candidates as you like from 0 (worst) to 5 (best).</li>
-				<li>If you don't have a preference you may give the same score to multiple candidates.</li>
-				<li>The two highest-scoring candidates are finalists.</li>
-				<li>The finalist preferred by the majority wins.</li>
-			</ul>
-			<a href="/docs/how/" target="_blank">How Does STAR Voting Work?</a>
-		</div>
 		<?php if ($this->hasVoted) { ?>
 		<div class="bigContainer">
 			<div class="bigContainerTitle">Your vote for "<?php echo $this->survey->title; ?>"</div>
@@ -74,6 +65,17 @@ if ($this->survey) {
 					<div id="voterInfoInput">
 						<?php if (!$this->voter->voterfileID) include_once('view/survey/voterinfoinput.view.php'); ?>
 						<?php include_once('view/survey/votervalimginput.view.php'); ?>
+					</div>
+					<div class="hrbar ui-bar">
+						Step 2: Vote
+					</div>
+					<div id="voteInstructions">
+						<ul>
+							<li>Give your favorite or favorites a full five stars, give your worst candidate or candidates zero stars, and arrange the others in between.</li>
+							<li>If your favorite can't win your vote automatically goes to the finalist you prefer.</li>
+							<!-- <li>Learn how to use STAR most effectively with this infographic: <a href="/docs/how/" target="_blank">"How Does STAR Voting Work?"</a></li> -->
+						</ul>
+						<a href="https://dev.ipo.vote/web/images/how_does_star_voting_work.jpg" target="_blank"><img src="https://dev.ipo.vote/web/images/how_does_star_voting_work.jpg" alt="How Does STAR Work?" style="max-width: 99%;max-height: 400px;"/></a>
 					</div>
 					<div id="statusMsg2" class="hidden"></div>
 					<div class="clear"></div>

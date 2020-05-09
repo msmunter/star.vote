@@ -423,6 +423,7 @@ table#yourVoteTable td.orderCell, table.yourVoteTable td.orderCell {
 
 div#voteInstructions {
 	font-size: 10pt;
+	margin-left: 15px;
 }
 
 div#voteInstructions ul {
@@ -575,7 +576,7 @@ div.surveyPollTitle {
 	margin-bottom: 5px;
 }
 
-div.surveyResultsPollTitle, div.recentOrPopularBar, div.placeHeader {
+div.surveyResultsPollTitle, div.recentOrPopularBar, div.placeHeader, div.hrbar {
 	background-color: #38c;
 	color: white;
 	text-shadow: 1px 1px 2px #333333;
@@ -586,10 +587,15 @@ div.surveyResultsPollTitle, div.recentOrPopularBar, div.placeHeader {
 	margin-bottom: 5px;
 }
 
-div.recentOrPopularBar {
+div.recentOrPopularBar, div.hrbar {
 	margin: none;
 	margin-left: 1px;
 	width: 100%;
+}
+
+div.hrbar {
+	/*background-color: #0B4599;*/
+	width: 99%;
 }
 
 td.barGraphTd {

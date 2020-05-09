@@ -2,9 +2,16 @@
 	<?php // Nothing here if it's your poll ?>
 <?php } else { ?>
 	<div class="ui-field-contain">
+		<div class="hrbar ui-bar">
+			Step 1: Upload Identifying Image(s)
+		</div>
 		<div id="identifyingImagesHeader">
-			Upload Identifying Images<br />
-			&nbsp;&nbsp;<span id="identifyingImagesLinkContainer"><a href="/docs/identifyingimages/" target="_blank">Additional documentation options</a></span>
+			<span id="identifyingImagesLinkContainer">
+				<ul>
+					<li><a href="/docs/identifyingimages/" target="_blank">Additional Documentation Options</a></li>
+					<li><a href="https://support.ipo.vote/a/solutions/articles/63000001976?lang=en" target="_blank">Privacy Policy</a></li>
+				</ul>
+			</span>
 		</div>
 		<div id="identImageContainer">
 			<input type="hidden" id="cdnHandle1" name="cdnHandle1" value="<?php echo $this->identImage->cdnHandle1; ?>" />
@@ -56,9 +63,6 @@
 					</td>
 				</tr>
 			</table>
-			<div>
-				<a href="https://support.ipo.vote/a/solutions/articles/63000001976?lang=en" target="_blank">Privacy Policy</a>
-			</div>
 		</div>
 	</div>
 	
