@@ -75,7 +75,7 @@ if ($this->survey) {
 							<li>If your favorite can't win your vote automatically goes to the finalist you prefer.</li>
 							<!-- <li>Learn how to use STAR most effectively with this infographic: <a href="/docs/how/" target="_blank">"How Does STAR Voting Work?"</a></li> -->
 						</ul>
-						<a href="https://dev.ipo.vote/web/images/how_does_star_voting_work.jpg" target="_blank"><img src="https://dev.ipo.vote/web/images/how_does_star_voting_work.jpg" alt="How Does STAR Work?" style="max-width: 99%;max-height: 400px;"/></a>
+						<a href="/web/images/how_does_star_voting_work.jpg" target="_blank"><img src="/web/images/how_does_star_voting_work.jpg" alt="How Does STAR Work?" style="max-width: 99%;max-height: 400px;"/></a>
 					</div>
 					<div id="statusMsg2" class="hidden"></div>
 					<div class="clear"></div>
