@@ -1,9 +1,10 @@
 <?php if ($this->user->userID == 1 || $this->userCanValidate == 2) { ?>
-	<input type="hidden" name="surveyID" id="surveyID" value="<?php echo $this->survey->surveyID; ?>"/>
-	<input type="hidden" name="voterID" id="voterID" value="<?php echo $this->voter->voterID; ?>"/>
-	<div class="bigContainer">
+	<?php if ($this->survey->surveyID && $this->voter->voterID) { ?>
+		<input type="hidden" name="surveyID" id="surveyID" value="<?php echo $this->survey->surveyID; ?>"/>
+		<input type="hidden" name="voterID" id="voterID" value="<?php echo $this->voter->voterID; ?>"/>
+		<div class="bigContainer">
 			<div class="bigContainerTitle">
-				Finalize Voter <?php echo $_POST['starId']; ?>
+				Finalize Voter <?php echo $_POST['starId']; ?> (<a href="/survey/votervalfinal/<?php echo $this->survey->surveyID; ?>/">View All</a>)
 			</div>
 			<div class="bigContainerInner">
 				<div id="statusMsg" class="hidden"></div>
@@ -80,8 +81,26 @@
 					</div>
 				<?php } ?>
 			</div>
-		</div>
-		<a id="orestarLink" href="<?php echo $this->orestarLink; ?>">Lookup Voter</a>
+		<?php } else { ?>
+			<?php if (!$this->survey->surveyID) { ?>
+				Must provide a valid surveyID
+			<?php } else { ?>
+				<div class="bigContainer">
+					<div class="bigContainerTitle">
+						Voters needing finalization (<?php echo $this->survey->title; ?>)
+					</div>
+					<div class="bigContainerInner">
+						<ol>
+							<?php foreach ($this->remainingVoters as $rv) { ?>
+								<li><a href="/survey/votervalfinal/<?php echo $this->survey->surveyID; ?>/?starId=<?php echo $rv->voterID; ?>"><?php echo $rv->voterID; ?></a></li>
+							<?php } ?>
+						</ol>
+					</div>
+				</div>
+			<?php } ?>
+		<?php } ?>
+	</div>
+	<a id="orestarLink" href="<?php echo $this->orestarLink; ?>">Lookup Voter</a>
 <?php } else { ?>
 	User not authorized to validate
 <?php } ?>

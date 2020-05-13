@@ -1034,12 +1034,16 @@ class SurveyController extends Controller
 				$this->userCanValidate = $this->model->userCanValidate($this->user->userID, $this->survey->surveyID);
 			}
 			if ($this->userCanValidate > 1) {
-				$this->voter = $this->model->getVoterByID($_GET['starId']);
-				$this->voterfile = $this->model->getVoterfileByID($this->voter->voterfileID);
-				$this->voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
-				$this->voterFinalizedCount = $this->model->getFinalizedVoterCount($this->survey->surveyID);
-				$this->voterCount = $this->model->getTempVoterCount($this->survey->surveyID);
-				$this->orestarLink = 'https://secure.sos.state.or.us/orestar/vr/showVoterSearch.do?lang=eng&source=SOS&identifier2='.$this->voterfile->fname.'&identifier3='.$this->voterfile->lname.'&identifier8='.$this->voter->birthdate;
+				if ($_GET['starId']) {
+					$this->voter = $this->model->getVoterByID($_GET['starId']);
+					$this->voterfile = $this->model->getVoterfileByID($this->voter->voterfileID);
+					$this->voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
+					$this->voterFinalizedCount = $this->model->getFinalizedVoterCount($this->survey->surveyID);
+					$this->voterCount = $this->model->getTempVoterCount($this->survey->surveyID);
+					$this->orestarLink = 'https://secure.sos.state.or.us/orestar/vr/showVoterSearch.do?lang=eng&source=SOS&identifier2='.$this->voterfile->fname.'&identifier3='.$this->voterfile->lname.'&identifier8='.$this->voter->birthdate;
+				} else {
+					$this->remainingVoters = $this->model->getRemainingVoters($this->survey->surveyID);
+				}
 			}
 		}
 	}

@@ -497,6 +497,21 @@ class SurveyModel extends Model
 		}
 	}
 
+	public function getRemainingVoters($surveyID)
+	{
+		$this->query = "SELECT `voterident`.`voterID` FROM `voterident`, `tempvotes`
+						WHERE `voterident`.`surveyID` LIKE '$surveyID'
+						AND `voterident`.`verificationState` LIKE 'rejectedOnce'
+						AND `voterident`.`voterID` LIKE `tempvotes`.`voterID`
+						ORDER BY `tempvotes`.`voteTime` ASC;";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results;
+		} else {
+			return false;
+		}
+	}
+
 	public function timeoutValidations($surveyID)
 	{
 		$this->query = "UPDATE `voterident`
