@@ -466,7 +466,6 @@ class SurveyModel extends Model
 		// See if you have one checked out
 		$this->query = "SELECT * FROM `voterident`, `tempvotes`
 						WHERE `voterident`.`surveyID` LIKE '$surveyID'
-						AND `voterident`.`verificationState` LIKE 'checkedOut' 
 						AND `voterident`.`checkoutID` = '$userID'
 						AND `voterident`.`voterID` = `tempvotes`.`voterID`
 						ORDER BY `tempvotes`.`voteTime` ASC
@@ -477,15 +476,16 @@ class SurveyModel extends Model
 		} else {
 			// Check out one
 			$this->query = "UPDATE `voterident`
-							SET `checkoutID` = '$userID', `checkoutTime` = NOW(), `verificationState` = 'checkedOut'
+							SET `checkoutID` = '$userID', `checkoutTime` = NOW() 
 							WHERE `surveyID` LIKE '$surveyID'
-							AND `verificationState` LIKE 'voted' 
+							AND `verificationState` IN ('voted', 'verifiedOnce')
+							AND (`firstVerifierID` IS NULL
+														OR `firstVerifierID` != '$userID')
 							LIMIT 1;";
 			$this->doUpdateQuery();
 			// Read the one you checked out
 			$this->query = "SELECT * FROM `voterident`
 							WHERE `surveyID` LIKE '$surveyID'
-							AND `verificationState` LIKE 'checkedOut'
 							AND `checkoutID` = '$userID'  
 							LIMIT 0,1";
 			$this->doSelectQuery();
@@ -502,7 +502,6 @@ class SurveyModel extends Model
 		$this->query = "UPDATE `voterident`
 						SET `checkoutID` = NULL, `checkoutTime` = NULL, `verificationState` = 'voted'
 						WHERE `surveyID` LIKE '$surveyID'
-						AND `verificationState` LIKE 'checkedOut'
 						AND `checkoutTime` < (NOW() - INTERVAL 5 MINUTE);";
 		$this->doUpdateQuery();
 	}

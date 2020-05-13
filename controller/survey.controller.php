@@ -1115,7 +1115,7 @@ class SurveyController extends Controller
 				$this->voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
 				if ($this->voterIdent->checkoutID == $this->user->userID) {
 					// Still good
-					if ($this->voterIdent->verificationState == 'checkedOut') {
+					if ($this->voterIdent->verificationState == 'voted' || $this->voterIdent->verificationState == 'checkedOut') {
 						// Not yet verified, verify it
 						if ($this->user->userID == 1 || $this->userCanValidate == 2) {
 							$return['msg'] = 'Processed voter '.$this->voter->voterID;
@@ -1137,29 +1137,7 @@ class SurveyController extends Controller
 							}
 						}
 						$this->model->updateVoterIdentState($this->survey->surveyID, $this->voter->voterID, $newState, $this->user->userID, $this->reason);
-						// Queue 'flagged' message
-						$voter = $this->model->getvoterbyid($this->voter->voterID);
-						$voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
-						$voterfile = $this->model->getVoterfileByID($voterfileID);
-						if ($newState == 'rejectedOnce') {
-							$api = new ApiController();
-							$api->template = 'ballotFlagged';
-							$api->fields = (object) [
-								'starId' => $this->voter->voterID,
-								'reason' => $this->reason,
-								'email' => $voter->email,
-								'firstName' => $voterfile->fname,
-								'lastName' => $voterfile->lname,
-								'phone' => $voter->phone,
-								'voterId' => $voterfile->stateVoterID,
-								'returnLink' => 'https://'.$_SERVER['HTTP_HOST'].'/survey/votervalfinal/'.$this->survey->surveyID.'/?starId='.$this->voter->voterID,
-								// 'ballotHtml' => base64_encode($return['html'])
-							];
-							if ($api->addMsg()) {
-								unset($api);
-							} else $return['caution'] = 'Failed to send post-vote ballot message';
-						}
-					} /*else if ($this->voterIdent->verificationState == 'verifiedOnce' || $this->voterIdent->verificationState == 'rejectedOnce') {
+					} else if ($this->voterIdent->verificationState == 'verifiedOnce' || $this->voterIdent->verificationState == 'rejectedOnce') {
 						// Verified once, finalize if L2 or admin
 						if ($this->user->userID == 1 || $this->userCanValidate == 2) {
 							$return['msg'] = 'Second verification complete';
@@ -1172,11 +1150,49 @@ class SurveyController extends Controller
 							}
 							$this->model->updateVoterIdentState($this->survey->surveyID, $this->voter->voterID, $newState, $this->user->userID, $this->reason);
 						} else {
-							$return['error'] = 'Must be L2 or admin to do L2 approvals';
+							// Not L2 or admin
+							if ($this->voterIdent->verificationState == 'verifiedOnce') {
+								if ($this->accept == 1) {
+									// Verify twice
+									$return['msg'] = 'Second verification complete';
+									$newState = 'verifiedTwice';
+									$return['msg'] .= ' (Verified)';
+								} else {
+									// Reject once
+									$return['msg'] = 'First verification complete';
+									$newState = 'rejectedOnce';
+									$return['msg'] .= ' (Flagged for review)';
+								}
+								$this->model->updateVoterIdentState($this->survey->surveyID, $this->voter->voterID, $newState, $this->user->userID, $this->reason);
+							} else {
+								$return['error'] = 'Must be L2 or admin to approve previously rejected ballots.';
+							}
 						}
-					}*/ else {
+					} else {
 						// No other conditions should come up
 						$return['error'] = 'Invalid verification state change';
+					}
+					// Queue 'flagged' message
+					if ($newState == 'rejectedOnce') {
+						$voter = $this->model->getvoterbyid($this->voter->voterID);
+						$voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
+						$voterfile = $this->model->getVoterfileByID($voterfileID);
+						$api = new ApiController();
+						$api->template = 'ballotFlagged';
+						$api->fields = (object) [
+							'starId' => $this->voter->voterID,
+							'reason' => $this->reason,
+							'email' => $voter->email,
+							'firstName' => $voterfile->fname,
+							'lastName' => $voterfile->lname,
+							'phone' => $voter->phone,
+							'voterId' => $voterfile->stateVoterID,
+							'returnLink' => 'https://'.$_SERVER['HTTP_HOST'].'/survey/votervalfinal/'.$this->survey->surveyID.'/?starId='.$this->voter->voterID,
+							// 'ballotHtml' => base64_encode($return['html'])
+						];
+						if ($api->addMsg()) {
+							unset($api);
+						} else $return['caution'] = 'Failed to send post-vote ballot message';
 					}
 				} else {
 					$return['error'] = 'Checkout timed out, please refresh your page and click the "Load" button.';
