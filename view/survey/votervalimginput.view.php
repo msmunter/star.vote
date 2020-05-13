@@ -16,7 +16,7 @@
 		<div id="identImageContainer">
 			<input type="hidden" id="cdnHandle1" name="cdnHandle1" value="<?php echo $this->identImage->cdnHandle1; ?>" />
 			<input type="hidden" id="cdnHandle2" name="cdnHandle2" value="<?php echo $this->identImage->cdnHandle2; ?>" />
-			<div class="uploadImgTip">1. A document linking your name and registered voting address such as a phone/utility bill or your nonpartisan Oregon ballot.</div>
+			<div class="uploadImgTip">1. A document linking your name and registered voting address such as a phone/utility bill or your nonpartisan Oregon ballot. Photo must clearly display address.</div>
 			<table>
 				<tr>
 					<td class="identImageCell">
