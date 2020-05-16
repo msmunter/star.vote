@@ -106,6 +106,7 @@ class StatsController extends Controller
 
 	public function allvoters()
 	{
+		$do_file = true;
 		$this->ajax = 1;
 		$this->doHeader = 0;
 		$this->doFooter = 0;
@@ -116,23 +117,27 @@ class StatsController extends Controller
 			$this->userCanValidate = $mSurvey->userCanValidate($this->user->userID, $this->URLdata);
 		}
 		if ($this->userCanValidate > 1) {
-			$voters = $this->model->getAllVotersBySurveyID($this->URLdata);
 			$output = "voterId, starId, firstName, lastName, email, phone, birthdate, regDate, voteTime, status\n";
+			$voters = $this->model->getAllVotersBySurveyID($this->URLdata);
 			foreach ($voters as $voter) { 
+				$voterident = $this->model->getVoteridentByVoterID($this->URLdata, $voter->starID);
 				$tempvote = $this->model->getTempvoteByVoterID($this->URLdata, $voter->starID);
 				$voter->voteTime = $tempvote->voteTime;
+				$voter->status = $voterident->status;
 				$output .= $voter->voterID.', '.$voter->starID.', '.$voter->firstName.', '.$voter->lastName.', '.$voter->email.', '.$voter->phone.', '.$voter->birthdate.', '.$voter->regDate.', '.$voter->voteTime.', '.$voter->status."\n";
 			}
 		} else {
 			$return['error'] = 'ERROR: Not authorized';
 		}
-
 		if ($output) {
-			header('Content-Type: text/csv');
-			$filename = 'staripo_allvoters_'.date('Ymd-His').'.csv';
-			header('Content-disposition: attachment;filename="'.$filename.'"');
-			$cvrHeader = 'Voter';
-			echo $output;
+			if ($do_file) {
+				header('Content-Type: text/csv');
+				$filename = 'staripo_allvoters_'.date('Ymd-His').'.csv';
+				header('Content-disposition: attachment;filename="'.$filename.'"');
+				echo $output;
+			} else {
+				$this->debug($output);
+			}
 		} else {
 			header('Content-Type: application/json');
 			echo json_encode($return);

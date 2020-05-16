@@ -32,14 +32,27 @@ class StatsModel extends Model
 
 	public function getAllVotersBySurveyID($surveyID)
 	{
-		$this->query = "SELECT `voterfile`.`stateVoterID` AS `voterID`, `voters`.`voterID` AS `starID`, `voterfile`.`fname` AS `firstName`, `voterfile`.`lname` AS `lastName`, `voters`.`email` AS `email`, `voters`.`phone` AS `phone`, `voters`.`birthdate` AS `birthdate`, `voters`.`added` AS `regDate`, `voterident`.`verificationState` AS `status`
-						FROM `voters`, `voterident`, `voterfile`
-						WHERE `voters`.`voterID` = `voterident`.`voterID`
-						AND `voterident`.`surveyID` LIKE '$surveyID'
-						AND `voters`.`voterfileID` = `voterfile`.`voterfileID`;";
+		$this->query = "SELECT `voterfile`.`stateVoterID` as `voterID`, `voters`.`voterID` AS `starID`, `voterfile`.`fname` AS `firstName`, `voterfile`.`lname` AS `lastName`, `voters`.`email` AS `email`, `voters`.`phone` AS `phone`, `voters`.`birthdate` AS `birthdate`, `voters`.`added` AS `regDate`
+						FROM `voters`, `voterfile`
+						WHERE `voterfile`.`surveyID` LIKE '$surveyID'
+						AND `voters`.`voterfileID` = `voterfile`.`voterfileID`
+						ORDER BY `voters`.`added` ASC;";
 		$this->doSelectQuery();
 		if (count($this->results) > 0) {
 			return $this->results;
+		} else return false;
+	}
+
+	public function getVoteridentByVoterID($surveyID, $voterID)
+	{
+		$this->query = "SELECT `verificationState` AS `status`
+						FROM `voterident`
+						WHERE `surveyID` LIKE '$surveyID'
+						AND `voterID` LIKE '$voterID'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results[0];
 		} else return false;
 	}
 
