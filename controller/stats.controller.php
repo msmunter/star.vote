@@ -104,56 +104,39 @@ class StatsController extends Controller
 		return $output;
 	}
 
-	// private function getNextEmail()
-	// {
-	// 	$nextEmail = $this->model->getNextEmail();
-	// 	if (!empty($nextEmail)) {
-	// 		$this->return['requestId'] = $nextEmail->msgID;
-	// 		$this->return['token'] = $nextEmail->token;
-	// 		$this->return['template'] = $nextEmail->template;
-	// 		$this->return['fields'] = json_decode($nextEmail->fields);
-	// 	} else {
-	// 		$this->return['requestId'] = false;
-	// 		$this->return['token'] = false;
-	// 	}
-	// 	echo json_encode($this->return);
-	// }
+	public function allvoters()
+	{
+		$this->ajax = 1;
+		$this->doHeader = 0;
+		$this->doFooter = 0;
+		if ($this->user->userID == 1) {
+			$this->userCanValidate = 2;
+		} else {
+			$mSurvey = new SurveyModel();
+			$this->userCanValidate = $mSurvey->userCanValidate($this->user->userID, $this->URLdata);
+		}
+		if ($this->userCanValidate > 1) {
+			$voters = $this->model->getAllVotersBySurveyID($this->URLdata);
+			$output = "voterId, starId, firstName, lastName, email, phone, birthdate, regDate, voteTime, status\n";
+			foreach ($voters as $voter) { 
+				$tempvote = $this->model->getTempvoteByVoterID($this->URLdata, $voter->starID);
+				$voter->voteTime = $tempvote->voteTime;
+				$output .= $voter->voterID.', '.$voter->starID.', '.$voter->firstName.', '.$voter->lastName.', '.$voter->email.', '.$voter->phone.', '.$voter->birthdate.', '.$voter->regDate.', '.$voter->voteTime.', '.$voter->status."\n";
+			}
+		} else {
+			$return['error'] = 'ERROR: Not authorized';
+		}
 
-	// private function completeEmail()
-	// {
-	// 	$msgID = $_GET['requestId'];
-	// 	if ($msgID) {
-	// 		$msg = $this->model->getMsgCompletedStatusByID($msgID);
-	// 		if ($msg->requestCompleted) {
-	// 			$this->return['requestId'] = $msgID;
-	// 			$this->return['template'] = $msg->template;
-	// 			$this->return['token'] = $msg->token;
-	// 		} else if ($msg->msgID) {
-	// 			$this->model->completeEmailByID($msgID);
-	// 			$this->return['requestId'] = $msgID;
-	// 			$this->return['template'] = $msg->template;
-	// 			$this->return['token'] = $msg->token;
-	// 		} else {
-	// 			$this->return['requestId'] = $msgID;
-	// 			$this->return['template'] = false;
-	// 			$this->return['token'] = false;
-	// 		}
-	// 	} else {
-	// 		$this->return['template'] = false;
-	// 		$this->return['token'] = false;
-	// 	}
-	// 	$this->return['status'] = 200;
-	// 	$this->return['statusText'] = "OK";
-	// 	echo json_encode($this->return);
-	// }
-
-	// public function addMsg()
-	// {
-	// 	if ($this->template && $this->fields) {
-	// 		if (!$this->model) $this->model = new ApiModel(); 
-	// 		$this->model->addMsg($this->template, json_encode($this->fields));
-	// 		return true;
-	// 	} else return false;
-	// }
+		if ($output) {
+			header('Content-Type: text/csv');
+			$filename = 'staripo_allvoters_'.date('Ymd-His').'.csv';
+			header('Content-disposition: attachment;filename="'.$filename.'"');
+			$cvrHeader = 'Voter';
+			echo $output;
+		} else {
+			header('Content-Type: application/json');
+			echo json_encode($return);
+		}
+	}
 }
 ?>

@@ -30,6 +30,31 @@ class StatsModel extends Model
 		return $answers;
 	}
 
+	public function getAllVotersBySurveyID($surveyID)
+	{
+		$this->query = "SELECT `voterfile`.`stateVoterID` AS `voterID`, `voters`.`voterID` AS `starID`, `voterfile`.`fname` AS `firstName`, `voterfile`.`lname` AS `lastName`, `voters`.`email` AS `email`, `voters`.`phone` AS `phone`, `voters`.`birthdate` AS `birthdate`, `voters`.`added` AS `regDate`, `voterident`.`verificationState` AS `status`
+						FROM `voters`, `voterident`, `voterfile`
+						WHERE `voters`.`voterID` = `voterident`.`voterID`
+						AND `voterident`.`surveyID` LIKE '$surveyID'
+						AND `voters`.`voterfileID` = `voterfile`.`voterfileID`;";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results;
+		} else return false;
+	}
+
+	public function getTempvoteByVoterID($surveyID, $voterID)
+	{
+		$this->query = "SELECT `voteJson`, `voteTime` FROM `tempvotes`
+						WHERE `surveyID` LIKE '$surveyID'
+						AND `voterID` LIKE '$voterID'
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results[0];
+		} else return false;
+	}
+
 	// public function addMsg($template, $fieldsJson)
 	// {
 	// 	$this->query = "INSERT INTO `msgout` (`template`, `fields`)
