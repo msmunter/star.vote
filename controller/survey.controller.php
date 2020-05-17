@@ -54,7 +54,7 @@ class SurveyController extends Controller
 						} /*else {
 							$this->voter->initVoter(null);
 						}*/
-						if ($this->voter->voterID) {
+						if ($this->voter->voterID || $this->user->userID == $this->survey->userID) {
 							$this->voter->voterfileID = $this->model->getVoterfileIDByVoterID($this->voter->voterID);
 							// Determine whether user has a temp vote, final vote, or has not voted
 							$this->hasVoted = false;
