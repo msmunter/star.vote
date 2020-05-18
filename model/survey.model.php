@@ -238,28 +238,28 @@ class SurveyModel extends Model
 		return $this->results[0]->count;
 	}
 
-	public function voterfileExists($surveyID, $voterID)
-	{
-		$this->query = "SELECT COUNT(*) AS `count` FROM `voterfile`
-						WHERE `surveyID` LIKE '$surveyID'
-						AND `voterID` LIKE '$voterID'
-						LIMIT 0,1;";
-		$this->doSelectQuery();
-		if ($this->results[0]->count > 0) {
-			return true;
-		}
-		return false;
-	}
+	// public function voterfileExists($surveyID, $voterID)
+	// {
+	// 	$this->query = "SELECT COUNT(*) AS `count` FROM `voterfile`
+	// 					WHERE `surveyID` LIKE '$surveyID'
+	// 					AND `voterID` LIKE '$voterID'
+	// 					LIMIT 0,1;";
+	// 	$this->doSelectQuery();
+	// 	if ($this->results[0]->count > 0) {
+	// 		return true;
+	// 	}
+	// 	return false;
+	// }
 
 	public function voterAlreadyVerified($surveyID, $voterID)
 	{
-		$this->query = "SELECT `verified` FROM `voterfile`
+		$this->query = "SELECT `verificationState` FROM `voterident`
 						WHERE `surveyID` LIKE '$surveyID'
 						AND `voterID` LIKE '$voterID'
 						LIMIT 0,1;";
 		$this->doSelectQuery();
 		if (count($this->results) > 0) {
-			if ($this->results[0]->verified) {
+			if ($this->results[0]->verificationState == "inResults") {
 				return true;
 			}
 		}
@@ -268,13 +268,21 @@ class SurveyModel extends Model
 
 	public function validateVoter($surveyID, $voterID, $validateTime)
 	{
-		$this->query = "UPDATE `voterfile`
-						SET `verified` = '$validateTime'
+		$this->query = "UPDATE `voterident`
+						SET `verificationState` = 'inResults'
 						WHERE `surveyID` LIKE '$surveyID'
 						AND `voterID` LIKE '$voterID'
 						LIMIT 1;";
 		$this->doUpdateQuery();
 		return true;
+	}
+
+	public function getVoterIdentCount($surveyID)
+	{
+		$this->query = "SELECT COUNT(*) AS `count` FROM `voterident`
+						WHERE `surveyID` = '$surveyID';";
+		$this->doSelectQuery();
+		return $this->results[0]->count;
 	}
 
 	public function getTempVoterCount($surveyID)
@@ -287,13 +295,76 @@ class SurveyModel extends Model
 		return $this->results[0]->count;
 	}
 
+	public function getRejectedVoterCount($surveyID)
+	{
+		$this->query = "SELECT COUNT(*) AS `count` FROM `voterident`
+						WHERE `surveyID` = '$surveyID'
+						AND `verificationState` IN ('rejectedOnce', 'rejectedTwice');";
+		$this->doSelectQuery();
+		return $this->results[0]->count;
+	}
+
 	public function getFinalizedVoterCount($surveyID)
 	{
 		$this->query = "SELECT COUNT(*) AS `count` FROM `voterident`
 						WHERE `surveyID` = '$surveyID'
-						AND `verificationState` IN ('rejectedTwice', 'verifiedTwice', 'inResults');";
+						AND `verificationState` IN ('rejectedTwice', 'verifiedTwice');";
 		$this->doSelectQuery();
 		return $this->results[0]->count;
+	}
+
+	public function getToBeFinalizedVoterCount($surveyID)
+	{
+		$this->query = "SELECT COUNT(*) AS `count` FROM `voterident`
+						WHERE `surveyID` = '$surveyID'
+						AND `verificationState` IN ('voted', 'rejectedOnce', 'verifiedOnce');";
+		$this->doSelectQuery();
+		return $this->results[0]->count;
+	}
+
+	public function getResultsVoterCount($surveyID)
+	{
+		$this->query = "SELECT COUNT(*) AS `count` FROM `voterident`
+						WHERE `surveyID` = '$surveyID'
+						AND `verificationState` IN ('inResults');";
+		$this->doSelectQuery();
+		return $this->results[0]->count;
+	}
+
+	public function getFinalizedVoters($surveyID)
+	{
+		$this->query = "SELECT * FROM `voterident`
+						WHERE `surveyID` = '$surveyID'
+						AND `verificationState` IN ('rejectedTwice', 'verifiedTwice');";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results;
+		} else return false;
+	}
+
+	public function getToBeProcessedVoters($surveyID)
+	{
+		$this->polls = $this->getPollsBySurveyID($surveyID);
+		$pollIdString = '';
+		$i = 0;
+		foreach ($this->polls as $poll) {
+			if ($i > 0) {
+				$pollIdString .= ',';
+			}
+			$pollIdString .= "'".$poll->pollID."'";
+			$i++;
+		}
+		$this->query = "SELECT `voterID` FROM `voterident`
+						WHERE `surveyID` = '$surveyID'
+						AND `verificationState` IN ('rejectedTwice', 'verifiedTwice')
+						AND `voterID` IN (SELECT `voterID` FROM `tempvotes`
+										  WHERE `surveyID` LIKE '$surveyID')
+						AND `voterID` NOT IN (SELECT `voterID` FROM `votes`
+											  WHERE `pollID` IN ($pollIdString));";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results;
+		} else return false;
 	}
 
 	// public function getYourVote($voterID, $pollID)

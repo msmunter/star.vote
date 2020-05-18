@@ -27,6 +27,7 @@ if ($this->survey) {
 					<button id="prevPollButton" disabled="disabled" data-inline="inline" data-mini="mini" onclick="changePoll('d')">&larr;</button>Part <span id="pollIndex">1</span> of <?php echo count($this->survey->polls); ?><button id="nextPollButton" data-inline="inline" data-mini="mini" onclick="changePoll('u')">&rarr;</button>
 				</div>
 				<button id="showResultsButton" data-inline="inline" onclick="showResults()">Show Results</button>
+				<button id="gotoFinalizeElectionButton" data-inline="inline" onclick="gotoFinalizeElection('<?php echo $this->survey->surveyID; ?>')">Finalize & Calculate Results</button>
 			</div>
 		</div>
 	<?php } else { ?>

@@ -1259,7 +1259,7 @@ class SurveyController extends Controller
 				$this->userCanValidate = $this->model->userCanValidate($this->user->userID, $this->survey->surveyID);
 			}
 			if ($this->userCanValidate) {
-				/*$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
+				$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
 				$mPoll = new PollModel();
 				foreach ($this->survey->polls as $poll) {
 					$poll->answers = $mPoll->getAnswersByPollID($poll->pollID);
@@ -1271,55 +1271,57 @@ class SurveyController extends Controller
 					}
 				}
 				$validateResult = false;
-				if ($_POST['voterID']) {
-					$voterfileExists = $this->model->voterfileExists($this->survey->surveyID, $_POST['voterID']);
-					if ($voterfileExists) {
-						$voterAlreadyVerified = $this->model->voterAlreadyVerified($this->survey->surveyID, $_POST['voterID']);
-						if (!$voterAlreadyVerified) {
-							$oDate = new DateTime();	
-							$validateTime = $oDate->format("Y-m-d H:i:s");
-							$validateResult = $this->model->validatevoter($this->survey->surveyID, $_POST['voterID'], $validateTime);
-							$return['voterID'] = $_POST['voterID'];
-							$return['voterVerifiedCount'] = $this->model->getVerifiedVoterCount($this->survey->surveyID);
-							//$return['voterCount'] = $this->model->getVoterCount($this->survey->surveyID);
-							$return['voterCount'] = $this->model->getTempVoterCount($this->survey->surveyID);
-							// Input the votes from the temp table
-							$tempVoteResult = $this->model->getTempVote($_POST['surveyID'], $_POST['voterID']);
-							$voteArray = json_decode($tempVoteResult->voteJson, true);
-							$voteArrayToDestroy = $voteArray;
-							$voteTime = $tempVoteResult->voteTime;
-							foreach ($voteArray as $answerID => $vote) {
-								$this->votes[] = $vote;
-								// Determine pollID
-								$pollID = $this->answerToPollArray[$answerID];
-								$this->model->insertVote($pollID, $_POST['voterID'], $answerID, $vote, $voteTime);
-								// Update the matrix; maybe replace the windows with bricks?
-								foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
-									if ($answerID != $answerID2) {
-										if ($vote > $vote2) {
-											$this->model->updateVoteMatrix($pollID, $answerID, $answerID2);
-										} else if ($vote < $vote2) {
-											$this->model->updateVoteMatrix($pollID, $answerID2, $answerID);
-										} // and do nothing if they're equal
-									}
+				if ($voterID) {
+					$voterAlreadyVerified = $this->model->voterAlreadyVerified($this->survey->surveyID, $voterID);
+					if (!$voterAlreadyVerified) {
+						$oDate = new DateTime();	
+						$validateTime = $oDate->format("Y-m-d H:i:s");
+						$validateResult = $this->model->validatevoter($this->survey->surveyID, $voterID, $validateTime);
+						$return['voterID'] = $_POST['voterID'];
+						$return['voterVerifiedCount'] = $this->model->getVerifiedVoterCount($this->survey->surveyID);
+						//$return['voterCount'] = $this->model->getVoterCount($this->survey->surveyID);
+						$return['voterCount'] = $this->model->getTempVoterCount($this->survey->surveyID);
+						// Input the votes from the temp table
+						$tempVoteResult = $this->model->getTempVote($this->survey->surveyID, $voterID);
+						$voteArray = json_decode($tempVoteResult->voteJson, true);
+						$voteArrayToDestroy = $voteArray;
+						$voteTime = $tempVoteResult->voteTime;
+						foreach ($voteArray as $answerID => $vote) {
+							$this->votes[] = $vote;
+							// Determine pollID
+							$pollID = $this->answerToPollArray[$answerID];
+							$this->model->insertVote($pollID, $voterID, $answerID, $vote, $voteTime);
+							// Update the matrix; maybe replace the windows with bricks?
+							foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
+								if ($answerID != $answerID2) {
+									if ($vote > $vote2) {
+										$this->model->updateVoteMatrix($pollID, $answerID, $answerID2);
+									} else if ($vote < $vote2) {
+										$this->model->updateVoteMatrix($pollID, $answerID2, $answerID);
+									} // and do nothing if they're equal
 								}
-								unset($voteArrayToDestroy[$answerID]);
 							}
-							$this->model->incrementSurveyVoteCount($this->surveyID);
-							//$this->model->deleteTempVote($_POST['surveyID'], $_POST['voterID']);
-							$this->model->validateTempVote($_POST['surveyID'], $_POST['voterID'], $validateTime);
-						} else {
-							$return['error'] = 'Voter already validated';
+							unset($voteArrayToDestroy[$answerID]);
 						}
+						$this->model->incrementSurveyVoteCount($this->surveyID);
+						//$this->model->deleteTempVote($this->survey->surveyID, $voterID);
+						//$this->model->validateTempVote($this->survey->surveyID, $voterID, $validateTime);
 					} else {
-						$return['error'] = 'Voter not found';
+						$return['error'] = 'Voter already validated';
 					}
-				}*/
+				} else {
+					$return['error'] = 'No voter ID provided';
+				}
 			} else {
 				$return['error'] = 'Not authorized to validate votes';
 			}
 		} else {
 			$return['error'] = 'Election not found';
+		}
+		if ($return) {
+			return $return;
+		} else {
+			return false;
 		}
 	}
 
@@ -1346,6 +1348,58 @@ class SurveyController extends Controller
 	// 	}
 	// 	echo json_encode($return);
 	// }
+
+	public function finalize()
+	{
+		if ($this->user->userID > 0 && ($this->user->userID == $this->survey->userID || $this->user->userID == 1)) {
+			if ($this->URLdata != '') {
+				if (strlen($this->URLdata) < 8 || strlen($this->URLdata) > 8) {
+					$this->error = 'Invalid survey ID (length)';
+				} else if (!ctype_alnum($this->URLdata)) {
+					$this->error = 'Invalid survey ID (characters)';
+				} else {
+					$this->survey = $this->model->getSurveyByID($this->URLdata);
+					if ($this->survey) {
+						$this->voterIdentCount = $this->model->getVoterIdentCount($this->URLdata);
+						$this->tempVoterCount = $this->model->getTempVoterCount($this->URLdata);
+						$this->finalizedVoterCount = $this->model->getFinalizedVoterCount($this->URLdata);
+						$this->toBeFinalizedVoterCount = $this->model->getToBeFinalizedVoterCount($this->URLdata);
+						$this->toBeProcessedVoters = $this->model->getToBeProcessedVoters($this->URLdata);
+						$this->resultsVoterCount = $this->model->getResultsVoterCount($this->URLdata);
+					}
+				}
+			} else {
+				$this->error = 'Invalid survey ID';
+			}
+		} else {
+			$this->error = 'Not authorized';
+		}
+	}
+
+	public function ajaxfinalizesurvey()
+	{
+		if ($this->user->userID > 0 && ($this->user->userID == $this->survey->userID || $this->user->userID == 1)) {
+			$this->survey = $this->model->getSurveyByID($_POST['surveyID']);
+			if ($this->survey) {
+				$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
+				$this->allVoters = $this->model->getFinalizedVoters($this->survey->surveyID);
+				$this->voters = $this->model->getToBeProcessedVoters($this->survey->surveyID);
+				$return['surveyID'] = $this->survey->surveyID;
+				foreach ($this->voters as $voter) {
+					$res = $this->addVoteToResults($this->survey->surveyID, $voter->voterID);
+					if ($res['error']) {
+						$return['error'] .= $res;
+					}
+				}
+				$return['result'] = 'Processed '.count($this->voters).' voters';
+			} else {
+				$return['error'] = 'Invalid survey ID';
+			}
+		} else {
+			$return['error'] = 'Not authorized';
+		}
+		echo json_encode($return);
+	}
 	
 	private function generateUniqueID($length, $table, $column)
 	{

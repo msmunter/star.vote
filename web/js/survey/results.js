@@ -410,3 +410,7 @@ function resetVoter() {
 		}
 	});
 }
+
+function gotoFinalizeElection(surveyID) {
+	window.open('/survey/finalize/'+surveyID+'/', '_top')
+}
