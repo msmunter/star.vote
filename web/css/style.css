@@ -825,6 +825,10 @@ div#footer a:link {
 	text-decoration: none;
 }
 
+.bottomBorder {
+	border-bottom: solid 1px #cccccc;
+}
+
 /* Global */
 .ui-link {
 	/*color: #c9e3b5 !important;*/

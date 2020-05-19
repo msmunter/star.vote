@@ -21,6 +21,7 @@ function clearStatus()
 function loadvalidation()
 {
 	$('#loadValidationButton').prop("disabled", true);
+	$('#voterVerifiedCount, #tempVoterCount, #valOnceCount, #valTwiceCount, #rejOnceCount, #rejTwiceCount, #inResultsCount, #newVoterCount, #finalizedCount').html("--");
 	updateStatus('Loading voter...');
 	$.post("/", { 
 		c: 'survey', 
@@ -76,6 +77,18 @@ function loadvalidation()
 				$('#validationImgHref2').attr('href', '/web/images/img_placeholder.svg');
 			}
 			$('.validateVoterButtons').prop("disabled", false);
+		}
+		if (!jData.error) {
+			//$('#cellVoterVerifiedCount').html(jData.voterVerifiedCount);
+			$('#cellTempVoterCount').html(jData.tempVoterCount);
+			$('#cellValOnceCount').html(jData.valOnceCount);
+			$('#cellValTwiceCount').html(jData.valTwiceCount);
+			$('#cellRejOnceCount').html(jData.rejOnceCount);
+			$('#cellRejTwiceCount').html(jData.rejTwiceCount);
+			$('#cellInResultsCount').html(jData.inResultsCount);
+			$('#cellNewVoterCount').html(jData.newVoterCount);
+			$('#cellFinalizedCount').html(jData.finalizedCount);
+			$('#cellToBeReviewedCount').html(jData.toBeReviewedCount);
 		}
 	});
 }

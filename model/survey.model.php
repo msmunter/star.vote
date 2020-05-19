@@ -295,6 +295,42 @@ class SurveyModel extends Model
 		return $this->results[0]->count;
 	}
 
+	public function getVerifiedOnceVoterCount($surveyID)
+	{
+		$this->query = "SELECT COUNT(*) AS `count` FROM `voterident`
+						WHERE `surveyID` = '$surveyID'
+						AND `verificationState` IN ('verifiedOnce');";
+		$this->doSelectQuery();
+		return $this->results[0]->count;
+	}
+
+	public function getVerifiedTwiceVoterCount($surveyID)
+	{
+		$this->query = "SELECT COUNT(*) AS `count` FROM `voterident`
+						WHERE `surveyID` = '$surveyID'
+						AND `verificationState` IN ('verifiedTwice');";
+		$this->doSelectQuery();
+		return $this->results[0]->count;
+	}
+
+	public function getRejectedOnceVoterCount($surveyID)
+	{
+		$this->query = "SELECT COUNT(*) AS `count` FROM `voterident`
+						WHERE `surveyID` = '$surveyID'
+						AND `verificationState` IN ('rejectedOnce');";
+		$this->doSelectQuery();
+		return $this->results[0]->count;
+	}
+
+	public function getRejectedTwiceVoterCount($surveyID)
+	{
+		$this->query = "SELECT COUNT(*) AS `count` FROM `voterident`
+						WHERE `surveyID` = '$surveyID'
+						AND `verificationState` IN ('rejectedTwice');";
+		$this->doSelectQuery();
+		return $this->results[0]->count;
+	}
+
 	public function getRejectedVoterCount($surveyID)
 	{
 		$this->query = "SELECT COUNT(*) AS `count` FROM `voterident`

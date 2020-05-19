@@ -23,7 +23,7 @@
 						</td>
 						<td>&nbsp;--&nbsp;</td>
 						<td id="verifiedVoterStatCell">
-						Finalized: <span id="voterVerifiedCount"><?php echo $this->voterFinalizedCount; ?></span> out of <span id="voterCount"><?php echo $this->voterCount; ?></span> voters total
+						<span id="rejectedOnceVoterCount"><?php echo $this->rejectedOnceVoterCount; ?></span> voters "rejected once"/need finalization
 					</td></tr>
 				</table>
 				<table id="validateVoterTable">

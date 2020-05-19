@@ -1018,8 +1018,19 @@ class SurveyController extends Controller
 			} else {
 				$this->userCanValidate = $this->model->userCanValidate($this->user->userID, $this->survey->surveyID);
 			}
-			$this->verifiedVoterCount = $this->model->getVerifiedVoterCount($this->survey->surveyID);
-			$this->voterCount = $this->model->getTempVoterCount($this->survey->surveyID);
+			//$this->verifiedVoterCount = $this->model->getVerifiedVoterCount($this->survey->surveyID);
+			//$this->voterCount = $this->model->getTempVoterCount($this->survey->surveyID);
+			$this->tempVoterCount = $this->model->getTempVoterCount($this->URLdata);
+
+			$this->verifiedOnceVoterCount = $this->model->getVerifiedOnceVoterCount($this->URLdata);
+			$this->verifiedTwiceVoterCount = $this->model->getVerifiedTwiceVoterCount($this->URLdata);
+			$this->rejectedOnceVoterCount = $this->model->getRejectedOnceVoterCount($this->URLdata);
+			$this->rejectedTwiceVoterCount = $this->model->getRejectedTwiceVoterCount($this->URLdata);
+
+			//$this->finalizedVoterCount = $this->model->getFinalizedVoterCount($this->URLdata);
+			$this->toBeFinalizedVoterCount = $this->model->getToBeFinalizedVoterCount($this->URLdata);
+			$this->toBeProcessedVoters = $this->model->getToBeProcessedVoters($this->URLdata);
+			$this->resultsVoterCount = $this->model->getResultsVoterCount($this->URLdata);
 		}
 	}
 
@@ -1039,6 +1050,7 @@ class SurveyController extends Controller
 					$this->voterfile = $this->model->getVoterfileByID($this->voter->voterfileID);
 					$this->voterIdent = $this->model->getVoterIdentByVoterID($this->voter->voterID);
 					$this->voterFinalizedCount = $this->model->getFinalizedVoterCount($this->survey->surveyID);
+					$this->rejectedOnceVoterCount = $this->model->getRejectedOnceVoterCount($this->URLdata);
 					$this->voterCount = $this->model->getTempVoterCount($this->survey->surveyID);
 					$this->orestarLink = 'https://secure.sos.state.or.us/orestar/vr/showVoterSearch.do?lang=eng&source=SOS&identifier2='.$this->voterfile->fname.'&identifier3='.$this->voterfile->lname.'&identifier8='.$this->voter->birthdate;
 				} else {
@@ -1082,8 +1094,17 @@ class SurveyController extends Controller
 					$return['validationStatus'] = $this->validationStatePrettyNames[$voterToValidate->verificationState];
 					$return['orestarLink'] = 'https://secure.sos.state.or.us/orestar/vr/showVoterSearch.do?lang=eng&source=SOS&identifier2='.$voterfileInfo->fname.'&identifier3='.$voterfileInfo->lname.'&identifier8='.$voter->birthdate;
 				}
-				$return['voterVerifiedCount'] = $this->model->getVerifiedVoterCount($this->survey->surveyID);
-				$return['voterCount'] = $this->model->getTempVoterCount($this->survey->surveyID);
+				//$return['voterVerifiedCount'] = $this->model->getVerifiedVoterCount($this->survey->surveyID);
+				$return['tempVoterCount'] = $this->model->getTempVoterCount($this->survey->surveyID);
+				$return['valOnceCount'] = $this->model->getVerifiedOnceVoterCount($this->survey->surveyID);
+				$return['valTwiceCount'] = $this->model->getVerifiedTwiceVoterCount($this->survey->surveyID);
+				$return['rejOnceCount'] = $this->model->getRejectedOnceVoterCount($this->survey->surveyID);
+				$return['rejTwiceCount'] = $this->model->getRejectedTwiceVoterCount($this->survey->surveyID);
+				$return['inResultsCount'] = $this->model->getResultsVoterCount($this->survey->surveyID);
+
+				$return['newVoterCount'] = $return['tempVoterCount'] - $return['valOnceCount'] - $return['valTwiceCount'] - $return['rejOnceCount'] - $return['rejTwiceCount'] - $return['inResultsCount'];
+				$return['finalizedCount'] = $return['valTwiceCount'] + $return['rejTwiceCount'];
+				$return['toBeReviewedCount'] = $return['tempVoterCount'] - $return['valTwiceCount'] - $return['rejOnceCount'] - $return['rejTwiceCount'] - $return['inResultsCount'];
 			}
 		} else {
 			$return['error'] = 'Survey not found';
@@ -1360,9 +1381,15 @@ class SurveyController extends Controller
 				} else {
 					$this->survey = $this->model->getSurveyByID($this->URLdata);
 					if ($this->survey) {
-						$this->voterIdentCount = $this->model->getVoterIdentCount($this->URLdata);
+						//$this->voterIdentCount = $this->model->getVoterIdentCount($this->URLdata);
 						$this->tempVoterCount = $this->model->getTempVoterCount($this->URLdata);
-						$this->finalizedVoterCount = $this->model->getFinalizedVoterCount($this->URLdata);
+
+						$this->verifiedOnceVoterCount = $this->model->getVerifiedOnceVoterCount($this->URLdata);
+						$this->verifiedTwiceVoterCount = $this->model->getVerifiedTwiceVoterCount($this->URLdata);
+						$this->rejectedOnceVoterCount = $this->model->getRejectedOnceVoterCount($this->URLdata);
+						$this->rejectedTwiceVoterCount = $this->model->getRejectedTwiceVoterCount($this->URLdata);
+
+						//$this->finalizedVoterCount = $this->model->getFinalizedVoterCount($this->URLdata);
 						$this->toBeFinalizedVoterCount = $this->model->getToBeFinalizedVoterCount($this->URLdata);
 						$this->toBeProcessedVoters = $this->model->getToBeProcessedVoters($this->URLdata);
 						$this->resultsVoterCount = $this->model->getResultsVoterCount($this->URLdata);
