@@ -1393,6 +1393,7 @@ class SurveyController extends Controller
 						$this->toBeFinalizedVoterCount = $this->model->getToBeFinalizedVoterCount($this->URLdata);
 						$this->toBeProcessedVoters = $this->model->getToBeProcessedVoters($this->URLdata);
 						$this->resultsVoterCount = $this->model->getResultsVoterCount($this->URLdata);
+						$this->percentReporting = round($this->resultsVoterCount / $this->tempVoterCount * 100, 1);
 					}
 				}
 			} else {

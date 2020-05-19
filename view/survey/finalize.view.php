@@ -31,6 +31,7 @@
 				<tr><td>Finalized:</td><td class="alignright" id="cellFinalizedCount"><?php echo $this->verifiedTwiceVoterCount + $this->rejectedTwiceVoterCount; ?></td></tr>
 				<tr><td>In Results:</td><td class="alignright" id="cellInResultsCount"><?php echo $this->resultsVoterCount; ?></td></tr>
 				<tr><td colspan="2" class="bottomBorder"></td></tr>
+				<tr><td>Reporting:</td><td class="alignright"><span id="cellPercentReporting"><?php echo $this->percentReporting; ?></span>%</td></tr>
 			</table>
 			<button id="finalizeSurveyButton" data-inline="inline" onclick="finalizeSurvey()">Finalize Survey</button>
 		</div>
