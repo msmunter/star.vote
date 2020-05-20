@@ -11,7 +11,7 @@
 				This can be run as many times as necessary to process all outstanding voters.	
 			</p>
 			<p>
-				<a href="https://dev.ipo.vote/survey/votervalfinal/<?php echo $this->survey->surveyID; ?>/">Voters needing finalization</a>
+				<a href="/survey/votervalfinal/<?php echo $this->survey->surveyID; ?>/">Voters needing finalization</a>
 			</p>
 			<table>
 				<tr><td>Voted:</td><td class="alignright" id="cellTempVoterCount"><?php echo $this->tempVoterCount; ?></td></tr>
