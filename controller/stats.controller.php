@@ -87,7 +87,8 @@ class StatsController extends Controller
 
 	private function generateCvr($surveyID)
 	{
-		$tempvotes = $this->model->getTempvotes($this->URLdata);
+		//$tempvotes = $this->model->getTempvotes($this->URLdata);
+		$tempvotes = $this->model->getAcceptedTempvotes($this->URLdata);
 		$i = 0;
 		foreach ($tempvotes as $vote) {
 			$i++;
