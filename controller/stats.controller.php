@@ -61,7 +61,7 @@ class StatsController extends Controller
 		$this->doFooter = 0;
 		if ($this->URLdata) {
 			if ($this->user->userID) {
-				$cvr = $this->generateCvr($this->URLdata);
+				$cvr = $this->generateCvr($this->URLdata, true);
 				$answers = $this->model->getSurveyAnswers($this->URLdata);
 				ksort($answers);
 			} else {
@@ -72,7 +72,7 @@ class StatsController extends Controller
 		}
 		if ($cvr) {
 			header('Content-Type: text/csv');
-			$filename = 'star_cvr_'.date('Ymd-His').'.csv';
+			$filename = 'election_anoncvr_'.date('Ymd-His').'.csv';
 			header('Content-disposition: attachment;filename="'.$filename.'"');
 			$cvrHeader = 'Voter';
 			foreach ($answers as $answer) {
@@ -85,7 +85,44 @@ class StatsController extends Controller
 		}
 	}
 
-	private function generateCvr($surveyID)
+	public function starcvr()
+	{
+		$this->ajax = 1;
+		$this->doHeader = 0;
+		$this->doFooter = 0;
+		if ($this->URLdata) {
+			if ($this->user->userID == 1) {
+				$this->userCanValidate = 2;
+			} else {
+				$mSurvey = new SurveyModel();
+				$this->userCanValidate = $mSurvey->userCanValidate($this->user->userID, $this->URLdata);
+			}
+			if ($this->userCanValidate > 1) {
+				$cvr = $this->generateCvr($this->URLdata, false);
+				$answers = $this->model->getSurveyAnswers($this->URLdata);
+				ksort($answers);
+			} else {
+				$this->return['error'] = 'Not authorized';
+			}
+		} else {
+			$this->return['error'] = 'Invalid survey/election';
+		}
+		if ($cvr) {
+			header('Content-Type: text/csv');
+			$filename = 'election_starcvr_'.date('Ymd-His').'.csv';
+			header('Content-disposition: attachment;filename="'.$filename.'"');
+			$cvrHeader = 'Voter';
+			foreach ($answers as $answer) {
+				$cvrHeader .= ','.$answer;
+			}
+			echo $cvrHeader . "\n" . $cvr;
+		} else {
+			header('Content-Type: application/json');
+			echo json_encode($this->return);
+		}
+	}
+
+	private function generateCvr($surveyID, $isAnonymous)
 	{
 		//$tempvotes = $this->model->getTempvotes($this->URLdata);
 		$tempvotes = $this->model->getAcceptedTempvotes($this->URLdata);
@@ -95,7 +132,11 @@ class StatsController extends Controller
 			$cvr[$i] = json_decode($vote->voteJson, true);
 			if ($cvr[$i]) {
 				ksort($cvr[$i]);
-				$output .= 'voter'.$i;
+				if ($isAnonymous) {
+					$output .= 'voter'.$i;
+				} else {
+					$output .= $vote->voterID;
+				}
 				foreach ($cvr[$i] as $id => $vote) {
 					$output .= ",$vote";
 				}
