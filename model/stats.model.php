@@ -13,7 +13,7 @@ class StatsModel extends Model
 
 	public function getAcceptedTempvotes($surveyID)
 	{
-		$this->query = "SELECT `tempvotes`.*, `voterident`.`verificationState` FROM `tempvotes`, `voterident`
+		$this->query = "SELECT `tempvotes`.*, `voterident`.`verificationState` AS `status` FROM `tempvotes`, `voterident`
 						WHERE `tempvotes`.`surveyID` LIKE '$surveyID'
 						AND `voterident`.`verificationState` IN ('inResults', 'verifiedTwice')
 						AND `tempvotes`.`voterID` LIKE `voterident`.`voterID`;";
