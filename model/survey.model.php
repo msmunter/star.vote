@@ -392,7 +392,7 @@ class SurveyModel extends Model
 		}
 		$this->query = "SELECT `voterID` FROM `voterident`
 						WHERE `surveyID` = '$surveyID'
-						AND `verificationState` IN ('rejectedTwice', 'verifiedTwice')
+						AND `verificationState` IN ('verifiedTwice')
 						AND `voterID` IN (SELECT `voterID` FROM `tempvotes`
 										  WHERE `surveyID` LIKE '$surveyID')
 						AND `voterID` NOT IN (SELECT `voterID` FROM `votes`
