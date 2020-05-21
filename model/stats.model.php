@@ -16,7 +16,8 @@ class StatsModel extends Model
 		$this->query = "SELECT `tempvotes`.*, `voterident`.`verificationState` AS `status` FROM `tempvotes`, `voterident`
 						WHERE `tempvotes`.`surveyID` LIKE '$surveyID'
 						AND `voterident`.`verificationState` IN ('inResults', 'verifiedTwice')
-						AND `tempvotes`.`voterID` LIKE `voterident`.`voterID`;";
+						AND `tempvotes`.`voterID` LIKE `voterident`.`voterID`
+						ORDER BY `tempvotes`.`voteID` ASC;";
 		$this->doSelectQuery();
 		if (count($this->results) > 0) {
 			return $this->results;
@@ -27,7 +28,8 @@ class StatsModel extends Model
 	{
 		$this->query = "SELECT `tempvotes`.*, `voterident`.`verificationState` AS `status` FROM `tempvotes`, `voterident`
 						WHERE `tempvotes`.`surveyID` LIKE '$surveyID'
-						AND `tempvotes`.`voterID` LIKE `voterident`.`voterID`;";
+						AND `tempvotes`.`voterID` LIKE `voterident`.`voterID`
+						ORDER BY `tempvotes`.`voteID` ASC;";
 		$this->doSelectQuery();
 		if (count($this->results) > 0) {
 			return $this->results;
