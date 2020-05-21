@@ -111,7 +111,7 @@ class StatsController extends Controller
 			header('Content-Type: text/csv');
 			$filename = 'election_starcvr_'.date('Ymd-His').'.csv';
 			header('Content-disposition: attachment;filename="'.$filename.'"');
-			$cvrHeader = 'Voter';
+			$cvrHeader = 'Voter,Status';
 			foreach ($answers as $answer) {
 				$cvrHeader .= ','.$answer;
 			}
@@ -124,8 +124,8 @@ class StatsController extends Controller
 
 	private function generateCvr($surveyID, $isAnonymous)
 	{
-		//$tempvotes = $this->model->getTempvotes($this->URLdata);
-		$tempvotes = $this->model->getAcceptedTempvotes($this->URLdata);
+		$tempvotes = $this->model->getAllTempvotes($this->URLdata);
+		//$tempvotes = $this->model->getAcceptedTempvotes($this->URLdata);
 		$i = 0;
 		foreach ($tempvotes as $vote) {
 			$i++;
@@ -135,7 +135,7 @@ class StatsController extends Controller
 				if ($isAnonymous) {
 					$output .= 'voter'.$i;
 				} else {
-					$output .= $vote->voterID;
+					$output .= $vote->voterID.','.$vote->status;
 				}
 				foreach ($cvr[$i] as $id => $vote) {
 					$output .= ",$vote";

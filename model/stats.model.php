@@ -23,6 +23,17 @@ class StatsModel extends Model
 		} else return false;
 	}
 
+	public function getAllTempvotes($surveyID)
+	{
+		$this->query = "SELECT `tempvotes`.*, `voterident`.`verificationState` AS `status` FROM `tempvotes`, `voterident`
+						WHERE `tempvotes`.`surveyID` LIKE '$surveyID'
+						AND `tempvotes`.`voterID` LIKE `voterident`.`voterID`;";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results;
+		} else return false;
+	}
+
 	public function getSurveyAnswers($surveyID)
 	{
 		$this->query = "SELECT `pollID` FROM `polls`
