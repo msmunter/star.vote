@@ -111,7 +111,7 @@ class StatsController extends Controller
 			header('Content-Type: text/csv');
 			$filename = 'election_starcvr_'.date('Ymd-His').'.csv';
 			header('Content-disposition: attachment;filename="'.$filename.'"');
-			$cvrHeader = 'Voter,Status';
+			$cvrHeader = 'Voter,Status,BirthYear,Zip';
 			foreach ($answers as $answer) {
 				$cvrHeader .= ','.$answer;
 			}
@@ -136,7 +136,8 @@ class StatsController extends Controller
 				if ($isAnonymous) {
 					$output .= 'voter'.$i;
 				} else {
-					$output .= $vote->voterID.','.$vote->status;
+					$voterfile = $this->model->getVoterfileByVoterID($surveyID, $vote->voterID);
+					$output .= $vote->voterID.','.$vote->status.','.$voterfile->birthyear.','.$voterfile->zip;
 				}
 				foreach ($cvr[$i] as $id => $vote) {
 					$output .= ",$vote";

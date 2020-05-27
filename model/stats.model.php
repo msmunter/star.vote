@@ -93,6 +93,20 @@ class StatsModel extends Model
 		} else return false;
 	}
 
+	public function getVoterfileByVoterID($surveyID, $voterID)
+	{
+		$this->query = "SELECT * FROM `voterfile`
+						WHERE `voterfileID` IN (SELECT `voterfileID` FROM `voters`
+												WHERE `surveyID` LIKE '$surveyID'
+												AND `voterID` LIKE '$voterID'
+												) 
+						LIMIT 0,1;";
+		$this->doSelectQuery();
+		if (count($this->results) > 0) {
+			return $this->results[0];
+		} else return false;
+	}
+
 	// public function addMsg($template, $fieldsJson)
 	// {
 	// 	$this->query = "INSERT INTO `msgout` (`template`, `fields`)
