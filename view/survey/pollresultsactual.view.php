@@ -35,7 +35,8 @@
 							echo '<tr class="answerResults"><td class="rankCell">'.$rank.'</td>';
 						}
 						echo '<td>'.$answer->text.'</td><td class="number">'.$answer->points.'</td><td class="number">'.number_format($answer->avgVote, 1).'</td></tr>';
-						echo '<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="4"><div class="barGraph" style="width: '.$answer->avgPercent.'%;"><div class="barGraphData">'.$answer->avgPercent.'% ('.number_format($answer->avgVote, 1).'/5)</div></div></td></tr>';
+						//echo '<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="4"><div class="barGraph" style="width: '.$answer->avgPercent.'%;"><div class="barGraphData">'.$answer->avgPercent.'% ('.number_format($answer->avgVote, 1).'/5)</div></div></td></tr>';
+						echo '<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="4"><div class="barGraph" style="width: '.$answer->avgPercent.'%;"><div class="barGraphData">'.$answer->avgPercent.'%</div></div></td></tr>';
 					}
 					?>
 				</table>
@@ -60,11 +61,11 @@
 							
 							<tr><td class="rankCell winner">1</td><td><?php echo $currentPoll->runoffResults['first']['question']; ?></td><td class="number"><?php echo $currentPoll->runoffResults['first']['votes']; ?></td></tr>
 							
-							<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($currentPoll->runoffResults['first']['votes']/$currentPoll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($currentPoll->runoffResults['first']['votes']/$currentPoll->totalVoterCount*100), 2); ?>% (<?php echo $currentPoll->runoffResults['first']['votes']; ?>/<?php echo $currentPoll->totalVoterCount; ?>)</div></div></td></tr>
+							<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($currentPoll->runoffResults['first']['votes']/$currentPoll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($currentPoll->runoffResults['first']['votes']/$currentPoll->totalVoterCount*100), 2); ?>%</div></div></td></tr>
 							
 							<tr><td class="rankCell winner">1</td><td><?php echo $currentPoll->runoffResults['second']['question']; ?></td><td class="number"><?php echo $currentPoll->runoffResults['second']['votes']; ?></td></tr>
 							
-							<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($currentPoll->runoffResults['second']['votes']/$currentPoll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($currentPoll->runoffResults['second']['votes']/$currentPoll->totalVoterCount*100), 2); ?>% (<?php echo $currentPoll->runoffResults['second']['votes']; ?>/<?php echo $currentPoll->totalVoterCount; ?>)</div></div></td></tr>
+							<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($currentPoll->runoffResults['second']['votes']/$currentPoll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($currentPoll->runoffResults['second']['votes']/$currentPoll->totalVoterCount*100), 2); ?>%</div></div></td></tr>
 							<?php
 							//echo '<tr class="noTopBorder"><td colspan="3">Tie between '. $currentPoll->runoffResults['first']['question'].' and '.$currentPoll->runoffResults['second']['question'].' with '.$currentPoll->runoffResults['first']['votes'].' votes each</td></tr>';
 						}
@@ -74,18 +75,18 @@
 						
 						<tr><td class="rankCell winner">1</td><td><?php echo $currentPoll->runoffResults['first']['question']; ?></td><td class="number"><?php echo $currentPoll->runoffResults['first']['votes']; ?></td></tr>
 						
-						<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($currentPoll->runoffResults['first']['votes']/$currentPoll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($currentPoll->runoffResults['first']['votes']/$currentPoll->totalVoterCount*100), 2); ?>% (<?php echo $currentPoll->runoffResults['first']['votes']; ?>/<?php echo $currentPoll->totalVoterCount; ?>)</div></div></td></tr>
+						<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($currentPoll->runoffResults['first']['votes']/$currentPoll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($currentPoll->runoffResults['first']['votes']/$currentPoll->totalVoterCount*100), 2); ?>%</div></div></td></tr>
 						
 						<tr><td class="rankCell">2</td><td><?php echo $currentPoll->runoffResults['second']['question']; ?></td><td class="number"><?php echo $currentPoll->runoffResults['second']['votes']; ?></td></tr>
 						
-						<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($currentPoll->runoffResults['second']['votes']/$currentPoll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($currentPoll->runoffResults['second']['votes']/$currentPoll->totalVoterCount*100), 2); ?>% (<?php echo $currentPoll->runoffResults['second']['votes']; ?>/<?php echo $currentPoll->totalVoterCount; ?>)</div></div></td></tr>
+						<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($currentPoll->runoffResults['second']['votes']/$currentPoll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($currentPoll->runoffResults['second']['votes']/$currentPoll->totalVoterCount*100), 2); ?>%</div></div></td></tr>
 						
 						<?php
 					}
 				?>
 					<tr><td class="rankCell"></td><td>No Preference</td><td class="number"><?php echo $currentPoll->noPreferenceCount; ?></td></tr>
 					
-					<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($currentPoll->noPreferenceCount/$currentPoll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($currentPoll->noPreferenceCount/$currentPoll->totalVoterCount*100), 2); ?>% (<?php echo $currentPoll->noPreferenceCount; ?>/<?php echo $currentPoll->totalVoterCount; ?>)</div></div></td></tr>
+					<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="3"><div class="barGraph" style="width: <?php echo number_format(($currentPoll->noPreferenceCount/$currentPoll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($currentPoll->noPreferenceCount/$currentPoll->totalVoterCount*100), 2); ?>%</div></div></td></tr>
 					</table>
 					<?php
 					// The unpreferred
