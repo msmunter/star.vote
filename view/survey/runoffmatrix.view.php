@@ -1,5 +1,6 @@
 				<?php foreach ($this->survey->polls as $zPoll) { ?>
-					<?php //$this->debug($zPoll); ?>
+					<div class="surveyResultsPollTitle"><?php echo $zPoll->question; ?></div>
+					<div class="clear"></div>
 					<div class="runoffLegend">
 						Legend: <span class="runoffFor">For</span>, <span class="runoffAgainst">Against</span>, <span class="runoffNopref">No Preference</span>
 					</div>
@@ -8,7 +9,7 @@
 						<tr><th colspan="2"></th>
 							<?php
 								foreach ($zPoll->runoffAnswerArray as $answer) {
-									echo '<th colspan="5">';
+									echo '<td colspan="5">';
 									echo $answer->text;
 									echo '</th>';
 								}
@@ -17,7 +18,8 @@
 								foreach ($zPoll->runoffAnswerArray as $answer) {
 									$empty++;
 									$z = 0;
-									echo '<tr><td>'.$answer->text.'</td><td>&gt;</td>';
+									//echo '<tr><td>'.$answer->text.'</td><td>&gt;</td>';
+									echo '<tr><td>'.$answer->text.'</td><td>pref. over</td>';
 									foreach ($zPoll->runoffAnswerArray as $innerAnswer) {
 										$z++;
 										if ($z == $empty) {
@@ -48,4 +50,5 @@
 							?>
 						</tr>
 					</table>
+					<div style="height: 20px;"/>
 				<?php } ?>

@@ -19,7 +19,7 @@
 		</div>
 		<div class="clear"></div>
 		<div class="floatleft">	
-			<div>Selection Phase (Top two advance):</div>
+			<div>Scoring Round (Top two advance):</div>
 			<div id="pollResultsContainer">
 				<div><?php echo $currentPoll->totalVoterCount; ?> voter<?php if ($currentPoll->totalVoterCount != 1) echo 's'; ?></div>
 				<table id="resultsTable">
@@ -44,7 +44,7 @@
 		</div>
 		<div id="resultsArrow">&rarr;</div>
 		<div class="floatleft">	
-			<div>Runoff Phase (Single winner):<br /></div>
+			<div>Runoff Round (Single winner):<br /></div>
 			<div id="runoffResults">
 				<table id="runoffResultsTable">
 					<?php 
@@ -56,7 +56,7 @@
 						} else {
 							// Two-way tie
 							?>
-							<tr class="headerRow"><th>Candidate</th><th>Voters</th></tr>
+							<tr class="headerRow"><th>Candidate</th><th>Votes</th></tr>
 							
 							<tr><td><?php echo $currentPoll->runoffResults['first']['question']; ?></td><td class="number"><?php echo $currentPoll->runoffResults['first']['votes']; ?></td></tr>
 							
@@ -87,29 +87,29 @@
 					
 					<tr class="answerResults barGraphTr"><td class="barGraphTd" colspan="2"><div class="barGraph" style="width: <?php echo number_format(($currentPoll->noPreferenceCount/$currentPoll->totalVoterCount*100), 2); ?>%;"><div class="barGraphData"><?php echo number_format(($currentPoll->noPreferenceCount/$currentPoll->totalVoterCount*100), 2); ?>%</div></div></td></tr>
 					</table>
-					<?php
-					// The unpreferred
-					/*if ($currentPoll->noPreferenceCount > 0) {
-						echo '<div id="preferenceText">'.$currentPoll->noPreferenceCount.' expressed no preference</div>';
-					} else {
-						echo '<div id="preferenceText">All voters expressed a preference</div>';
-					}*/
-					?>
 				<div class="clear"></div>
 			</div>
 		</div>
 		<div class="clear"></div>
 		<div>
-		<?php
-		if ($currentPoll->runoffResults['tie']) {
-			echo 'Tie, therefore no Condorcet winner';
-		} else if ($currentPoll->condorcet === false) {
-			echo $currentPoll->runoffResults['first']['question'].' did not win all pairings and therefore is not the Condorcet winner.';
-		} else {
-			echo 'STAR elected the Condorcet winner.';
-		}
-		?>
+			<?php if ($currentPoll->runoffResults['tie']) { ?>
+				There is a tie in the runoff. The winner is the candidate with the highest score. In the event of a tie in runoff and score a tie-breaking method must be employed.
+			 <?php } else { ?>
+			 	<span class="bold"><?php echo $currentPoll->runoffResults['first']['question']; ?> wins</span>; 
+			 	<?php echo $currentPoll->runoffResults['first']['votes']; ?> voters preferred <?php echo $currentPoll->runoffResults['first']['question']; ?> over <?php echo $currentPoll->runoffResults['second']['question']; ?>.
+			 <?php } ?>
 		</div>
-		<div class="clear"></div>
+		<div>
+			<?php
+			if ($currentPoll->runoffResults['tie']) {
+				echo 'Tie, therefore no Condorcet winner';
+			} else if ($currentPoll->condorcet === false) {
+				echo $currentPoll->runoffResults['first']['question'].' did not win all pairings and therefore is not the Condorcet winner.';
+			} else {
+				echo 'STAR elected the Condorcet winner.';
+			}
+			?>
+		</div>
+		<div class="clear" style="height: 20px;"></div>
 	<?php } ?>
 <?php } ?>
