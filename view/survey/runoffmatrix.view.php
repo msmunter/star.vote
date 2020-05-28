@@ -2,7 +2,12 @@
 					<div class="surveyResultsPollTitle"><?php echo $zPoll->question; ?></div>
 					<div class="clear"></div>
 					<div class="runoffLegend">
-						Legend: <span class="runoffFor">For</span>, <span class="runoffAgainst">Against</span>, <span class="runoffNopref">No Preference</span>
+						<table class="runoffMatrix" style="margin-bottom: 3px;">
+							<tr><td style="font-size: 10pt;">Cell Legend: </td><td class="borderCell padded winCell">Row Wins</td><td class="rightBorderCell padded loseCell">Column Wins</td></tr>
+						</table>
+						<div>
+							Number Legend: <span class="runoffFor">For Row</span>, <span class="runoffAgainst">Against Column</span>, <span class="runoffNopref">No Preference</span>
+						</div>
 					</div>
 					<div class="clear"></div>
 					<table class="runoffMatrix">
