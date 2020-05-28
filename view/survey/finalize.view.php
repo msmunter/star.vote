@@ -34,6 +34,9 @@
 				<tr><td>Reporting:</td><td class="alignright"><span id="cellPercentReporting"><?php echo $this->percentReporting; ?></span>%</td></tr>
 			</table>
 			<button id="finalizeSurveyButton" data-inline="inline" onclick="finalizeSurvey()">Finalize Survey</button>
+			<div class="clear" style="height: 20px;"></div>
+			<button id="resetFinalizationButton" data-inline="inline" style="color: red;" onclick="resetSurveyFinalization()">Reset Finalization</button>
+			<div class="clear"/>
 		</div>
 	</div>
 <?php } ?>

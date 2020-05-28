@@ -789,5 +789,23 @@ class SurveyModel extends Model
 			return true;
 		} else return false;
 	}
+
+	public function resetSurveyFinalization($surveyID, $pollString)
+	{
+		$this->query = "UPDATE `runoff` SET `votes` = '0' WHERE `pollID` IN ($pollString);";
+		$this->doUpdateQuery();
+
+		$this->query = "UPDATE `answers` SET `votes` = '0', `points` = '0' WHERE `pollID` IN ($pollString);";
+		$this->doUpdateQuery();
+
+		$this->query = "UPDATE `surveys` SET `votes` = '0' WHERE `surveyID` LIKE '$surveyID';";
+		$this->doUpdateQuery();
+
+		$this->query = "DELETE FROM `votes` WHERE `pollID` IN ($pollString);";
+		$this->doUpdateQuery();
+
+		$this->query = "UPDATE `voterident` SET `verificationState` = 'verifiedTwice' WHERE `verificationState` LIKE 'inResults' AND `surveyID` LIKE '$surveyID';";
+		$this->doUpdateQuery();
+	}
 }
 ?>

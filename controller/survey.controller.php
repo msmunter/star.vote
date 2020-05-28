@@ -1307,21 +1307,40 @@ class SurveyController extends Controller
 						$voteArray = json_decode($tempVoteResult->voteJson, true);
 						$voteArrayToDestroy = $voteArray;
 						$voteTime = $tempVoteResult->voteTime;
+						// Undervote detection/removal
+						$votesByPoll = false;
+						$nonZeroPolls = [];
+						foreach ($voteArray as $answerID => $vote) {
+							$votesByPoll[$this->answerToPollArray[$answerID]][$answerID] = $vote;
+						}
+						foreach ($this->survey->polls as $poll) {
+							$nonZero = false;
+							foreach ($votesByPoll[$poll->pollID] as $vote) {
+								if ($vote > 0) {
+									$nonZeroPolls[] = $poll->pollID;
+									break;
+								}
+							}
+						}
+
 						foreach ($voteArray as $answerID => $vote) {
 							$this->votes[] = $vote;
 							// Determine pollID
 							$pollID = $this->answerToPollArray[$answerID];
-							$this->model->insertVote($pollID, $voterID, $answerID, $vote, $voteTime);
-							// Update the matrix; maybe replace the windows with bricks?
-							foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
-								if ($answerID != $answerID2) {
-									if ($vote > $vote2) {
-										$this->model->updateVoteMatrix($pollID, $answerID, $answerID2);
-									} else if ($vote < $vote2) {
-										$this->model->updateVoteMatrix($pollID, $answerID2, $answerID);
-									} // and do nothing if they're equal
+							if (in_array($pollID, $nonZeroPolls)) {
+								$this->model->insertVote($pollID, $voterID, $answerID, $vote, $voteTime);
+								// Update the matrix; maybe replace the windows with bricks?
+								foreach ($voteArrayToDestroy as $answerID2 => $vote2) {
+									if ($answerID != $answerID2) {
+										if ($vote > $vote2) {
+											$this->model->updateVoteMatrix($pollID, $answerID, $answerID2);
+										} else if ($vote < $vote2) {
+											$this->model->updateVoteMatrix($pollID, $answerID2, $answerID);
+										} // and do nothing if they're equal
+									}
 								}
 							}
+							
 							unset($voteArrayToDestroy[$answerID]);
 						}
 						$this->model->incrementSurveyVoteCount($this->surveyID);
@@ -1420,6 +1439,30 @@ class SurveyController extends Controller
 					}
 				}
 				$return['result'] = 'Processed '.count($this->voters).' voters';
+			} else {
+				$return['error'] = 'Invalid survey ID';
+			}
+		} else {
+			$return['error'] = 'Not authorized';
+		}
+		echo json_encode($return);
+	}
+
+	public function ajaxresetsurveyfinalization()
+	{
+		if ($this->user->userID > 0 && ($this->user->userID == $this->survey->userID || $this->user->userID == 1)) {
+			$this->survey = $this->model->getSurveyByID($_POST['surveyID']);
+			if ($this->survey) {
+				$this->survey->polls = $this->model->getPollsBySurveyID($this->survey->surveyID);
+				$pollString = '';
+				$i = 0;
+				foreach ($this->survey->polls as $poll) {
+					if ($i > 0) $pollString .= ',';
+					$pollString .= "'".$poll->pollID."'";
+					$i++;
+				}
+				$this->model->resetSurveyFinalization($this->survey->surveyID, $pollString);
+				$return['result'] = 'Finalization has been reset';
 			} else {
 				$return['error'] = 'Invalid survey ID';
 			}
