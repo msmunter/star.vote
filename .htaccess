@@ -1,7 +1,14 @@
+AuthType Basic
+AuthName "Authentication Required"
+AuthUserFile /home/bitnami/htdocs/.htpasswd
+Require valid-user
 RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)([^/])$        /$1$2/ [L,R=301]
-RewriteRule ^2020primary/([a-zA-Z0-9]+)/?$ index.php?c=survey&a=results&d=hxxxy1a4&voterID=$1 [L]
-RewriteRule ^([a-z]+)/([a-z]+)/([a-zA-Z0-9-]+)/?$ index.php?c=$1&a=$2&d=$3 [L]
-RewriteRule ^([a-z]+)/([a-z]+)/?$ index.php?c=$1&a=$2 [L]
+RewriteRule ^2020primary/([a-zA-Z0-9]+)/?$ index.php?c=survey&a=results&d=2y2rwft9&voterID=$1 [L]
+RewriteRule ^survey/getstarid/([a-zA-Z0-9-]+)/?$ index.php?c=survey&a=getstarid&d=$1&%{QUERY_STRING} [L]
+RewriteRule ^survey/votervalfinal/([a-zA-Z0-9-]+)/?$ index.php?c=survey&a=votervalfinal&d=$1&%{QUERY_STRING} [L]
+RewriteRule ^api/(v[0-9]+)/([a-zA-Z0-9-]+)/?$ index.php?c=api&a=$1&d=$2&%{QUERY_STRING} [L]
+RewriteRule ^([a-z]+)/([a-zA-Z0-9]+)/([a-zA-Z0-9-]+)/?$ index.php?c=$1&a=$2&d=$3 [L]
+RewriteRule ^([a-z]+)/([a-zA-Z0-9]+)/?$ index.php?c=$1&a=$2 [L]
 RewriteRule ^([a-zA-Z0-9-]+)/?$ index.php?c=$1 [L]
