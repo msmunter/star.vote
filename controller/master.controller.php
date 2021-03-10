@@ -60,24 +60,28 @@ class MasterController
 					$this->controller->name = 'poll';
 					$this->controller->action = 'results';
 					$this->controller->URLdata = $requestedController;
+					$this->controller->passedKey = $this->prepGetPost('k');
 				} else if ($pollBySlug) {
 					// Valid poll by Slug, load poll controller
 					$this->controller = new PollController;
 					$this->controller->name = 'poll';
 					$this->controller->action = 'results';
 					$this->controller->URLdata = $pollBySlug->pollID;
+					$this->controller->passedKey = $this->prepGetPost('k');
 				} else if ($surveyByID) {
 					// Valid survey by ID, load survey controller
 					$this->controller = new SurveyController;
 					$this->controller->name = 'survey';
 					$this->controller->action = 'results';
 					$this->controller->URLdata = $requestedController;
+					$this->controller->passedKey = $requestedAction;
 				} else if ($surveyBySlug) {
 					// Valid survey by Slug, load survey controller
 					$this->controller = new SurveyController;
 					$this->controller->name = 'survey';
 					$this->controller->action = 'results';
 					$this->controller->URLdata = $surveyBySlug->surveyID;
+					$this->controller->passedKey = $requestedAction;
 				}
 				$this->controller->control();
 			} else {

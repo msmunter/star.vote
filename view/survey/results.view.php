@@ -59,7 +59,7 @@ if ($this->survey) {
 			<div class="bigContainerInner">
 				<?php if ($this->survey->verifiedVoting) { ?>
 					<label for="voterKey">Voter Key:</label>
-					<input id="voterKey" />
+					<input id="voterKey" value="<?php echo $this->passedKey; ?>"/>
 				<?php } ?>
 				<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
 				<div class="clear"></div>

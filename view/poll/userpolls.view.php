@@ -8,7 +8,7 @@ if (count($this->polls) > 0) {
 		echo '<a class="pollLink" href="/';
 		if ($this->polls[$i]->customSlug != '') {
 			echo $this->polls[$i]->customSlug;
-		} else echo $this->polls[$i]->surveyID;
+		} else echo $this->polls[$i]->pollID;
 		echo '/">';
 			echo '<div class="pollInfoVotes">Votes<br />'.$this->polls[$i]->votes.'</div>';
 			echo $this->polls[$i]->question;
@@ -21,7 +21,7 @@ if (count($this->polls) > 0) {
 		echo '<a class="pollLink" href="/';
 		if ($this->polls[$i]->customSlug != '') {
 			echo $this->polls[$i]->customSlug;
-		} else echo $this->polls[$i]->surveyID;
+		} else echo $this->polls[$i]->pollID;
 		echo '/">';
 			echo '<div class="pollInfoVotes">Votes<br />'.$this->polls[$i]->votes.'</div>';
 			echo $this->polls[$i]->question;
