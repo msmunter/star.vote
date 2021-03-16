@@ -1,6 +1,6 @@
 RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)([^/])$        /$1$2/ [L,R=301]
-RewriteRule ^([a-z]+)/([a-z]+)/([a-zA-Z0-9-]+)/?$ index.php?c=$1&a=$2&d=$3 [L]
-RewriteRule ^([a-z]+)/([a-z]+)/?$ index.php?c=$1&a=$2 [L]
-RewriteRule ^([a-zA-Z0-9-]+)/?$ index.php?c=$1 [L]
+RewriteRule ^([a-z]+)/([a-z]+)/([a-zA-Z0-9-]+)/?$ index.php?c=$1&a=$2&d=$3 [L,QSA]
+RewriteRule ^([a-z]+)/([a-z]+)/?$ index.php?c=$1&a=$2 [L,QSA]
+RewriteRule ^([a-zA-Z0-9-]+)/?$ index.php?c=$1 [L,QSA]
