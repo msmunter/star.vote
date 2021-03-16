@@ -74,14 +74,14 @@ class MasterController
 					$this->controller->name = 'survey';
 					$this->controller->action = 'results';
 					$this->controller->URLdata = $requestedController;
-					$this->controller->passedKey = $requestedAction;
+					$this->controller->passedKey = $this->prepGetPost('k');
 				} else if ($surveyBySlug) {
 					// Valid survey by Slug, load survey controller
 					$this->controller = new SurveyController;
 					$this->controller->name = 'survey';
 					$this->controller->action = 'results';
 					$this->controller->URLdata = $surveyBySlug->surveyID;
-					$this->controller->passedKey = $requestedAction;
+					$this->controller->passedKey = $this->prepGetPost('k');
 				}
 				$this->controller->control();
 			} else {
