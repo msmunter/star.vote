@@ -17,6 +17,11 @@ if ($this->survey) {
 			<div class="bigContainerTitle">Polls in survey: "<?php echo $this->survey->title; ?>" <?php if ($this->survey->votes < 1) { ?><a class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all" href="/survey/createpoll/<?php echo $this->survey->surveyID; ?>/">Add Poll</a><?php } ?></div>
 			<div class="bigContainerInner">
 				<?php if (!empty($this->startEndString)) {?><div class="startEndString"><?php echo $this->startEndString; ?></div><?php } ?>
+				<?php if ($this->survey->votingWindowDirection == 'before') { ?>
+					<button id="startStopButton" data-inline="inline" data-mini="true" onclick="manualStartStop(1)">Start NOW</button>
+				<?php } else if ($this->survey->inVotingWindow) { ?>
+					<button id="startStopButton" data-inline="inline" data-mini="true" onclick="manualStartStop(0)">Stop NOW</button>
+				<?php } ?>
 				<div class="clear"></div>
 				<div id="voteInput">
 					<?php include_once('view/survey/voteinput.view.php'); ?>

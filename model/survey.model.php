@@ -256,5 +256,23 @@ class SurveyModel extends Model
 			return true;
 		} else return false;
 	}
+
+	public function startStopSurvey($surveyID, $startStop)
+	{
+		$oDate = new DateTime();
+		$insertDate = "'".$oDate->format('Y-m-d H:i:s')."'";
+		if ($startStop == 1) {
+			$field = "startTime";
+		} else {
+			$field = "endTime";
+		}
+		
+		// Update
+		$this->query = "UPDATE `surveys`
+					SET `$field` = $insertDate
+					WHERE `surveyID` LIKE '".$surveyID."'
+					LIMIT 1;";
+		$this->doUpdateQuery();
+	}
 }
 ?>

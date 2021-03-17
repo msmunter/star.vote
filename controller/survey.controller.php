@@ -380,6 +380,25 @@ class SurveyController extends Controller
 		}
 		echo json_encode($return);
 	}
+
+	public function manualstartstop()
+	{
+		if (!empty($_POST['surveyID'])) {
+			// Get survey
+			$this->survey = $this->model->getSurveyByID($_POST['surveyID']);
+			if ($this->survey) {
+				if ($this->user->userID == $this->survey->userID) {
+					if ($_POST['startStop'] == "1") {
+						$this->model->startStopSurvey($this->survey->surveyID, 1);
+					} else {
+						$this->model->startStopSurvey($this->survey->surveyID, 0);
+					}
+					$return['html'] = 'Success!';
+				} else $return['error'] = 'Not admin of requested survey';
+			} else $return['error'] = 'Invalid survey ID';
+		} else $return['error'] = 'Invalid survey ID';
+		echo json_encode($return);
+	}
 	
 	public function ajaxinsertsurvey()
 	{

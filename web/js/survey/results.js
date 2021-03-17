@@ -323,3 +323,23 @@ function resetVoter() {
 		}
 	});
 }
+
+function manualStartStop(startStop) {
+	if (startStop != 1) {
+		startStop = 0;
+	}
+	$.post("/", { 
+		c: 'survey', 
+		a: 'manualstartstop', 
+		ajax: '1',
+		surveyID: $('#surveyID').val(),
+		startStop: startStop
+	}, function(data) {
+		var jData = JSON.parse(data);
+		if (jData.error) {
+			$('#statusMsg').html("ERROR: "+jData.error);
+		} else {
+			location.reload();
+		}
+	});
+}
