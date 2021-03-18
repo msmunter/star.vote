@@ -6,7 +6,7 @@
 		<div class="bigContainerTitle">Generate Voter Keys for "<a href="/<?php
 			if ($this->survey->customSlug) {
 				echo $this->survey->customSlug;
-			} else echo 'survey/'.$this->survey->surveyID;
+			} else echo $this->survey->surveyID;
 		?>/"><?php echo $this->survey->title; ?></a>"</div>
 		<div class="bigContainerInner">
 			<input type="number" id="numKeys" value="1" min="1" max="999999" />
@@ -17,7 +17,7 @@
 		<div class="bigContainerTitle">Existing Voter Keys for "<a href="/<?php
 			if ($this->survey->customSlug) {
 				echo $this->survey->customSlug;
-			} else echo 'survey/'.$this->survey->surveyID;
+			} else echo $this->survey->surveyID;
 		?>/"><?php echo $this->survey->title; ?></a>"</div>
 		<div class="bigContainerInner" id="existingVoterKeys">
 			<?php include('view/survey/existingvoterkeys.view.php'); ?>
@@ -29,7 +29,7 @@
 	if ($this->survey->customSlug) {
 		echo $this->survey->customSlug;
 	} else {
-		echo 'survey/'.$this->survey->surveyID;
+		echo $this->survey->surveyID;
 	}
 	?>
 	/"><?php echo $this->survey->title; ?></a>"
