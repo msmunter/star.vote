@@ -13,10 +13,10 @@
 <?php } ?>
 <div id="voteInstructions">
 	<ul>
-		<li>You may score as many candidates as you like from 0 (no support) to 5 (max support).</li>
-		<li>You may give the same score to multiple candidates.</li>
-		<li>The two highest-scoring candidates are finalists.</li>
-		<li>The finalist scored higher by more voters wins.</li>
+		<li>Give your favorite five stars.</li>
+		<li>Give your last choice zero or leave blank.</li>
+		<li>Equal scores are allowed.</li>
+		<li>Score other candidates as desired.</li>
 		<?php if ($this->poll->oneVotePerIp) echo '<li>Votes are limited to one per IP address.</li>'; ?>
 	</ul>
 </div>
