@@ -61,6 +61,12 @@
 	</head>
 	<body>
 		<div id="page" data-role="page">
+			<div id="headerActual" data-role="header" class="ui-bar ui-header ui-bar-inherit" role="banner" style="background-color: #282828; border-bottom-color: black;">
+				<div style="display: flex; justify-content: center; color: white; margin-top: 10px; margin-bottom: 10px; font-family: Verdana, sans-serif; align-items: center; margin-left: auto; margin-right: auto; width: 80%">
+					<a href="https://bettervoting.com" style="color: white; text-decoration: none; font-family: sans-serif; width: 500px; text-align: center; font-weight: 400; text-shadow: unset; font-size: 20px">Try the new voting experience at BetterVoting.com !</a>
+					<a href="https://bettervoting.com" style="color: white; text-decoration: none"><img src="https://bettervoting.com/logo.png" style="height: 40px"/></a>
+				</div>
+			</div>
 			<div id="headerActual" data-role="header" class="ui-bar">
 				<!-- Header -->
 				<div id="pageHeader">
