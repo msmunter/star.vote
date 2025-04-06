@@ -7,7 +7,7 @@
 		<meta name="keywords" content="vote, voting" />
 		<meta name="robots" content="follow, index" />
 		<title>
-		<?php if ($_SERVER['SERVER_NAME'] == 'star.vote') { ?>
+		<?php if ($_SERVER['SERVER_NAME'] == 'classic.star.vote') { ?>
 			&#9733;.&#10003;
 		<?php } else { ?>
 			&#9733;.&#10003; [Dev]
@@ -47,7 +47,7 @@
 		</script>
 		<!-- jQuery Mobile -->
 		<script src="/web/js/jquery.mobile-1.4.5.min.js"></script>
-		<?php if ($_SERVER['SERVER_NAME'] == 'star.vote') { ?>
+		<?php if ($_SERVER['SERVER_NAME'] == 'classic.star.vote') { ?>
 		<!-- Global site tag (gtag.js) - Google Analytics -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=UA-113220345-1"></script>
 		<script>
@@ -74,7 +74,7 @@
 						<img id="headerLogo" src="https://<?php echo $_SERVER['SERVER_NAME']; ?>/web/images/starvote_logo.png" alt="Logo" />
 					</a>
 					<a id="headerTitle" href="https://<?php echo $_SERVER['SERVER_NAME']; ?>/">
-						<?php if ($_SERVER['SERVER_NAME'] == 'star.vote') { ?>
+						<?php if ($_SERVER['SERVER_NAME'] == 'classic.star.vote') { ?>
 							<!-- Previously there was a .vote here, but that's removed with the new logo -->
 						<?php } else { ?>
 							&raquo; Dev &laquo;
