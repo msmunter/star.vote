@@ -13,10 +13,10 @@
 <?php } ?>
 <div id="voteInstructions">
 	<ul>
-		<li>Give your favorite five stars.</li>
-		<li>Give your last choice zero or leave blank.</li>
-		<li>Equal scores are allowed.</li>
+		<li>Give your favorite candidates(s) five stars.</li>
+		<li>Give your last choice(s) zero or leave blank.</li>
 		<li>Score other candidates as desired.</li>
+		<li>Equal scores indicate equal support.</li>
 		<?php if ($this->poll->oneVotePerIp) echo '<li>Votes are limited to one per IP address.</li>'; ?>
 	</ul>
 </div>
