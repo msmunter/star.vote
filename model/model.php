@@ -19,7 +19,7 @@ class Model
 		// Grab db config file
 		$dbConfig = parse_ini_file('/srv/www/dbconfig/starvote_db.ini');
 		// Use different server for test and live
-		if ($_SERVER['SERVER_NAME'] == 'star.vote') {
+		if ($_SERVER['SERVER_NAME'] == 'classic.star.vote') {
 			// Live
 			$this->host = $dbConfig['live_host'];
 			$this->database = $dbConfig['live_database'];
