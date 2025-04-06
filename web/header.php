@@ -75,7 +75,7 @@
 					</a>
 					<a id="headerTitle" href="https://<?php echo $_SERVER['SERVER_NAME']; ?>/">
 						<?php if ($_SERVER['SERVER_NAME'] == 'star.vote') { ?>
-							.vote
+							<!-- Previously there was a .vote here, but that's removed with the new logo -->
 						<?php } else { ?>
 							&raquo; Dev &laquo;
 						<?php } ?>
